@@ -1,0 +1,84 @@
+#
+# Project       : air4all-portugal  Control
+#
+# File          : 
+# Description   : Records for Vnetilator Control 
+#
+##
+# Author        : Bernardo Carvalho (IPFN-IST)
+#
+# Copyright (c) : Air4All
+# Created 19-Mar-2020
+#
+##
+record(mbbi, "$(P)$(R)OPMODE") {
+    field(DESC, "Ventilation Opertator Mode")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(ZRST, "Stopped")
+    field(ONST, "Idle")
+    field(TWST, "AC Volume Control")
+    field(THST, "AC Pressure Control")
+    field(FRST, "WaitShot")
+    field(FVST, "Stopping")
+    field(SXST, "Emergency")
+    field(VAL, "0")
+}
+
+record(ao, "$(P)$(R)RR-MAXTIME") {
+    field(DESC, "Max RR Time 0.1")
+    field(EGU,"Sec")
+    field(VAL, "10.0")
+}
+record(calc, "$(P)$(R)TIME-COUNTER") {
+    field(DESC, "0.1 s counter")
+    field(INPA, "$(P)$(R)TIME-COUNTER")
+    field(INPB, "$(P)$(R)RR-MAXTIME NPP MS")
+    field(SCAN, ".1 second")
+    field(CALC, "(A>=B)? 0 : A + .1")
+    field(VAL, "0")
+    field(FLNK, "$(P)$(R)Sensor-Pressure" )
+}
+
+record(stringin, "$(P)$(R)CurrentTime") {
+    field(DESC, "Current Date and Time of the IOC")
+    field(SCAN, "1 second")
+    field(DTYP, "Soft Timestamp")
+    field(PINI, "YES")
+    field(INP, "@%d/%m/%Y %H:%M:%S")
+}
+ 
+record(stringout, "$(P)$(R)TraceMessage") {
+    field(DESC, "Trace Message from IOC")
+    field(VAL, "Trace mode ON")
+}
+ 
+record(stringout, "$(P)$(R)LogMessage") {
+    field(DESC, "Log Message ")
+}
+
+record(ai,"$(P)$(R)Sensor-ExpiredFlow"){
+    field(DESC,"Input Expired Air Flow ")
+    field(PREC,"3")
+    field(EGU,"l/m")
+    field(VAL,"0")
+    field(HOPR,"10")
+    field(LOPR,"0")
+    field(HIHI,"10")
+    field(HIGH,"8")
+    field(LOW,"2")
+    field(LOLO,"1")
+}
+record(ai,"$(P)$(R)Volume-Expired"){
+    field(DESC,"Calculated Expired Minute Volume")
+    field(PREC,"3")
+    field(EGU,"l/m")
+    field(VAL,"0")
+}
+
+

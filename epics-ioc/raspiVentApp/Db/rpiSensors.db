@@ -1,0 +1,24 @@
+#
+# Project       : air4all-portugal  Control
+#
+# File          :
+# Description   : Records for Vnetilator Control
+#
+##
+# Author        : Bernardo Carvalho (IPFN-IST)
+#
+# Copyright (c) : Air4All
+# Created 19-Mar-2020
+#
+##
+record(ai,"$(P)$(R)Sensor-Pressure"){
+    field(DESC,"Input Air pressure ")
+    field(PREC,"3")
+    field(EGU,"cmH2O")
+    field(HOPR,"10")
+    field(LOPR,"0")
+    field(HIHI,"10")
+    field(HIGH,"8")
+    field(LOW,"2")
+    field(LOLO,"1")
+}
