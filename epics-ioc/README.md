@@ -13,6 +13,7 @@ cd ventilator-control/epics-ioc
 4. On file `iocBoot/iocraspiVent/st.cmd`
     check the executable name on the first line 
 ```
+source ./epicsenv.sh
 make
 cd iocBoot/iocraspiVent
 ./st.cmd
