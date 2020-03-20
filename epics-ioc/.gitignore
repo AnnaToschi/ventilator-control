@@ -16,6 +16,7 @@
 # Epics build
 *O.linux-arm*
 *O.Common*
+*O.Darwin-x86*
 db/
 dbd/
 bin/
@@ -23,3 +24,6 @@ lib/
  
 #epics IOC autosave files
 *.sav*
+
+#envPath created when running make
+/iocBoot/iocraspiVent/envPaths
