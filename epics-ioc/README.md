@@ -4,12 +4,14 @@
 
 1. Install EPICS [https://docs.epics-controls.org/projects/how-tos/en/latest/getting-started/installation.html]
 2. mkdir folder and do:
-```
+```bash 
 git clone https://gitlab.com/air4all-portugal/ventilator-control
 cd ventilator-control/epics-ioc
 ```
-3. Adjust file `configure/RELEASE` 
-   `EPICS_BASE =`
+3. Create a file  `ventilator-control/RELEASE.local` (not versioned) with your installation details
+```
+   EPICS_BASE = ...
+```
 4. On file `iocBoot/iocraspiVent/st.cmd`
     check the executable name on the first line 
 ```

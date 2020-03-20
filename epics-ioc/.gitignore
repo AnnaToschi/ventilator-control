@@ -1,0 +1,25 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+ 
+# Linker output
+*.ilk
+*.map
+*.exp
+ 
+# Precompiled Headers
+*.gch
+*.pch
+ 
+# Epics build
+*O.linux-arm*
+*O.Common*
+db/
+dbd/
+bin/
+lib/
+ 
+#epics IOC autosave files
+*.sav*
