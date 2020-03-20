@@ -1,3 +1,5 @@
+#!../../bin/darwin-x86/raspiVent
+#
 #!../../bin/linux-arm/raspiVent
 
 #- You may have to change raspiVent to something else

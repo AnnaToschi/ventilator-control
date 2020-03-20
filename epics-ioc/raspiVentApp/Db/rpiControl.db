@@ -1,8 +1,8 @@
 #
 # Project       : air4all-portugal  Control
 #
-# File          : 
-# Description   : Records for Vnetilator Control 
+# File          :
+# Description   : Records for Vnetilator Control
 #
 ##
 # Author        : Bernardo Carvalho (IPFN-IST)
@@ -30,11 +30,6 @@ record(mbbi, "$(P)$(R)OPMODE") {
     field(VAL, "0")
 }
 
-record(ao, "$(P)$(R)RR-MAXTIME") {
-    field(DESC, "Max RR Time 0.1")
-    field(EGU,"Sec")
-    field(VAL, "10.0")
-}
 record(calc, "$(P)$(R)TIME-COUNTER") {
     field(DESC, "0.1 s counter")
     field(INPA, "$(P)$(R)TIME-COUNTER")
@@ -42,7 +37,7 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(SCAN, ".1 second")
     field(CALC, "(A>=B)? 0 : A + .1")
     field(VAL, "0")
-    field(FLNK, "$(P)$(R)Sensor-Pressure" )
+    field(FLNK, "$(P)$(R)TIME-FNOUT" )
 }
 
 record(stringin, "$(P)$(R)CurrentTime") {
@@ -52,33 +47,62 @@ record(stringin, "$(P)$(R)CurrentTime") {
     field(PINI, "YES")
     field(INP, "@%d/%m/%Y %H:%M:%S")
 }
- 
+
 record(stringout, "$(P)$(R)TraceMessage") {
     field(DESC, "Trace Message from IOC")
     field(VAL, "Trace mode ON")
 }
- 
+
 record(stringout, "$(P)$(R)LogMessage") {
     field(DESC, "Log Message ")
 }
 
-record(ai,"$(P)$(R)Sensor-ExpiredFlow"){
-    field(DESC,"Input Expired Air Flow ")
-    field(PREC,"3")
-    field(EGU,"l/m")
-    field(VAL,"0")
-    field(HOPR,"10")
-    field(LOPR,"0")
-    field(HIHI,"10")
-    field(HIGH,"8")
-    field(LOW,"2")
-    field(LOLO,"1")
+record(ao,"$(P)$(R)Tidal-Volume"){
+    field(DESC,"Tidal Volume Setting")
+    field(PREC,"0")
+    field(EGU,"ml")
+    field(VAL,"400.0")
+# Drive High /Low
+    field(DRVH,"1000")
+    field(DRVL,"200")
+    field(HOPR,"1000")
+    field(LOPR,"200")
 }
-record(ai,"$(P)$(R)Volume-Expired"){
-    field(DESC,"Calculated Expired Minute Volume")
-    field(PREC,"3")
-    field(EGU,"l/m")
-    field(VAL,"0")
+record(longout,"$(P)$(R)FiO2"){
+    field(DESC,"O2 Concentration Setting")
+    field(EGU,"%")
+    field(VAL,"50")
+# Drive High /Low
+    field(DRVH,"100")
+    field(DRVL,"20")
+    field(HOPR,"100")
+    field(LOPR,"20")
+}
+record(ao,"$(P)$(R)PEEP"){
+    field(DESC,"Positive End Expiratory Pressure Setting")
+    field(PREC,"1")
+    field(EGU,"cmH2O")
+    field(VAL,"5.0")
+# Drive High /Low
+    field(DRVH,"20")
+    field(DRVL,"2")
+    field(HOPR,"20")
+    field(LOPR,"2")
+}
+record(longout,"$(P)$(R)Resp-Rate"){
+    field(DESC,"Target Respiration Rate")
+    field(EGU,"b/min")
+    field(VAL,"12")
+    field(HOPR,"20")
+    field(LOPR,"2")
+    field(PINI,"YES")
+    field(FLNK, "$(P)$(R)RR-MAXTIME" )
 }
 
-
+record(calc, "$(P)$(R)RR-MAXTIME") {
+    field(DESC, "Max RR Time")
+    field(INPA, "$(P)$(R)Resp-Rate NPP")
+    field(CALC, "60.0 / A")
+    field(EGU,"Sec")
+    field(VAL, "10.0")
+}
