@@ -96,6 +96,10 @@ record(longout,"$(P)$(R)Resp-Rate"){
     field(VAL,"12")
     field(HOPR,"20")
     field(LOPR,"2")
+    field(HIHI,"18")
+    field(HIGH,"7")
+    field(LOW,"4")
+    field(LOLO,"2")
     field(PINI,"YES")
     field(FLNK, "$(P)$(R)RR-MAXTIME" )
 }

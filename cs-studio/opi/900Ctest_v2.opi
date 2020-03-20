@@ -2825,7 +2825,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -2846,8 +2846,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-7ed7</wuid>
-    <x>-15</x>
-    <y>-2</y>
+    <x>-14</x>
+    <y>190</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -2865,7 +2865,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -2886,8 +2886,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-7ec7</wuid>
-    <x>80</x>
-    <y>-1</y>
+    <x>81</x>
+    <y>191</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -2909,7 +2909,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <format_type>0</format_type>
     <height>38</height>
@@ -2938,8 +2938,8 @@ $(pv_value)</tooltip>
     <width>79</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6eef</wuid>
-    <x>34</x>
-    <y>23</y>
+    <x>35</x>
+    <y>215</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -2978,8 +2978,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6ed6</wuid>
-    <x>-15</x>
-    <y>64</y>
+    <x>-12</x>
+    <y>1</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3018,8 +3018,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6ed5</wuid>
-    <x>82</x>
-    <y>63</y>
+    <x>85</x>
+    <y>0</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3037,7 +3037,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="0" blue="128" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3059,7 +3059,7 @@ $(pv_value)</tooltip>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6ec1</wuid>
     <x>79</x>
-    <y>129</y>
+    <y>64</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3077,7 +3077,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3098,8 +3098,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6eb4</wuid>
-    <x>-8</x>
-    <y>190</y>
+    <x>-7</x>
+    <y>123</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3117,7 +3117,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3139,7 +3139,7 @@ $(pv_value)</tooltip>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6eb3</wuid>
     <x>82</x>
-    <y>190</y>
+    <y>123</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3157,7 +3157,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3197,7 +3197,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3270,8 +3270,8 @@ $(pv_value)</tooltip>
     <width>79</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6e5a</wuid>
-    <x>34</x>
-    <y>85</y>
+    <x>37</x>
+    <y>22</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3293,7 +3293,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="0" blue="128" />
     </foreground_color>
     <format_type>0</format_type>
     <height>38</height>
@@ -3323,13 +3323,13 @@ $(pv_value)</tooltip>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6e4f</wuid>
     <x>34</x>
-    <y>151</y>
+    <y>86</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
-    <alarm_pulsing>false</alarm_pulsing>
+    <alarm_pulsing>true</alarm_pulsing>
     <auto_size>false</auto_size>
-    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <backcolor_alarm_sensitive>true</backcolor_alarm_sensitive>
     <background_color>
       <color red="14" green="19" blue="149" />
     </background_color>
@@ -3345,7 +3345,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <format_type>0</format_type>
     <height>38</height>
@@ -3374,8 +3374,8 @@ $(pv_value)</tooltip>
     <width>79</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6e4e</wuid>
-    <x>34</x>
-    <y>215</y>
+    <x>35</x>
+    <y>148</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3397,7 +3397,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <format_type>0</format_type>
     <height>38</height>
@@ -3445,7 +3445,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="13" style="1" pixels="false">Header 3</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3485,7 +3485,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="0" blue="128" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3506,8 +3506,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6ded</wuid>
-    <x>-21</x>
-    <y>123</y>
+    <x>-24</x>
+    <y>59</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3525,7 +3525,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="13" style="1" pixels="false">Header 3</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="0" blue="128" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3547,7 +3547,7 @@ $(pv_value)</tooltip>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6dec</wuid>
     <x>-11</x>
-    <y>129</y>
+    <y>64</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3565,7 +3565,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="13" style="1" pixels="false">Header 3</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3586,8 +3586,8 @@ $(pv_value)</tooltip>
     <width>67</width>
     <wrap_words>false</wrap_words>
     <wuid>-7869a33b:170f79d9950:-6dd5</wuid>
-    <x>4</x>
-    <y>4</y>
+    <x>5</x>
+    <y>196</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -3605,7 +3605,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="13" style="1" pixels="false">Header 3</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3645,7 +3645,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3689,7 +3689,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <format_type>0</format_type>
     <height>38</height>
@@ -3737,7 +3737,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="19" style="1" pixels="false">Header 1</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -3777,7 +3777,7 @@ $(pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="13" style="1" pixels="false">Header 3</opifont.name>
     </font>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>25</height>
     <horizontal_alignment>1</horizontal_alignment>
@@ -4000,7 +4000,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="0" blue="0" />
+      <color red="162" green="255" blue="0" />
     </foreground_color>
     <height>1</height>
     <horizontal_fill>true</horizontal_fill>
@@ -4058,7 +4058,7 @@ $(pv_value)</tooltip>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="0" blue="0" />
+      <color red="255" green="231" blue="0" />
     </foreground_color>
     <height>1</height>
     <horizontal_fill>true</horizontal_fill>
@@ -4988,7 +4988,7 @@ $(pv_value)</tooltip>
       <color red="200" green="200" blue="200" />
     </axis_0_grid_color>
     <axis_0_log_scale>false</axis_0_log_scale>
-    <axis_0_maximum>6.0</axis_0_maximum>
+    <axis_0_maximum>5.0</axis_0_maximum>
     <axis_0_minimum>0.0</axis_0_minimum>
     <axis_0_scale_font>
       <opifont.name fontName=".SF NS Text" height="11" style="0" pixels="false">Default</opifont.name>
@@ -5005,139 +5005,19 @@ $(pv_value)</tooltip>
     <axis_1_axis_color>
       <color red="255" green="255" blue="255" />
     </axis_1_axis_color>
-    <axis_1_axis_title>Volume (mL)</axis_1_axis_title>
-    <axis_1_dash_grid_line>true</axis_1_dash_grid_line>
-    <axis_1_grid_color>
-      <color red="200" green="200" blue="200" />
-    </axis_1_grid_color>
-    <axis_1_log_scale>false</axis_1_log_scale>
-    <axis_1_maximum>1000.0</axis_1_maximum>
-    <axis_1_minimum>0.0</axis_1_minimum>
-    <axis_1_scale_font>
-      <opifont.name fontName=".SF NS Text" height="9" style="0" pixels="false">Fine Print</opifont.name>
-    </axis_1_scale_font>
-    <axis_1_scale_format></axis_1_scale_format>
-    <axis_1_show_grid>true</axis_1_show_grid>
-    <axis_1_time_format>0</axis_1_time_format>
-    <axis_1_title_font>
-      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
-    </axis_1_title_font>
-    <axis_1_visible>true</axis_1_visible>
-    <axis_count>2</axis_count>
-    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-    <background_color>
-      <color red="14" green="19" blue="149" />
-    </background_color>
-    <border_alarm_sensitive>true</border_alarm_sensitive>
-    <border_color>
-      <color red="0" green="128" blue="255" />
-    </border_color>
-    <border_style>0</border_style>
-    <border_width>1</border_width>
-    <enabled>true</enabled>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-    <foreground_color>
-      <color red="255" green="255" blue="255" />
-    </foreground_color>
-    <height>130</height>
-    <name>XY Graph_2</name>
-    <plot_area_background_color>
-      <color red="14" green="19" blue="149" />
-    </plot_area_background_color>
-    <pv_name>Raspi:central:Volume-InspExp</pv_name>
-    <pv_value />
-    <rules />
-    <scale_options>
-      <width_scalable>true</width_scalable>
-      <height_scalable>true</height_scalable>
-      <keep_wh_ratio>false</keep_wh_ratio>
-    </scale_options>
-    <scripts />
-    <show_legend>false</show_legend>
-    <show_plot_area_border>false</show_plot_area_border>
-    <show_toolbar>false</show_toolbar>
-    <title></title>
-    <title_font>
-      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
-    </title_font>
-    <tooltip>$(trace_0_y_pv)
-$(trace_0_y_pv_value)</tooltip>
-    <trace_0_anti_alias>true</trace_0_anti_alias>
-    <trace_0_buffer_size>100</trace_0_buffer_size>
-    <trace_0_concatenate_data>true</trace_0_concatenate_data>
-    <trace_0_line_width>1</trace_0_line_width>
-    <trace_0_name>$(trace_0_y_pv)</trace_0_name>
-    <trace_0_plot_mode>0</trace_0_plot_mode>
-    <trace_0_point_size>4</trace_0_point_size>
-    <trace_0_point_style>0</trace_0_point_style>
-    <trace_0_trace_color>
-      <color red="255" green="255" blue="255" />
-    </trace_0_trace_color>
-    <trace_0_trace_type>0</trace_0_trace_type>
-    <trace_0_update_delay>100</trace_0_update_delay>
-    <trace_0_update_mode>0</trace_0_update_mode>
-    <trace_0_visible>true</trace_0_visible>
-    <trace_0_x_axis_index>0</trace_0_x_axis_index>
-    <trace_0_x_pv>Raspi:central:TIME-COUNTER</trace_0_x_pv>
-    <trace_0_x_pv_value />
-    <trace_0_y_axis_index>1</trace_0_y_axis_index>
-    <trace_0_y_pv>$(pv_name)</trace_0_y_pv>
-    <trace_0_y_pv_value />
-    <trace_count>1</trace_count>
-    <transparent>false</transparent>
-    <trigger_pv></trigger_pv>
-    <trigger_pv_value />
-    <visible>true</visible>
-    <widget_type>XY Graph</widget_type>
-    <width>589</width>
-    <wuid>-7869a33b:170f79d9950:-6756</wuid>
-    <x>204</x>
-    <y>188</y>
-  </widget>
-  <widget typeId="org.csstudio.opibuilder.widgets.xyGraph" version="1.0.0">
-    <actions hook="false" hook_all="false" />
-    <alarm_pulsing>false</alarm_pulsing>
-    <axis_0_auto_scale>false</axis_0_auto_scale>
-    <axis_0_auto_scale_threshold>0.0</axis_0_auto_scale_threshold>
-    <axis_0_axis_color>
-      <color red="255" green="255" blue="255" />
-    </axis_0_axis_color>
-    <axis_0_axis_title></axis_0_axis_title>
-    <axis_0_dash_grid_line>false</axis_0_dash_grid_line>
-    <axis_0_grid_color>
-      <color red="200" green="200" blue="200" />
-    </axis_0_grid_color>
-    <axis_0_log_scale>false</axis_0_log_scale>
-    <axis_0_maximum>6.0</axis_0_maximum>
-    <axis_0_minimum>0.0</axis_0_minimum>
-    <axis_0_scale_font>
-      <opifont.name fontName=".SF NS Text" height="11" style="0" pixels="false">Default</opifont.name>
-    </axis_0_scale_font>
-    <axis_0_scale_format></axis_0_scale_format>
-    <axis_0_show_grid>false</axis_0_show_grid>
-    <axis_0_time_format>0</axis_0_time_format>
-    <axis_0_title_font>
-      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
-    </axis_0_title_font>
-    <axis_0_visible>false</axis_0_visible>
-    <axis_1_auto_scale>false</axis_1_auto_scale>
-    <axis_1_auto_scale_threshold>0.0</axis_1_auto_scale_threshold>
-    <axis_1_axis_color>
-      <color red="255" green="255" blue="255" />
-    </axis_1_axis_color>
     <axis_1_axis_title>P (cmH20)</axis_1_axis_title>
     <axis_1_dash_grid_line>true</axis_1_dash_grid_line>
     <axis_1_grid_color>
       <color red="200" green="200" blue="200" />
     </axis_1_grid_color>
     <axis_1_log_scale>false</axis_1_log_scale>
-    <axis_1_maximum>6.0</axis_1_maximum>
+    <axis_1_maximum>10.0</axis_1_maximum>
     <axis_1_minimum>-2.0</axis_1_minimum>
     <axis_1_scale_font>
       <opifont.name fontName=".SF NS Text" height="9" style="0" pixels="false">Fine Print</opifont.name>
     </axis_1_scale_font>
     <axis_1_scale_format></axis_1_scale_format>
-    <axis_1_show_grid>true</axis_1_show_grid>
+    <axis_1_show_grid>false</axis_1_show_grid>
     <axis_1_time_format>0</axis_1_time_format>
     <axis_1_title_font>
       <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
@@ -5157,10 +5037,10 @@ $(trace_0_y_pv_value)</tooltip>
     <enabled>true</enabled>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="0" blue="128" />
     </foreground_color>
-    <height>92</height>
-    <name>XY Graph_1</name>
+    <height>130</height>
+    <name>XY Graph_2</name>
     <plot_area_background_color>
       <color red="14" green="19" blue="149" />
     </plot_area_background_color>
@@ -5191,7 +5071,7 @@ $(trace_0_y_pv_value)</tooltip>
     <trace_0_point_size>4</trace_0_point_size>
     <trace_0_point_style>0</trace_0_point_style>
     <trace_0_trace_color>
-      <color red="255" green="255" blue="255" />
+      <color red="255" green="231" blue="0" />
     </trace_0_trace_color>
     <trace_0_trace_type>0</trace_0_trace_type>
     <trace_0_update_delay>100</trace_0_update_delay>
@@ -5209,9 +5089,129 @@ $(trace_0_y_pv_value)</tooltip>
     <trigger_pv_value />
     <visible>true</visible>
     <widget_type>XY Graph</widget_type>
-    <width>589</width>
-    <wuid>-7869a33b:170f79d9950:-673f</wuid>
+    <width>588</width>
+    <wuid>-7869a33b:170f79d9950:-6756</wuid>
     <x>204</x>
+    <y>188</y>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.xyGraph" version="1.0.0">
+    <actions hook="false" hook_all="false" />
+    <alarm_pulsing>false</alarm_pulsing>
+    <axis_0_auto_scale>false</axis_0_auto_scale>
+    <axis_0_auto_scale_threshold>0.0</axis_0_auto_scale_threshold>
+    <axis_0_axis_color>
+      <color red="255" green="255" blue="255" />
+    </axis_0_axis_color>
+    <axis_0_axis_title></axis_0_axis_title>
+    <axis_0_dash_grid_line>false</axis_0_dash_grid_line>
+    <axis_0_grid_color>
+      <color red="200" green="200" blue="200" />
+    </axis_0_grid_color>
+    <axis_0_log_scale>false</axis_0_log_scale>
+    <axis_0_maximum>5.0</axis_0_maximum>
+    <axis_0_minimum>0.0</axis_0_minimum>
+    <axis_0_scale_font>
+      <opifont.name fontName=".SF NS Text" height="11" style="0" pixels="false">Default</opifont.name>
+    </axis_0_scale_font>
+    <axis_0_scale_format></axis_0_scale_format>
+    <axis_0_show_grid>false</axis_0_show_grid>
+    <axis_0_time_format>0</axis_0_time_format>
+    <axis_0_title_font>
+      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
+    </axis_0_title_font>
+    <axis_0_visible>false</axis_0_visible>
+    <axis_1_auto_scale>false</axis_1_auto_scale>
+    <axis_1_auto_scale_threshold>0.0</axis_1_auto_scale_threshold>
+    <axis_1_axis_color>
+      <color red="255" green="255" blue="255" />
+    </axis_1_axis_color>
+    <axis_1_axis_title>Volume (mL)</axis_1_axis_title>
+    <axis_1_dash_grid_line>true</axis_1_dash_grid_line>
+    <axis_1_grid_color>
+      <color red="200" green="200" blue="200" />
+    </axis_1_grid_color>
+    <axis_1_log_scale>false</axis_1_log_scale>
+    <axis_1_maximum>1000.0</axis_1_maximum>
+    <axis_1_minimum>0.0</axis_1_minimum>
+    <axis_1_scale_font>
+      <opifont.name fontName=".SF NS Text" height="9" style="0" pixels="false">Fine Print</opifont.name>
+    </axis_1_scale_font>
+    <axis_1_scale_format></axis_1_scale_format>
+    <axis_1_show_grid>false</axis_1_show_grid>
+    <axis_1_time_format>0</axis_1_time_format>
+    <axis_1_title_font>
+      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
+    </axis_1_title_font>
+    <axis_1_visible>true</axis_1_visible>
+    <axis_count>2</axis_count>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="14" green="19" blue="149" />
+    </background_color>
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <border_style>0</border_style>
+    <border_width>1</border_width>
+    <enabled>true</enabled>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <foreground_color>
+      <color red="255" green="255" blue="255" />
+    </foreground_color>
+    <height>92</height>
+    <name>XY Graph_1</name>
+    <plot_area_background_color>
+      <color red="14" green="19" blue="149" />
+    </plot_area_background_color>
+    <pv_name>Raspi:central:Volume-InspExp</pv_name>
+    <pv_value />
+    <rules />
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <scripts />
+    <show_legend>false</show_legend>
+    <show_plot_area_border>false</show_plot_area_border>
+    <show_toolbar>false</show_toolbar>
+    <title></title>
+    <title_font>
+      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
+    </title_font>
+    <tooltip>$(trace_0_y_pv)
+$(trace_0_y_pv_value)</tooltip>
+    <trace_0_anti_alias>true</trace_0_anti_alias>
+    <trace_0_buffer_size>100</trace_0_buffer_size>
+    <trace_0_concatenate_data>true</trace_0_concatenate_data>
+    <trace_0_line_width>1</trace_0_line_width>
+    <trace_0_name>$(trace_0_y_pv)</trace_0_name>
+    <trace_0_plot_mode>0</trace_0_plot_mode>
+    <trace_0_point_size>4</trace_0_point_size>
+    <trace_0_point_style>0</trace_0_point_style>
+    <trace_0_trace_color>
+      <color red="255" green="0" blue="128" />
+    </trace_0_trace_color>
+    <trace_0_trace_type>0</trace_0_trace_type>
+    <trace_0_update_delay>100</trace_0_update_delay>
+    <trace_0_update_mode>0</trace_0_update_mode>
+    <trace_0_visible>true</trace_0_visible>
+    <trace_0_x_axis_index>0</trace_0_x_axis_index>
+    <trace_0_x_pv>Raspi:central:TIME-COUNTER</trace_0_x_pv>
+    <trace_0_x_pv_value />
+    <trace_0_y_axis_index>1</trace_0_y_axis_index>
+    <trace_0_y_pv>$(pv_name)</trace_0_y_pv>
+    <trace_0_y_pv_value />
+    <trace_count>1</trace_count>
+    <transparent>false</transparent>
+    <trigger_pv></trigger_pv>
+    <trigger_pv_value />
+    <visible>true</visible>
+    <widget_type>XY Graph</widget_type>
+    <width>592</width>
+    <wuid>-7869a33b:170f79d9950:-673f</wuid>
+    <x>198</x>
     <y>96</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.xyGraph" version="1.0.0">
@@ -5228,7 +5228,7 @@ $(trace_0_y_pv_value)</tooltip>
       <color red="200" green="200" blue="200" />
     </axis_0_grid_color>
     <axis_0_log_scale>false</axis_0_log_scale>
-    <axis_0_maximum>6.0</axis_0_maximum>
+    <axis_0_maximum>5.0</axis_0_maximum>
     <axis_0_minimum>0.0</axis_0_minimum>
     <axis_0_scale_font>
       <opifont.name fontName=".SF NS Text" height="11" style="0" pixels="false">Default</opifont.name>
@@ -5240,7 +5240,7 @@ $(trace_0_y_pv_value)</tooltip>
       <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
     </axis_0_title_font>
     <axis_0_visible>false</axis_0_visible>
-    <axis_1_auto_scale>true</axis_1_auto_scale>
+    <axis_1_auto_scale>false</axis_1_auto_scale>
     <axis_1_auto_scale_threshold>0.0</axis_1_auto_scale_threshold>
     <axis_1_axis_color>
       <color red="255" green="255" blue="255" />
@@ -5251,13 +5251,13 @@ $(trace_0_y_pv_value)</tooltip>
       <color red="200" green="200" blue="200" />
     </axis_1_grid_color>
     <axis_1_log_scale>false</axis_1_log_scale>
-    <axis_1_maximum>100.0</axis_1_maximum>
-    <axis_1_minimum>0.0</axis_1_minimum>
+    <axis_1_maximum>50.0</axis_1_maximum>
+    <axis_1_minimum>-50.0</axis_1_minimum>
     <axis_1_scale_font>
       <opifont.name fontName=".SF NS Text" height="9" style="0" pixels="false">Fine Print</opifont.name>
     </axis_1_scale_font>
     <axis_1_scale_format></axis_1_scale_format>
-    <axis_1_show_grid>true</axis_1_show_grid>
+    <axis_1_show_grid>false</axis_1_show_grid>
     <axis_1_time_format>0</axis_1_time_format>
     <axis_1_title_font>
       <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
@@ -5333,5 +5333,157 @@ $(trace_0_y_pv_value)</tooltip>
     <wuid>-7869a33b:170f79d9950:-6737</wuid>
     <x>204</x>
     <y>4</y>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.ThumbWheel" version="1.0.0">
+    <actions hook="false" hook_all="false" />
+    <alarm_pulsing>false</alarm_pulsing>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <border_style>0</border_style>
+    <border_width>1</border_width>
+    <decimalDigits>0</decimalDigits>
+    <enabled>true</enabled>
+    <focusedFrameColor>
+      <color red="0" green="0" blue="255" />
+    </focusedFrameColor>
+    <font>
+      <opifont.name fontName=".SF NS Text" height="11" style="0" pixels="false">Default</opifont.name>
+    </font>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <height>60</height>
+    <integerDigits>3</integerDigits>
+    <internalFrameColor>
+      <color red="0" green="0" blue="0" />
+    </internalFrameColor>
+    <internalFrameSize>1</internalFrameSize>
+    <limits_from_pv>false</limits_from_pv>
+    <maximum>100.0</maximum>
+    <minimum>0.0</minimum>
+    <name>Thumb Wheel</name>
+    <pv_name></pv_name>
+    <pv_value />
+    <rules />
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <scripts />
+    <show_buttons>true</show_buttons>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <visible>true</visible>
+    <widget_type>Thumb Wheel</widget_type>
+    <width>120</width>
+    <wuid>-7869a33b:170f79d9950:-4eb1</wuid>
+    <x>648</x>
+    <y>412</y>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+    <actions hook="false" hook_all="false" />
+    <alarm_pulsing>false</alarm_pulsing>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <bit>-1</bit>
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <border_style>0</border_style>
+    <border_width>1</border_width>
+    <bulb_border>3</bulb_border>
+    <bulb_border_color>
+      <color red="150" green="150" blue="150" />
+    </bulb_border_color>
+    <data_type>0</data_type>
+    <effect_3d>true</effect_3d>
+    <enabled>true</enabled>
+    <font>
+      <opifont.name fontName=".SF NS Text" height="11" style="0" pixels="false">Default</opifont.name>
+    </font>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <foreground_color>
+      <color red="192" green="192" blue="192" />
+    </foreground_color>
+    <height>86</height>
+    <name>LED_5</name>
+    <off_color>
+      <color red="0" green="100" blue="0" />
+    </off_color>
+    <off_label>OFF</off_label>
+    <on_color>
+      <color red="0" green="255" blue="0" />
+    </on_color>
+    <on_label>ON</on_label>
+    <pv_name>Raspi:central:Volume-InspExp</pv_name>
+    <pv_value />
+    <rules />
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>true</keep_wh_ratio>
+    </scale_options>
+    <scripts />
+    <show_boolean_label>false</show_boolean_label>
+    <square_led>false</square_led>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <visible>true</visible>
+    <widget_type>LED</widget_type>
+    <width>86</width>
+    <wuid>-7869a33b:170f79d9950:-4d71</wuid>
+    <x>284</x>
+    <y>312</y>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
+    <actions hook="false" hook_all="false" />
+    <auto_size>false</auto_size>
+    <background_color>
+      <color red="255" green="255" blue="255" />
+    </background_color>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <border_style>0</border_style>
+    <border_width>1</border_width>
+    <enabled>true</enabled>
+    <font>
+      <opifont.name fontName=".SF NS Text" height="11" style="1" pixels="false">Default Bold</opifont.name>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255" />
+    </foreground_color>
+    <height>25</height>
+    <horizontal_alignment>1</horizontal_alignment>
+    <name>Label_43</name>
+    <rules />
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <scripts />
+    <text>APNEA ALARM</text>
+    <tooltip></tooltip>
+    <transparent>true</transparent>
+    <vertical_alignment>1</vertical_alignment>
+    <visible>true</visible>
+    <widget_type>Label</widget_type>
+    <width>91</width>
+    <wrap_words>false</wrap_words>
+    <wuid>-7869a33b:170f79d9950:-4d70</wuid>
+    <x>385</x>
+    <y>351</y>
   </widget>
 </display>

@@ -6,7 +6,6 @@
 2. mkdir folder and do:
 ```bash 
 git clone https://gitlab.com/air4all-portugal/ventilator-control
-cd ventilator-control/epics-ioc
 ```
 3. Create a file  `ventilator-control/RELEASE.local` (not versioned) with your installation details
 ```
@@ -15,6 +14,7 @@ cd ventilator-control/epics-ioc
 4. On file `iocBoot/iocraspiVent/st.cmd`
     check the executable name on the first line 
 ```
+cd ventilator-control/epics-ioc
 source ./epicsenv.sh
 make
 cd iocBoot/iocraspiVent
