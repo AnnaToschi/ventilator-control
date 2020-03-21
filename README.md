@@ -1,12 +1,16 @@
-# ventilator-control
+# Ventilator Control Project
 
-Software for control a GUI  panel visualisation  for Open Source ventilator 
+Software for control a GUI  panel visualisation  for Open Source ventilator
+
+# Learn:
+## Usefull Simulators
+1. [Xlung Demo](https://simulation.xlung.net/xlung/demo)
 
 ## Youtube Information Videos
 1. Introduction to Mechanical Ventilation Maquet SERVO-i
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=6JFHiiEkjlk
 " target="_blank"><img src="http://img.youtube.com/vi/6JFHiiEkjlk/0.jpg"
-alt="Introduction to Mechanical Ventilation Maquet SERVO-i" width="240" height="180" border="10" /></a>   
+alt="Introduction to Mechanical Ventilation Maquet SERVO-i" width="240" height="180" border="10" /></a>
 2. Overview of the Servo 900c Pneumatic Unit
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=gnWi2_8Y8DQ
 " target="_blank"><img src="http://img.youtube.com/vi/gnWi2_8Y8DQ/0.jpg"
