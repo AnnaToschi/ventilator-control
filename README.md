@@ -6,6 +6,9 @@ Software for control a GUI  panel visualisation  for Open Source ventilator
 ## Usefull Simulators
 1. [Xlung Demo](https://simulation.xlung.net/xlung/demo)
 
+## Other Infos
+1. [An introduction to the ventilator waveform](https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20551/introduction-ventilator-waveform)
+
 ## Youtube Information Videos
 1. Introduction to Mechanical Ventilation Maquet SERVO-i
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=6JFHiiEkjlk
