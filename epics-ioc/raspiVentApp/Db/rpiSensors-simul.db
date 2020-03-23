@@ -18,6 +18,17 @@ record(fanout, "$(P)$(R)TIME-FNOUT"){
 #    field(LNK3, "$(P)$(R)TMPump1-Acceleration")
 #    field(LNK4, "$(P)$(R)TMPump1-NormalOperation")
 }
+record(calc,"$(P)$(R)Sensor-Flow"){
+    field(DESC,"Flow Sensor")
+    field(PREC,"1")
+    field(EGU,"l/m")
+    field(HOPR,"150")
+    field(LOPR,"40")
+    field(DRVH,"150")
+    field(DRVL,"40")
+    field(HIGH,"120")
+    field(LOW,"60")
+}
 record(calc,"$(P)$(R)Sensor-Pressure"){
     field(DESC,"Input Air pressure ")
     field(PREC,"3")
@@ -32,7 +43,66 @@ record(calc,"$(P)$(R)Sensor-Pressure"){
     field(LOW,"2")
     field(LOLO,"1")
 }
-
+record(calc,"$(P)$(R)Sensor-Resp-Rate"){
+    field(DESC,"Respiration Rate Sensor")
+    field(EGU,"b/min")
+    field(VAL,"12")
+    field(HOPR,"20")
+    field(LOPR,"2")
+    field(HIHI,"18")
+    field(HIGH,"7")
+    field(LOW,"4")
+    field(LOLO,"2")
+    field(PINI,"YES")
+    field(FLNK, "$(P)$(R)RR-MAXTIME" )
+}
+record(calc,"$(P)$(R)Sensor-FiO2"){
+    field(DESC,"O2 Concentration Sensor")
+    field(EGU,"%")
+    field(VAL,"50")
+# Drive High /Low
+    field(DRVH,"100")
+    field(DRVL,"20")
+    field(HOPR,"100")
+    field(LOPR,"20")
+}
+record(calc,"$(P)$(R)Sensor-FiO2"){
+    field(DESC,"Positive End Expiratory Pressure Sensor")
+    field(PREC,"0")
+    field(EGU,"cmH2O")
+    field(VAL,"5.0")
+# Drive High /Low
+    field(DRVH,"20")
+    field(DRVL,"2")
+    field(HOPR,"20")
+    field(LOPR,"2")
+}
+record(ao,"$(P)$(R)Sensor-Tidal-Volume"){
+    field(DESC,"Tidal Volume Sensor")
+    field(PREC,"0")
+    field(EGU,"ml")
+    field(VAL,"400.0")
+# Drive High /Low
+    field(DRVH,"1400")
+    field(DRVL,"200")
+    field(HOPR,"1400")
+    field(LOPR,"200")
+    field(HIGH,"800")
+    field(LOW,"100")
+}
+record(ao,"$(P)$(R)Sensor-Tidal-Volume-Expiration"){
+    field(DESC,"Tidal Volume Expiration Sensor")
+    field(PREC,"0")
+    field(EGU,"ml")
+    field(VAL,"400.0")
+# Drive High /Low
+    field(DRVH,"1400")
+    field(DRVL,"200")
+    field(HOPR,"1400")
+    field(LOPR,"200")
+    field(HIGH,"800")
+    field(LOW,"100")
+}
 record(calc,"$(P)$(R)Sensor-Flow"){
     field(DESC,"Simulated Inspired/Expired Mix Flow ")
     field(PREC,"1")
@@ -47,7 +117,6 @@ record(calc,"$(P)$(R)Sensor-Flow"){
     field(LOLO,"-200")
     field(FLNK, "$(P)$(R)Volume-InspExp" )
 }
-
 record(calc,"$(P)$(R)Volume-InspExp"){
     field(DESC, "Calculated Insp/Exp Volume")
     field(INPA, "$(P)$(R)TIME-COUNTER")

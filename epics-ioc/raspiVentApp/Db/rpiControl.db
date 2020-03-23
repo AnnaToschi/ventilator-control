@@ -64,10 +64,36 @@ record(ao,"$(P)$(R)Tidal-Volume"){
     field(EGU,"ml")
     field(VAL,"400.0")
 # Drive High /Low
-    field(DRVH,"1000")
+    field(DRVH,"1400")
     field(DRVL,"200")
-    field(HOPR,"1000")
+    field(HOPR,"1400")
     field(LOPR,"200")
+    field(HIGH,"800")
+    field(LOW,"100")
+}
+record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
+    field(DESC,"Tidal Volume Expiration Setting")
+    field(PREC,"0")
+    field(EGU,"ml")
+    field(VAL,"400.0")
+# Drive High /Low
+    field(DRVH,"1400")
+    field(DRVL,"200")
+    field(HOPR,"1400")
+    field(LOPR,"200")
+    field(HIGH,"800")
+    field(LOW,"100")
+}
+record(ao,"$(P)$(R)Flow"){
+    field(DESC,"Flow Setting")
+    field(PREC,"1")
+    field(EGU,"l/m")
+    field(HOPR,"150")
+    field(LOPR,"40")
+    field(DRVH,"150")
+    field(DRVL,"40")
+    field(HIGH,"120")
+    field(LOW,"60")
 }
 record(longout,"$(P)$(R)FiO2"){
     field(DESC,"O2 Concentration Setting")
@@ -81,7 +107,7 @@ record(longout,"$(P)$(R)FiO2"){
 }
 record(ao,"$(P)$(R)PEEP"){
     field(DESC,"Positive End Expiratory Pressure Setting")
-    field(PREC,"1")
+    field(PREC,"0")
     field(EGU,"cmH2O")
     field(VAL,"5.0")
 # Drive High /Low
@@ -90,8 +116,45 @@ record(ao,"$(P)$(R)PEEP"){
     field(HOPR,"20")
     field(LOPR,"2")
 }
+record(ao,"$(P)$(R)Ppeak"){
+    field(DESC,"Peak Preassure PC/PS Setting")
+    field(PREC,"0")
+    field(EGU,"cmH20")
+    field(VAL,"40")
+# Drive High /Low
+    field(DRVH,"100")
+    field(DRVL,"0'")
+    field(HOPR,"100")
+    field(LOPR,"0")
+    field(HIGH,"80")
+    field(LOW,"2")
+}
+record(ao,"$(P)$(R)Ptrigger"){
+    field(DESC,"Trigger Preassure PS Setting")
+    field(PREC,"0")
+    field(EGU,"cmH20")
+    field(VAL,"-2")
+# Drive High /Low
+    field(DRVH,"0")
+    field(DRVL,"-20'")
+    field(HOPR,"0")
+    field(LOPR,"-20")
+}
+record(ao,"$(P)$(R)Tinsp"){
+    field(DESC,"Inspiration Time Setting")
+    field(PREC,"1")
+    field(EGU,"s")
+    field(VAL,"1.3")
+# Drive High /Low
+    field(DRVH,"2")
+    field(DRVL,"0.5'")
+    field(HOPR,"2")
+    field(LOPR,"0.5")
+    field(HIGH,"2.5")
+    field(LOW,"0.3")
+}
 record(longout,"$(P)$(R)Resp-Rate"){
-    field(DESC,"Target Respiration Rate")
+    field(DESC,"Respiration Rate Setting")
     field(EGU,"b/min")
     field(VAL,"12")
     field(HOPR,"20")
