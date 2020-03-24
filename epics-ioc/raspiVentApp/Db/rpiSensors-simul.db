@@ -62,6 +62,16 @@ record(ai,"$(P)$(R)Sensor-PEEP"){
     field(HOPR,"20")
     field(LOPR,"2")
 }
+record(ai,"$(P)$(R)Sensor-Flow"){
+    field(DESC,"Flow Sensor")
+    field(PREC,"1")
+    field(EGU,"l/m")
+    field(VAL, "")
+    field(HOPR,"150")
+    field(LOPR,"40")
+    field(HIGH,"120")
+    field(LOW,"60")
+}
 record(ai,"$(P)$(R)Sensor-Tidal-Volume"){
     field(DESC,"Tidal Volume Sensor")
     field(PREC,"0")
@@ -115,7 +125,7 @@ record(calc,"$(P)$(R)Insp-Exp-Ratio"){
     field(INPB, "$(P)$(R)RR-MAXTIME")
 #  One minute has 1200 * 0.05 steps 
     field(CALC, "A/(B-A)")
-    field(PREC,"1")
+    field(PREC,"2")
     field(EGU,"")
     field(VAL,"0")
 }
