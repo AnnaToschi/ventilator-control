@@ -1,0 +1,7 @@
+#arduino serial communication simulation
+
+first run serial.sh (requires socat) to create the virtual serial ports for testing
+
+then run the program using one of the created ports (e.g. /dev/pts/10)
+
+then open a serial terminal on the other port and test
