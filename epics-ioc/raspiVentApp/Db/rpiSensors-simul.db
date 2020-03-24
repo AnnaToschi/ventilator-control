@@ -18,7 +18,7 @@ record(fanout, "$(P)$(R)TIME-FNOUT"){
 #    field(LNK3, "$(P)$(R)TMPump1-Acceleration")
 #    field(LNK4, "$(P)$(R)TMPump1-NormalOperation")
 }
-record(calc,"$(P)$(R)Sensor-Flow"){
+record(ai,"$(P)$(R)Sensor-Flow"){
     field(DESC,"Flow Sensor")
     field(PREC,"1")
     field(EGU,"l/m")
@@ -56,7 +56,7 @@ record(calc,"$(P)$(R)Sensor-Resp-Rate"){
     field(PINI,"YES")
     field(FLNK, "$(P)$(R)RR-MAXTIME" )
 }
-record(calc,"$(P)$(R)Sensor-FiO2"){
+record(ai,"$(P)$(R)Sensor-FiO2"){
     field(DESC,"O2 Concentration Sensor")
     field(EGU,"%")
     field(VAL,"50")
@@ -66,7 +66,7 @@ record(calc,"$(P)$(R)Sensor-FiO2"){
     field(HOPR,"100")
     field(LOPR,"20")
 }
-record(calc,"$(P)$(R)Sensor-FiO2"){
+record(ai,"$(P)$(R)PEEP"){
     field(DESC,"Positive End Expiratory Pressure Sensor")
     field(PREC,"0")
     field(EGU,"cmH2O")
@@ -77,7 +77,7 @@ record(calc,"$(P)$(R)Sensor-FiO2"){
     field(HOPR,"20")
     field(LOPR,"2")
 }
-record(ao,"$(P)$(R)Sensor-Tidal-Volume"){
+record(ai,"$(P)$(R)Sensor-Tidal-Volume"){
     field(DESC,"Tidal Volume Sensor")
     field(PREC,"0")
     field(EGU,"ml")
@@ -90,7 +90,7 @@ record(ao,"$(P)$(R)Sensor-Tidal-Volume"){
     field(HIGH,"800")
     field(LOW,"100")
 }
-record(ao,"$(P)$(R)Sensor-Tidal-Volume-Expiration"){
+record(ai,"$(P)$(R)Sensor-Tidal-Volume-Expiration"){
     field(DESC,"Tidal Volume Expiration Sensor")
     field(PREC,"0")
     field(EGU,"ml")
@@ -103,20 +103,20 @@ record(ao,"$(P)$(R)Sensor-Tidal-Volume-Expiration"){
     field(HIGH,"800")
     field(LOW,"100")
 }
-record(calc,"$(P)$(R)Sensor-Flow"){
-    field(DESC,"Simulated Inspired/Expired Mix Flow ")
-    field(PREC,"1")
-    field(INPA, "$(P)$(R)TIME-COUNTER")
-    field(CALC, "(A<=0.5)? 0 : ((A<1.5)? 40 : (A<2.5)? -40: 0) ")
-    field(EGU,"l/m")
-    field(HOPR,"200")
-    field(LOPR,"-200")
-    field(HIHI,"200")
-    field(HIGH,"150")
-    field(LOW,"-150")
-    field(LOLO,"-200")
-    field(FLNK, "$(P)$(R)Volume-InspExp" )
-}
+#record(calc,"$(P)$(R)Sensor-Flow"){
+#    field(DESC,"Simulated Inspired/Expired Mix Flow ")
+#    field(PREC,"1")
+#    field(INPA, "$(P)$(R)TIME-COUNTER")
+#    field(CALC, "(A<=0.5)? 0 : ((A<1.5)? 40 : (A<2.5)? -40: 0) ")
+#    field(EGU,"l/m")
+#    field(HOPR,"200")
+#    field(LOPR,"-200")
+#    field(HIHI,"200")
+#    field(HIGH,"150")
+#    field(LOW,"-150")
+#    field(LOLO,"-200")
+#    field(FLNK, "$(P)$(R)Volume-InspExp" )
+#}
 record(calc,"$(P)$(R)Volume-InspExp"){
     field(DESC, "Calculated Insp/Exp Volume")
     field(INPA, "$(P)$(R)TIME-COUNTER")

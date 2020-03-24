@@ -11,7 +11,12 @@
 # Created 19-Mar-2020
 #
 ##
-record(mbbi, "$(P)$(R)OPMODE") {
+
+
+### include record bi with inspiration and expiration states. -> LED
+
+
+record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Opertator Mode")
     field(ZRVL, "0")
     field(ONVL, "1")
@@ -24,12 +29,11 @@ record(mbbi, "$(P)$(R)OPMODE") {
     field(ONST, "Idle")
     field(TWST, "AC Volume Control")
     field(THST, "AC Pressure Control")
-    field(FRST, "WaitShot")
-    field(FVST, "Stopping")
+    field(FRST, "Pressure Support")
+    field(FVST, "Alarm Setting")
     field(SXST, "Emergency")
     field(VAL, "0")
 }
-
 record(calc, "$(P)$(R)TIME-COUNTER") {
     field(DESC, "0.1 s counter")
     field(INPA, "$(P)$(R)TIME-COUNTER")
@@ -87,7 +91,7 @@ record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
 record(ao,"$(P)$(R)Flow"){
     field(DESC,"Flow Setting")
     field(PREC,"1")
-    field(EGU,"l/m")
+    field(EGU,"l/min")
     field(HOPR,"150")
     field(LOPR,"40")
     field(DRVH,"150")
@@ -104,6 +108,16 @@ record(longout,"$(P)$(R)FiO2"){
     field(DRVL,"20")
     field(HOPR,"100")
     field(LOPR,"20")
+}
+record(ao,"$(P)$(R)FiO2-Margin"){
+    field(DESC,"O2 Concentration Margin Setting")
+    field(EGU,"%")
+    field(VAL,"5")
+# Drive High /Low
+    field(DRVH,"20")
+    field(DRVL,"0")
+    field(HOPR,"20")
+    field(LOPR,"0")
 }
 record(ao,"$(P)$(R)PEEP"){
     field(DESC,"Positive End Expiratory Pressure Setting")
@@ -153,7 +167,7 @@ record(ao,"$(P)$(R)Tinsp"){
     field(HIGH,"2.5")
     field(LOW,"0.3")
 }
-record(longout,"$(P)$(R)Resp-Rate"){
+record(ao,"$(P)$(R)Resp-Rate"){
     field(DESC,"Respiration Rate Setting")
     field(EGU,"b/min")
     field(VAL,"12")
@@ -166,7 +180,15 @@ record(longout,"$(P)$(R)Resp-Rate"){
     field(PINI,"YES")
     field(FLNK, "$(P)$(R)RR-MAXTIME" )
 }
-
+record(ao,"$(P)$(R)Resp-Rate-Margin"){
+    field(DESC,"Respiration Rate Margin Setting")
+    field(EGU,"b/min")
+    field(VAL,"5")
+    field(DRVH,"10")
+    field(DRVL,"0")
+    field(HOPR,"10")
+    field(LOPR,"0")
+}
 record(calc, "$(P)$(R)RR-MAXTIME") {
     field(DESC, "Max RR Time")
     field(INPA, "$(P)$(R)Resp-Rate NPP")
