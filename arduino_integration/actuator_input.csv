@@ -1,0 +1,3 @@
+inspiratory_valve(0=fully closed,255=fully open);expiratory_valve(0=fully closed,255=fully open);buzzer_pitch(0=lowest tone, 255=highest tone);buzzer_volume(0=lowest vol, 255=highest vol);status(0=inspiring,1=expiring...);reserved1;reserved2\n\r
+0-255;0-255;0-255;0-255;0-7;0-255;0-255\n\r
+
