@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -96,7 +96,6 @@ main(int argc, char **argv)
 	* idx is the index for the lookup table*/
 
 	int pbufi,i,ws,idx; 
-	float rfl;
 	pbufi=0;
 	char wbuf[WBUF_SZ];
 	for(;;){
