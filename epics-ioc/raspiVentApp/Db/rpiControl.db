@@ -44,7 +44,6 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(VAL, "0")
     field(FLNK, "$(P)$(R)TIME-FNOUT" )
 }
-
 record(stringin, "$(P)$(R)CurrentTime") {
     field(DESC, "Current Date and Time of the IOC")
     field(SCAN, "1 second")
@@ -52,7 +51,6 @@ record(stringin, "$(P)$(R)CurrentTime") {
     field(PINI, "YES")
     field(INP, "@%d/%m/%Y %H:%M:%S")
 }
-
 record(stringout, "$(P)$(R)TraceMessage") {
     field(DESC, "Trace Message from IOC")
     field(VAL, "Trace mode ON")
@@ -61,7 +59,6 @@ record(stringout, "$(P)$(R)TraceMessage") {
 record(stringout, "$(P)$(R)LogMessage") {
     field(DESC, "Log Message ")
 }
-
 record(ao,"$(P)$(R)Tidal-Volume"){
     field(DESC,"Tidal Volume Setting")
     field(PREC,"0")
@@ -126,9 +123,9 @@ record(ao,"$(P)$(R)PEEP"){
     field(VAL,"5.0")
 # Drive High /Low
     field(DRVH,"20")
-    field(DRVL,"2")
+    field(DRVL,"0")
     field(HOPR,"20")
-    field(LOPR,"2")
+    field(LOPR,"0")
 }
 record(ao,"$(P)$(R)Ppeak"){
     field(DESC,"Peak Preassure PC/PS Setting")
@@ -137,11 +134,11 @@ record(ao,"$(P)$(R)Ppeak"){
     field(VAL,"40")
 # Drive High /Low
     field(DRVH,"100")
-    field(DRVL,"0'")
+    field(DRVL,"0")
     field(HOPR,"100")
     field(LOPR,"0")
     field(HIGH,"80")
-    field(LOW,"2")
+    field(LOW,"0")
 }
 record(ao,"$(P)$(R)Ptrigger"){
     field(DESC,"Trigger Preassure PS Setting")
@@ -150,7 +147,7 @@ record(ao,"$(P)$(R)Ptrigger"){
     field(VAL,"-2")
 # Drive High /Low
     field(DRVH,"0")
-    field(DRVL,"-20'")
+    field(DRVL,"-20")
     field(HOPR,"0")
     field(LOPR,"-20")
 }
@@ -160,12 +157,25 @@ record(ao,"$(P)$(R)Tinsp"){
     field(EGU,"s")
     field(VAL,"1.3")
 # Drive High /Low
-    field(DRVH,"2")
-    field(DRVL,"0.5'")
-    field(HOPR,"2")
-    field(LOPR,"0.5")
-    field(HIGH,"2.5")
-    field(LOW,"0.3")
+    field(DRVH,"10")
+    field(DRVL,"0.1")
+    field(HOPR,"10")
+    field(LOPR,"0.1")
+    field(HIGH,"8")
+    field(LOW,"0.2")
+}
+record(ao,"$(P)$(R)Tinsp-Rise") {
+    field(DESC,"Time to rise to maximum P")
+    field(PREC,"1")
+    field(EGU,"s")
+    field(VAL,"0.5")
+# Drive High /Low
+    field(DRVH,"10")
+    field(DRVL,"0.1")
+    field(HOPR,"10")
+    field(LOPR,"0.1")
+    field(HIGH,"8")
+    field(LOW,"0.2")
 }
 record(ao,"$(P)$(R)Resp-Rate"){
     field(DESC,"Respiration Rate Setting")

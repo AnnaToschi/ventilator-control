@@ -18,17 +18,6 @@ record(fanout, "$(P)$(R)TIME-FNOUT"){
 #    field(LNK3, "$(P)$(R)TMPump1-Acceleration")
 #    field(LNK4, "$(P)$(R)TMPump1-NormalOperation")
 }
-record(ai,"$(P)$(R)Sensor-Flow"){
-    field(DESC,"Flow Sensor")
-    field(PREC,"1")
-    field(EGU,"l/m")
-    field(HOPR,"150")
-    field(LOPR,"40")
-    field(DRVH,"150")
-    field(DRVL,"40")
-    field(HIGH,"120")
-    field(LOW,"60")
-}
 record(calc,"$(P)$(R)Sensor-Pressure"){
     field(DESC,"Input Air pressure ")
     field(PREC,"3")
@@ -61,19 +50,15 @@ record(ai,"$(P)$(R)Sensor-FiO2"){
     field(EGU,"%")
     field(VAL,"50")
 # Drive High /Low
-    field(DRVH,"100")
-    field(DRVL,"20")
     field(HOPR,"100")
     field(LOPR,"20")
 }
-record(ai,"$(P)$(R)PEEP"){
+record(ai,"$(P)$(R)Sensor-PEEP"){
     field(DESC,"Positive End Expiratory Pressure Sensor")
     field(PREC,"0")
     field(EGU,"cmH2O")
     field(VAL,"5.0")
 # Drive High /Low
-    field(DRVH,"20")
-    field(DRVL,"2")
     field(HOPR,"20")
     field(LOPR,"2")
 }
@@ -83,8 +68,6 @@ record(ai,"$(P)$(R)Sensor-Tidal-Volume"){
     field(EGU,"ml")
     field(VAL,"400.0")
 # Drive High /Low
-    field(DRVH,"1400")
-    field(DRVL,"200")
     field(HOPR,"1400")
     field(LOPR,"200")
     field(HIGH,"800")
@@ -96,8 +79,6 @@ record(ai,"$(P)$(R)Sensor-Tidal-Volume-Expiration"){
     field(EGU,"ml")
     field(VAL,"400.0")
 # Drive High /Low
-    field(DRVH,"1400")
-    field(DRVL,"200")
     field(HOPR,"1400")
     field(LOPR,"200")
     field(HIGH,"800")
@@ -126,5 +107,15 @@ record(calc,"$(P)$(R)Volume-InspExp"){
     field(CALC, "(A==0)? 0 : B + C/1200.0*1000.0")
     field(PREC,"1")
     field(EGU,"ml")
+    field(VAL,"0")
+}
+record(calc,"$(P)$(R)Insp-Exp-Ratio"){
+    field(DESC, "Calculated insp-exp time ratio")
+    field(INPA, "$(P)$(R)Tinsp")
+    field(INPB, "$(P)$(R)RR-MAXTIME")
+#  One minute has 1200 * 0.05 steps 
+    field(CALC, "A/(B-A)")
+    field(PREC,"1")
+    field(EGU,"")
     field(VAL,"0")
 }
