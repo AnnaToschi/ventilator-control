@@ -14,7 +14,13 @@
 
 
 ### include record bi with inspiration and expiration states. -> LED
-
+record(bo, "$(P)$(R)Flow-Direction" ) {
+   field(DESC,"Inspiration/Experiation Mode")
+#
+#	field( OUT,  "$(P)$(R)PCF8574:57:REGISTER.B2 PP MS")
+	field( ZNAM, "Inspiration")
+	field( ONAM, "ExppirationF")
+}
 
 record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Opertator Mode")
@@ -51,6 +57,7 @@ record(stringin, "$(P)$(R)CurrentTime") {
     field(PINI, "YES")
     field(INP, "@%d/%m/%Y %H:%M:%S")
 }
+
 record(stringout, "$(P)$(R)TraceMessage") {
     field(DESC, "Trace Message from IOC")
     field(VAL, "Trace mode ON")

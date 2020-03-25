@@ -1,4 +1,62 @@
+/*
+ * Project       :
+ * Docs: https://www-csr.bessy.de/control/SoftDist/sequencer/
+ *
+ * File          :
+ *
+ *
+ */
+
 program sncVentilator
+/* CONSTANT DECLARATIONS */
+short NO_ALARM=0;
+short MINOR=1;
+short MAJOR=2;
+short INVALID=3;
+
+/*Vent States*/
+short POS_Stopped =0;
+short POS_Starting=1;
+short POS_Process =2;
+short POS_Clean =3;
+short POS_WaitShot=4;
+short POS_Stopping=5;
+short POS_Emergency=6;
+
+/* IOC PV monitored variables */
+short   OpMode;
+assign  OpMode to "{user}:OPMODE";
+monitor OpMode;
+
+short   FlowDir;
+assign  FlowDir to "{user}:Flow-Direction";
+monitor FlowDir;
+
+float   CycleTime;
+assign  CycleTime to "{user}:TIME-COUNTER";
+monitor CycleTime;
+
+float   Resprate;
+assign  Resprate to "{user}:Resp-Rate";
+monitor Resprate;
+
+float   SensorPressure;
+assign  SensorPressure to "{user}:Sensor-Pressure";
+monitor SensorPressure;
+
+/*
+#Raspi:central: Sensor-PEEP
+#Raspi:central: PEEP
+*/
+
+
+/* IOC PV actuator variables */
+/*   BUzzer */
+
+/* Trace message record limited to 40 characters */
+string msg;
+assign msg to "{user}:TraceMessage.VAL";
+
 double v;
 assign v to "{user}:aiExample";
 monitor v;
@@ -8,6 +66,34 @@ ss ss1 {
 	when (delay(10)) {
 	    printf("sncExample: Startup delay over\n");
 	} state low
+    }
+    state low {
+	when (v > 5.0) {
+	    printf("sncExample: Changing to high\n");
+	} state high
+    }
+    state high {
+	when (v <= 5.0) {
+	    printf("sncExample: Changing to low\n");
+	} state low
+    }
+}
+
+/* Main Pulse State Set */
+ss VentSequence {
+    state init {
+        entry {
+            strcpy(msg, "INIT: Sequence Entry");
+            pvPut(msg);
+            errlogSevPrintf(NO_ALARM, "%s\n",msg);
+
+            strcpy(msg, "Initializing...");
+            pvPut(msg);
+            errlogSevPrintf(NO_ALARM, "%s\n",msg);
+        }
+	    when (delay(10)) {
+	        printf("sncExample: Startup delay over\n");
+	    } state low
     }
     state low {
 	when (v > 5.0) {
