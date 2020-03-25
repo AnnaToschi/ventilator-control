@@ -63,11 +63,12 @@ raspiVent_LIBS += raspiVentSupport
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file
 ifneq ($(SNCSEQ),)
-    # Build sncExample into raspiVentSupport
-    sncExample_SNCFLAGS += +r
-    raspiVent_DBD += sncExample.dbd
+    # Build sncVentilator into raspiVentSupport
+    sncVentilator += +r
+    #raspiVent_DBD += sncExample.dbd
+    raspiVent_DBD += sncVentilator.dbd
     # A .stt sequence program is *not* pre-processed:
-    raspiVentSupport_SRCS += sncExample.stt
+    raspiVentSupport_SRCS += sncVentilator.stt
     raspiVentSupport_LIBS += seq pv
     raspiVent_LIBS += seq pv
 
