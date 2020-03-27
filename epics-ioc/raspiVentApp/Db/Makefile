@@ -6,10 +6,11 @@ include $(TOP)/configure/CONFIG
 # Install databases, templates & substitutions like this
 #DB += circle.db
 DB += rpiControl.db
-DB += rpiSensors-simul.db
+#DB += rpiSensors-simul.db
 DB += raspiVentVersion.db
 
-DB += rpiSensors-simul-arduino.db
+#DB += rpiSensors-simul-arduino.db
+DB += rpiSensors-arduino.db
 DB += arduino.proto
 #DB += dbSubExample.db
 #DB += user.substitutions
