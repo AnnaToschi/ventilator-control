@@ -23,7 +23,11 @@ git clone https://gitlab.com/air4all-portugal/ventilator-control
 ```
 2. Create a file  `ventilator-control/RELEASE.local` (not versioned) with your installation details
 ```
-   EPICS_BASE = ...
+EPICS_BASE = ...
+MODULES = /Users/bernardo/EPICS/support
+SNCSEQ = $(MODULES)/seq-2.2.8
+ASYN = $(MODULES)/asyn
+STREAM = $(MODULES)/stream
 ```
 3. Build IOC
 ```

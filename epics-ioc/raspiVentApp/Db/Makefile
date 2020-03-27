@@ -7,11 +7,14 @@ include $(TOP)/configure/CONFIG
 #DB += circle.db
 DB += rpiControl.db
 DB += rpiSensors-simul.db
-#DB += dbExample1.db
-#DB += dbExample2.db
 DB += raspiVentVersion.db
+
+DB += rpiSensors-simul-arduino.db
+DB += arduino.proto
 #DB += dbSubExample.db
 #DB += user.substitutions
+#DB += dbExample1.db
+#DB += dbExample2.db
 
 # If <anyname>.db template is not named <anyname>*.template add
 # <anyname>_TEMPLATE = <templatename>

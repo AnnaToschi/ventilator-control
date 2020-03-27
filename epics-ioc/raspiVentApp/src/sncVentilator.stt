@@ -36,12 +36,16 @@ float   CycleTime;
 assign  CycleTime to "{user}:TIME-COUNTER";
 monitor CycleTime;
 
-float   Resprate;
-assign  Resprate to "{user}:Resp-Rate";
-monitor Resprate;
+float   RespRate;
+assign  RespRate to "{user}:Resp-Rate";
+monitor RespRate;
 
 float   SensorPressure;
 assign  SensorPressure to "{user}:Sensor-Pressure";
+monitor SensorPressure;
+
+float   SettingPeep;
+assign  SettingPeep to "{user}:PEEP";
 monitor SensorPressure;
 
 /*

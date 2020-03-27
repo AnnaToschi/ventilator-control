@@ -25,7 +25,7 @@ raspiVentSupport_SRCS += devXxxSoft.c
 # causes problems on Windows DLL builds
 #raspiVentSupport_SRCS += dbSubExample.c
 raspiVentSupport_SRCS += devraspiVentVersion.c
-raspiVentSupport_SRCS += raspiVentHello.c
+#raspiVentSupport_SRCS += raspiVentHello.c
 raspiVentSupport_SRCS += initTrace.c
 
 raspiVentSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
@@ -47,8 +47,11 @@ raspiVent_DBD += base.dbd
 raspiVent_DBD += xxxSupport.dbd
 #raspiVent_DBD += dbSubExample.dbd
 raspiVent_DBD += devraspiVentVersion.dbd
-raspiVent_DBD += raspiVentHello.dbd
+#raspiVent_DBD += raspiVentHello.dbd
 raspiVent_DBD += initTrace.dbd
+raspiVent_DBD += asyn.dbd
+raspiVent_DBD += stream.dbd
+raspiVent_DBD += drvAsynSerialPort.dbd
 
 # raspiVent_registerRecordDeviceDriver.cpp derives from raspiVent.dbd
 raspiVent_SRCS += raspiVent_registerRecordDeviceDriver.cpp
@@ -59,6 +62,9 @@ raspiVent_SRCS_vxWorks += -nil-
 
 # Link in the code from our support library
 raspiVent_LIBS += raspiVentSupport
+# Add all the support libraries needed by this IOC
+raspiVent_LIBS += asyn
+raspiVent_LIBS += stream
 
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file

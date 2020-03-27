@@ -23,7 +23,7 @@ record(bo, "$(P)$(R)Flow-Direction" ) {
 }
 
 record(mbbo, "$(P)$(R)OPMODE") {
-    field(DESC, "Ventilation Opertator Mode")
+    field(DESC, "Ventilation Operator Mode")
     field(ZRVL, "0")
     field(ONVL, "1")
     field(TWVL, "2")
@@ -48,8 +48,17 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(SCAN, ".05 second")
     field(CALC, "(A>=B)? 0 : A + 0.05")
     field(VAL, "0")
-    field(FLNK, "$(P)$(R)TIME-FNOUT" )
+#    field(FLNK, "$(P)$(R)TIME-FNOUT" )
+    field(FLNK, "$(P)$(R)Sensor-Flow")
 }
+# Fanout Proc records
+#record(fanout, "$(P)$(R)TIME-FNOUT"){
+#    field(LNK1, "$(P)$(R)Sensor-Flow")
+#    field(LNK2, "$(P)$(R)Sensor-Pressure")
+#    field(LNK3, "$(P)$(R)Sensor-Volume")
+#    field(LNK3, "$(P)$(R)TMPump1-Acceleration")
+#    field(LNK4, "$(P)$(R)TMPump1-NormalOperation")
+#}
 record(stringin, "$(P)$(R)CurrentTime") {
     field(DESC, "Current Date and Time of the IOC")
     field(SCAN, "1 second")

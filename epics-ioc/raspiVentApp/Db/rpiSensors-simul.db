@@ -11,27 +11,7 @@
 # Created 19-Mar-2020
 #
 ##
-# Fanout Proc records
-record(fanout, "$(P)$(R)TIME-FNOUT"){
-    field(LNK1, "$(P)$(R)Sensor-Pressure")
-    field(LNK2, "$(P)$(R)Sensor-Flow")
-#    field(LNK3, "$(P)$(R)TMPump1-Acceleration")
-#    field(LNK4, "$(P)$(R)TMPump1-NormalOperation")
-}
-record(calc,"$(P)$(R)Sensor-Pressure"){
-    field(DESC,"Input Air pressure ")
-    field(PREC,"3")
-    field(INPA, "$(P)$(R)TIME-COUNTER")
-    field(INPB, "$(P)$(R)PEEP")
-    field(CALC, "(A<=0.5)? -A : ((A<3.0)? 0 : B)")
-    field(EGU,"cmH2O")
-    field(HOPR,"30")
-    field(LOPR,"0")
-    field(HIHI,"30")
-    field(HIGH,"25")
-    field(LOW,"2")
-    field(LOLO,"1")
-}
+
 record(calc,"$(P)$(R)Sensor-Resp-Rate"){
     field(DESC,"Respiration Rate Sensor")
     field(EGU,"b/min")
@@ -62,16 +42,7 @@ record(ai,"$(P)$(R)Sensor-PEEP"){
     field(HOPR,"20")
     field(LOPR,"2")
 }
-record(ai,"$(P)$(R)Sensor-Flow"){
-    field(DESC,"Flow Sensor")
-    field(PREC,"1")
-    field(EGU,"l/m")
-    field(VAL, "")
-    field(HOPR,"150")
-    field(LOPR,"40")
-    field(HIGH,"120")
-    field(LOW,"60")
-}
+
 record(ai,"$(P)$(R)Sensor-Tidal-Volume"){
     field(DESC,"Tidal Volume Sensor")
     field(PREC,"0")
@@ -113,7 +84,7 @@ record(calc,"$(P)$(R)Volume-InspExp"){
     field(INPA, "$(P)$(R)TIME-COUNTER")
     field(INPB, "$(P)$(R)Volume-InspExp NPP")
     field(INPC, "$(P)$(R)Sensor-Flow NPP")
-#  One minute has 1200 * 0.05 steps 
+#  One minute has 1200 * 0.05 steps
     field(CALC, "(A==0)? 0 : B + C/1200.0*1000.0")
     field(PREC,"1")
     field(EGU,"ml")
@@ -123,7 +94,7 @@ record(calc,"$(P)$(R)Insp-Exp-Ratio"){
     field(DESC, "Calculated insp-exp time ratio")
     field(INPA, "$(P)$(R)Tinsp")
     field(INPB, "$(P)$(R)RR-MAXTIME")
-#  One minute has 1200 * 0.05 steps 
+#  One minute has 1200 * 0.05 steps
     field(CALC, "A/(B-A)")
     field(PREC,"2")
     field(EGU,"")
