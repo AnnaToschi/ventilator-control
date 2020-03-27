@@ -1,6 +1,9 @@
-Terminator = CR LF;
+### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
+
+Terminator = LF;
 
 #Terminator=CR;
+ExtraInput = Ignore;
 #MaxInput = 20;
 
 # in millisecond
@@ -11,18 +14,32 @@ ReplyTimeout = 250;
 # use ai and ao records
 
 # Using redirection to write time x.y and read records, First get Flow
-getValues {
-    out  "%(\$1).2f";
-    in  "%f %*f %*f ";
+getId {
+   in  "%d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%*f";
 }
-# Ignore 1rst and third value
-getPressure {
-  ExtraInput = Ignore;
-  in  "%*f %f %*f";
+getFio2 {
+	in  "%*d;%f;%*f;%*f;%*f;%*f;%*f;%*f;%*f";
 }
-
-getVolume {
-    in  "%*f %*f %f ";
+getPinsp {
+	in  "%*d;%*f;%f;%*f;%*f;%*f;%*f;%*f;%*f";
+}
+getFinsp {
+	in  "%*d;%*f;%*f;%f;%*f;%*f;%*f;%*f;%*f";
+}
+getPexp {
+	in  "%*d;%*f;%*f;%*f;%f;%*f;%*f;%*f;%*f";
+}
+getFexp {
+	in  "%*d;%*f;%*f;%*f;%*f;%f;%*f;%*f;%*f";
+}
+getTidalVolume {
+	in  "%*d;%*f;%*f;%*f;%*f;%*f;%f;%*f;%*f";
+}
+getTotalFlow {
+	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%f;%*f";
+}
+getResv1 {
+	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%f";
 }
 
 # Connect a stringout record to this to get
