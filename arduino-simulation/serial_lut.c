@@ -1,4 +1,5 @@
-#define _POSIX_C_SOURCE 200809L
+// #define _POSIX_C_SOURCE 200809L
+#define OLCUC 0000002
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
