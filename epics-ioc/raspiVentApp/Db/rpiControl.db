@@ -49,7 +49,7 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(CALC, "(A>=B)? 0 : A + 0.05")
     field(VAL, "0")
 #    field(FLNK, "$(P)$(R)TIME-FNOUT" )
-    field(FLNK, "$(P)$(R)Sensor-Flow")
+#    field(FLNK, "$(P)$(R)Sensor-Flow")
 }
 # Fanout Proc records
 #record(fanout, "$(P)$(R)TIME-FNOUT"){
