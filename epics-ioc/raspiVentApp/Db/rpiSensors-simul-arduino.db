@@ -11,6 +11,14 @@
 # Created 26-Mar-2020
 #
 ##
+record(bo,"$(P)$(R)Valve-Insp"){
+    field(DESC,"Flow Sensor Measure from Arduino")
+#    field(DTYP, "stream")
+#    field(OUT, "@arduino.proto setValve($(P)$(R)TIME-COUNTER) $(PORT)")
+    field(VAL,0)
+    field(ZNAM,"Closed")
+    field(ONAM,"Open")
+}
 record(ai,"$(P)$(R)Sensor-Flow"){
     field(DESC,"Flow Sensor Measure from Arduino")
     field(DTYP, "stream")
