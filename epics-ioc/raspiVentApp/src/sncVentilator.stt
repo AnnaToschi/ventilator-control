@@ -54,17 +54,15 @@ float   SettingPeep;
 assign  SettingPeep to "{user}:PEEP";
 monitor SensorPressure;
 
-/* IOC PV actuator  variables */
-short   ValveInsp;
-assign  ValveInsp to "{user}:Valve-Insp";
-
 /*
 #Raspi:central: Sensor-PEEP
 #Raspi:central: PEEP
 */
 
-
 /* IOC PV actuator variables */
+short   ValveInsp;
+assign  ValveInsp to "{user}:Valve-Insp";
+
 /*   BUzzer */
 
 /* Trace message record limited to 40 characters */
@@ -141,5 +139,54 @@ ss VolControl {
             ValveInsp = 0; // Change to CONSTANT
             pvPut(ValveInsp);
         } state Inspiration_VC
+    }
+}
+/* Presure Control State Set */
+ss PressControl {
+    state NON_PC {
+        entry {
+            strcpy(msg, "INIT: Sequence Entry");
+            pvPut(msg);
+            errlogSevPrintf(NO_ALARM, "%s\n",msg);
+
+            strcpy(msg, "Initializing...");
+            pvPut(msg);
+            errlogSevPrintf(NO_ALARM, "%s\n",msg);
+        }
+	    when (OpMode == OPM_PressureControl )    {
+	        printf("sncVentilator: Startup delay over\n");
+	    } state Idle_PC
+    }
+    state Idle_PC {
+	    when (OpMode != OPM_PressureControl)    {
+	        printf("sncVentilator: Ending PC Mode \n");
+	    } state NON_PC
+        when (CycleTime == 0.0) {
+	        printf("sncVentilator: PC Mode: Changing to Inspiration\n");
+            ValveInsp = 0; // Change to CONSTANT
+            pvPut(ValveInsp);
+        } state Inspiration_PC
+    }
+    state Inspiration_PC {
+	    when (OpMode != OPM_PressureControl)    {
+	        printf("sncVentilator: Ending PC Mode \n");
+            /*Close Valves*/ 
+	    } state NON_PC
+        when (CycleTime == RrMaxTime / 2.0) {
+	        printf("sncVentilator: PC Mode: Changing to Expiration\n");
+            ValveInsp = 1; // Change to CONSTANT
+            pvPut(ValveInsp);
+        } state Expiration_PC 
+    }
+    state Expiration_PC {
+	    when (OpMode != OPM_PressureControl)    {
+	        printf("sncVentilator: Ending PC Mode \n");
+            /*Close Valves*/ 
+	    } state NON_PC
+        when (CycleTime >= RrMaxTime) {
+	        printf("sncVentilator: PC Mode: Changing to Inspiration\n");
+            ValveInsp = 0; // Change to CONSTANT
+            pvPut(ValveInsp);
+        } state Inspiration_PC
     }
 }
