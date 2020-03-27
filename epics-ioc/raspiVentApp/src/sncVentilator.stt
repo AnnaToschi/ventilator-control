@@ -54,6 +54,10 @@ float   SettingPeep;
 assign  SettingPeep to "{user}:PEEP";
 monitor SensorPressure;
 
+/* IOC PV actuator  variables */
+short   ValveInsp;
+assign  ValveInsp to "{user}:Valve-Insp";
+
 /*
 #Raspi:central: Sensor-PEEP
 #Raspi:central: PEEP
@@ -112,6 +116,8 @@ ss VolControl {
 	    } state NON_VC
         when (CycleTime == 0.0) {
 	        printf("sncVentilator: VC Mode: Changing to Inspiration\n");
+            ValveInsp = 0; // Change to CONSTANT
+            pvPut(ValveInsp);
         } state Inspiration_VC
     }
     state Inspiration_VC {
@@ -121,6 +127,8 @@ ss VolControl {
 	    } state NON_VC
         when (CycleTime == RrMaxTime / 2.0) {
 	        printf("sncVentilator: VC Mode: Changing to Expiration\n");
+            ValveInsp = 1; // Change to CONSTANT
+            pvPut(ValveInsp);
         } state Expiration_VC 
     }
     state Expiration_VC {
@@ -130,6 +138,8 @@ ss VolControl {
 	    } state NON_VC
         when (CycleTime >= RrMaxTime) {
 	        printf("sncVentilator: VC Mode: Changing to Inspiration\n");
+            ValveInsp = 0; // Change to CONSTANT
+            pvPut(ValveInsp);
         } state Inspiration_VC
     }
 }
