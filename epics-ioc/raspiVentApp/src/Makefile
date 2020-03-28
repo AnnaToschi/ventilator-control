@@ -68,15 +68,15 @@ raspiVent_LIBS += stream
 
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file
-# ifneq ($(SNCSEQ),)
-#     # Build sncVentilator into raspiVentSupport
-#     sncVentilator += +r
-#     #raspiVent_DBD += sncExample.dbd
-#     raspiVent_DBD += sncVentilator.dbd
-#     # A .stt sequence program is *not* pre-processed:
-#     raspiVentSupport_SRCS += sncVentilator.stt
-#     raspiVentSupport_LIBS += seq pv
-#     raspiVent_LIBS += seq pv
+ifneq ($(SNCSEQ),)
+	# Build sncVentilator into raspiVentSupport
+	sncVentilator += +r
+	#raspiVent_DBD += sncExample.dbd
+	raspiVent_DBD += sncVentilator.dbd
+    # A .stt sequence program is *not* pre-processed:
+	raspiVentSupport_SRCS += sncVentilator.stt
+	raspiVentSupport_LIBS += seq pv
+	raspiVent_LIBS += seq pv
 
 #     # Build sncProgram as a standalone program
 #     PROD_HOST += sncProgram
@@ -85,7 +85,7 @@ raspiVent_LIBS += stream
 #     sncProgram_SRCS += sncProgram.st
 #     sncProgram_LIBS += seq pv
 #     sncProgram_LIBS += $(EPICS_BASE_HOST_LIBS)
-# endif
+endif
 
 # Link QSRV (pvAccess Server) if available
 ifdef EPICS_QSRV_MAJOR_VERSION
