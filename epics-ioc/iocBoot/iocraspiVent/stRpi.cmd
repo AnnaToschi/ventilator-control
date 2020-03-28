@@ -24,7 +24,7 @@ dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyAMA0")
 drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
-#drvAsynSerialPortConfigure("RS0","/dev/ttys022")
+#drvAsynSerialPortConfigure("RS1","/dev/pts/4")
 
 asynSetOption("RS0", 0, "baud", "115200")
 asynSetOption("RS0", 0, "bits", "8")
@@ -34,7 +34,7 @@ asynSetOption("RS0", 0, "clocal", "Y")
 asynSetOption("RS0", 0, "crtscts", "N")
 
 dbLoadRecords "db/rpiSensors-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
-
+dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
 # Stream DEBUG
 var streamError 1
 var streamDebug 1
