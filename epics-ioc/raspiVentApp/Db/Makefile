@@ -9,8 +9,8 @@ DB += rpiControl.db
 #DB += rpiSensors-simul.db
 DB += raspiVentVersion.db
 
-#DB += rpiSensors-simul-arduino.db
-DB += rpiSensors-arduino.db
+DB += rpiSensors-simul-arduino.db
+#DB += rpiSensors-arduino.db
 DB += rpiControl-arduino.db
 DB += arduino.proto
 #DB += dbSubExample.db

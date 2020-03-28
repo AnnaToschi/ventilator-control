@@ -16,15 +16,15 @@ raspiVent_registerRecordDeviceDriver pdbbase
 ## Load record instances
 dbLoadRecords "db/raspiVentVersion.db", "user=pi"
 dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
-dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
+#dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
 #dbLoadRecords "db/dbSubExample.db", "user=pi"
 #dbLoadTemplate "db/user.substitutions"
 
 ## Load Serial drivers
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyAMA0")
-drvAsynSerialPortConfigure("RS0","/dev/ttys020")
-#drvAsynSerialPortConfigure("RS0","/dev/ttys022")
+#drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
+drvAsynSerialPortConfigure("RS0","/dev/ttys005")
 
 asynSetOption("RS0", 0, "baud", "115200")
 asynSetOption("RS0", 0, "bits", "8")
@@ -34,7 +34,7 @@ asynSetOption("RS0", 0, "clocal", "Y")
 asynSetOption("RS0", 0, "crtscts", "N")
 
 dbLoadRecords "db/rpiSensors-simul-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
-
+dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
 # Stream DEBUG
 var streamError 1
 var streamDebug 1
@@ -52,3 +52,4 @@ iocInit
 ## Start any sequence programs
 seq sncVentilator, "user=Raspi:central"
 #seq sncExample, "user=Raspi:central"
+

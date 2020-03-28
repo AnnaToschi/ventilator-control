@@ -1,47 +1,63 @@
 ### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
 #Vinsp(0-255);Vexp(0-255);buzzer_pitch(0-255);buzzer_vol(0-255);status(0-7);resv1(0-255);resv2(0-255)\n
 
-Terminator = LF;
+#Terminator = LF;
 
-#Terminator=CR;
+Terminator=CR LF;
 ExtraInput = Ignore;
 #MaxInput = 20;
 
 # in millisecond
 #ReadTimeout = 2000;
-ReplyTimeout = 250;
+ReplyTimeout = 100;
 
 # Values are float
 # use ai and ao records
 
 # Using redirection to write time x.y and read records, First get Flow
-getId {
-   in  "%d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%*f";
+#getId {
+#   in  "%d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%*f";
+#}
+#getFio2 {
+#	in  "%*d;%f;%*f;%*f;%*f;%*f;%*f;%*f;%*f";
+#}
+#getPinsp {
+#	in  "%*d;%*f;%f;%*f;%*f;%*f;%*f;%*f;%*f";
+#}
+#getFinsp {
+#	in  "%*d;%*f;%*f;%f;%*f;%*f;%*f;%*f;%*f";
+#}
+#getPexp {
+#	in  "%*d;%*f;%*f;%*f;%f;%*f;%*f;%*f;%*f";
+#}
+#getFexp {
+#	in  "%*d;%*f;%*f;%*f;%*f;%f;%*f;%*f;%*f";
+#}
+#getTidalVolume {
+#	in  "%*d;%*f;%*f;%*f;%*f;%*f;%f;%*f;%*f";
+#}
+#getTotalFlow {
+#	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%f;%*f";
+#}
+#getResv1 {
+#	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%f";
+#}
+
+# Using redirection to write time x.y and read records, First get Flow
+getValues {
+#   out  "%(\$1).2f";
+    in  "%f %*f %*f ";
 }
-getFio2 {
-	in  "%*d;%f;%*f;%*f;%*f;%*f;%*f;%*f;%*f";
+# Ignore 1rst and third value
+getPressure {
+  ExtraInput = Ignore;
+  in  "%*f %f %*f";
 }
-getPinsp {
-	in  "%*d;%*f;%f;%*f;%*f;%*f;%*f;%*f;%*f";
+
+getVolume {
+    in  "%*f %*f %f ";
 }
-getFinsp {
-	in  "%*d;%*f;%*f;%f;%*f;%*f;%*f;%*f;%*f";
-}
-getPexp {
-	in  "%*d;%*f;%*f;%*f;%f;%*f;%*f;%*f;%*f";
-}
-getFexp {
-	in  "%*d;%*f;%*f;%*f;%*f;%f;%*f;%*f;%*f";
-}
-getTidalVolume {
-	in  "%*d;%*f;%*f;%*f;%*f;%*f;%f;%*f;%*f";
-}
-getTotalFlow {
-	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%f;%*f";
-}
-getResv1 {
-	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%f";
-}
+
 
 # Connect a stringout record to this to get
 # a generic command interface.
@@ -49,7 +65,7 @@ getResv1 {
 
 
 WriteMsg {
-	out "%(A).0f;%(B).0f;%(C).0f;%(D).0f;(E).0f;%(F).0f;%(G).0f";
+	out "%(A).0f;%(B).0f;%(C).0f;%(D).0f;%(E).0f;%(F).0f;%(G).0f";
 }
 #SetVexp {
 #	out  "%*d;%d;%*d;%*d;%*d;%*d;";

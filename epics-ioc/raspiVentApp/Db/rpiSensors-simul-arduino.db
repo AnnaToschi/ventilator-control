@@ -11,14 +11,6 @@
 # Created 26-Mar-2020
 #
 ##
-record(bo,"$(P)$(R)Valve-Insp"){
-    field(DESC,"Flow Sensor Measure from Arduino")
-#    field(DTYP, "stream")
-#    field(OUT, "@arduino.proto setValve($(P)$(R)TIME-COUNTER) $(PORT)")
-    field(VAL,0)
-    field(ZNAM,"Closed")
-    field(ONAM,"Open")
-}
 record(ai,"$(P)$(R)Sensor-Flow"){
     field(DESC,"Flow Sensor Measure from Arduino")
     field(DTYP, "stream")
@@ -40,10 +32,6 @@ record(ai,"$(P)$(R)Sensor-Pressure"){
     field(DTYP, "stream")
     field(INP, "@arduino.proto getPressure $(PORT)")
     field(SCAN, "I/O Intr")
-#    field(PREC,"3")
-#    field(INPA, "$(P)$(R)TIME-COUNTER")
-#    field(INPB, "$(P)$(R)PEEP")
-#    field(CALC, "(A<=0.5)? -A : ((A<3.0)? 0 : B)")
     field(EGU,"cmH2O")
     field(HOPR,"30")
     field(LOPR,"0")

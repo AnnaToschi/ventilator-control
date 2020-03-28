@@ -27,3 +27,4 @@ lib/
 
 #envPath created when running make
 /iocBoot/iocraspiVent/envPaths
+logfile.txt
