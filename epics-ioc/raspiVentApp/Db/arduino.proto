@@ -1,4 +1,5 @@
 ### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
+#Vinsp(0-255);Vexp(0-255);buzzer_pitch(0-255);buzzer_vol(0-255);status(0-7);resv1(0-255);resv2(0-255)\n
 
 Terminator = LF;
 
@@ -45,6 +46,24 @@ getResv1 {
 # Connect a stringout record to this to get
 # a generic command interface.
 # After processing finishes, the record contains the reply.
+
+
+WriteMsg {
+	out "%(A).0f;%(B).0f;%(C).0f;%(D).0f;(E).0f;%(F).0f;%(G).0f";
+}
+#SetVexp {
+#	out  "%*d;%d;%*d;%*d;%*d;%*d;";
+#}
+#SetBuzzPitch {
+#	out  "%*d;%*d;%d;%*d;%*d;%*d;";
+#}
+#SetBuzzVol {
+#	out  "%*d;%*d;%*d;%d;%*d;%*d;";
+#}
+#SetState {
+#	out  "%*d;%*d;%*d;%*d;%d;%*d;";
+#}
+
 
 debug {
     ExtraInput = Ignore;
