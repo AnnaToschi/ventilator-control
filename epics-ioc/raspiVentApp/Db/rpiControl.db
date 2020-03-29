@@ -173,6 +173,7 @@ record(ao,"$(P)$(R)Set-Tinsp"){
     field(LOPR,"0.1")
     field(HIGH,"8")
     field(LOW,"0.2")
+    field(FLNK, "$(P)$(R)Set-Texp" )
 }
 record(ao,"$(P)$(R)Set-TinspRise") {
     field(DESC,"Time to rise to maximum P")
@@ -214,6 +215,16 @@ record(calc, "$(P)$(R)RR-MAXTIME") {
     field(INPA, "$(P)$(R)Set-RespRate NPP")
     field(CALC, "60.0 / A")
     field(EGU,"Sec")
+    field(VAL, "10.0")
+    field(FLNK, "$(P)$(R)Set-Texp" )
+}
+record(calc, "$(P)$(R)Set-Texp") {
+    field(DESC, "Calc Expiration")
+    field(PREC, "1")
+    field(INPA, "$(P)$(R)RR-MAXTIME")
+    field(INPB, "$(P)$(R)Set-Tinsp")
+    field(CALC, "(A-B)/B")
+    field(EGU,"")
     field(VAL, "10.0")
 }
 # record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
