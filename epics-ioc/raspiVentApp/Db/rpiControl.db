@@ -211,7 +211,7 @@ record(ao,"$(P)$(R)Set-RespRateMargin"){
 }
 record(calc, "$(P)$(R)RR-MAXTIME") {
     field(DESC, "Max RR Time")
-    field(INPA, "$(P)$(R)Resp-Rate NPP")
+    field(INPA, "$(P)$(R)Set-RespRate NPP")
     field(CALC, "60.0 / A")
     field(EGU,"Sec")
     field(VAL, "10.0")
