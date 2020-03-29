@@ -45,7 +45,7 @@ ReplyTimeout = 100;
 
 # Using redirection to write time x.y and read records, First get Flow
 getValues {
-#   out  "%(\$1).2f";
+   out  "%(\$1).2f";
     in  "%f %*f %*f ";
 }
 # Ignore 1rst and third value

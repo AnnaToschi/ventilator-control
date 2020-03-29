@@ -49,7 +49,7 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(CALC, "(A>=B)? 0 : A + 0.05")
     field(VAL, "0")
 #    field(FLNK, "$(P)$(R)TIME-FNOUT" )
-#    field(FLNK, "$(P)$(R)Sensor-Flow")
+    field(FLNK, "$(P)$(R)Sensor-Flow")
 }
 # Fanout Proc records
 #record(fanout, "$(P)$(R)TIME-FNOUT"){
@@ -66,16 +66,34 @@ record(stringin, "$(P)$(R)CurrentTime") {
     field(PINI, "YES")
     field(INP, "@%d/%m/%Y %H:%M:%S")
 }
-
 record(stringout, "$(P)$(R)TraceMessage") {
     field(DESC, "Trace Message from IOC")
     field(VAL, "Trace mode ON")
 }
-
 record(stringout, "$(P)$(R)LogMessage") {
     field(DESC, "Log Message ")
 }
-record(ao,"$(P)$(R)Tidal-Volume"){
+record(ai,"$(P)$(R)Sensor-Ppeak"){
+    field(DESC,"Maximum pressure reached in each cycle")
+    field(PREC,"1")
+    field(EGU,"cmH2O")
+    field(VAL,"40")
+    field(HOPR,"150")
+    field(LOPR,"0")
+    field(HIGH,"80")
+    field(LOW,"0")
+}
+record(ai,"$(P)$(R)Sensor-PEEP"){
+    field(DESC,"Current measured PEEP")
+    field(PREC,"1")
+    field(EGU,"cmH2O")
+    field(VAL,"5")
+    field(HOPR,"50")
+    field(LOPR,"0")
+    field(HIGH,"50")
+    field(LOW,"0")
+}
+record(ao,"$(P)$(R)Set-Vt"){
     field(DESC,"Tidal Volume Setting")
     field(PREC,"0")
     field(EGU,"ml")
@@ -88,31 +106,7 @@ record(ao,"$(P)$(R)Tidal-Volume"){
     field(HIGH,"800")
     field(LOW,"100")
 }
-record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
-    field(DESC,"Tidal Volume Expiration Setting")
-    field(PREC,"0")
-    field(EGU,"ml")
-    field(VAL,"400.0")
-# Drive High /Low
-    field(DRVH,"1400")
-    field(DRVL,"200")
-    field(HOPR,"1400")
-    field(LOPR,"200")
-    field(HIGH,"800")
-    field(LOW,"100")
-}
-record(ao,"$(P)$(R)Flow"){
-    field(DESC,"Flow Setting")
-    field(PREC,"1")
-    field(EGU,"l/min")
-    field(HOPR,"150")
-    field(LOPR,"40")
-    field(DRVH,"150")
-    field(DRVL,"40")
-    field(HIGH,"120")
-    field(LOW,"60")
-}
-record(longout,"$(P)$(R)FiO2"){
+record(longout,"$(P)$(R)Set-FiO2"){
     field(DESC,"O2 Concentration Setting")
     field(EGU,"%")
     field(VAL,"50")
@@ -122,7 +116,7 @@ record(longout,"$(P)$(R)FiO2"){
     field(HOPR,"100")
     field(LOPR,"20")
 }
-record(ao,"$(P)$(R)FiO2-Margin"){
+record(ao,"$(P)$(R)Set-FiO2-Margin"){
     field(DESC,"O2 Concentration Margin Setting")
     field(EGU,"%")
     field(VAL,"5")
@@ -132,7 +126,7 @@ record(ao,"$(P)$(R)FiO2-Margin"){
     field(HOPR,"20")
     field(LOPR,"0")
 }
-record(ao,"$(P)$(R)PEEP"){
+record(ao,"$(P)$(R)Set-PEEP"){
     field(DESC,"Positive End Expiratory Pressure Setting")
     field(PREC,"0")
     field(EGU,"cmH2O")
@@ -143,7 +137,7 @@ record(ao,"$(P)$(R)PEEP"){
     field(HOPR,"20")
     field(LOPR,"0")
 }
-record(ao,"$(P)$(R)Ppeak"){
+record(ao,"$(P)$(R)Set-Ppeak"){
     field(DESC,"Peak Preassure PC/PS Setting")
     field(PREC,"0")
     field(EGU,"cmH20")
@@ -156,7 +150,7 @@ record(ao,"$(P)$(R)Ppeak"){
     field(HIGH,"80")
     field(LOW,"0")
 }
-record(ao,"$(P)$(R)Ptrigger"){
+record(ao,"$(P)$(R)Set-Ptrigger"){
     field(DESC,"Trigger Preassure PS Setting")
     field(PREC,"0")
     field(EGU,"cmH20")
@@ -167,7 +161,7 @@ record(ao,"$(P)$(R)Ptrigger"){
     field(HOPR,"0")
     field(LOPR,"-20")
 }
-record(ao,"$(P)$(R)Tinsp"){
+record(ao,"$(P)$(R)Set-Tinsp"){
     field(DESC,"Inspiration Time Setting")
     field(PREC,"1")
     field(EGU,"s")
@@ -179,8 +173,9 @@ record(ao,"$(P)$(R)Tinsp"){
     field(LOPR,"0.1")
     field(HIGH,"8")
     field(LOW,"0.2")
+    field(FLNK, "$(P)$(R)Set-Texp" )
 }
-record(ao,"$(P)$(R)Tinsp-Rise") {
+record(ao,"$(P)$(R)Set-TinspRise") {
     field(DESC,"Time to rise to maximum P")
     field(PREC,"1")
     field(EGU,"s")
@@ -193,7 +188,7 @@ record(ao,"$(P)$(R)Tinsp-Rise") {
     field(HIGH,"8")
     field(LOW,"0.2")
 }
-record(ao,"$(P)$(R)Resp-Rate"){
+record(ao,"$(P)$(R)Set-RespRate"){
     field(DESC,"Respiration Rate Setting")
     field(EGU,"b/min")
     field(VAL,"12")
@@ -206,7 +201,7 @@ record(ao,"$(P)$(R)Resp-Rate"){
     field(PINI,"YES")
     field(FLNK, "$(P)$(R)RR-MAXTIME" )
 }
-record(ao,"$(P)$(R)Resp-Rate-Margin"){
+record(ao,"$(P)$(R)Set-RespRateMargin"){
     field(DESC,"Respiration Rate Margin Setting")
     field(EGU,"b/min")
     field(VAL,"5")
@@ -217,8 +212,31 @@ record(ao,"$(P)$(R)Resp-Rate-Margin"){
 }
 record(calc, "$(P)$(R)RR-MAXTIME") {
     field(DESC, "Max RR Time")
-    field(INPA, "$(P)$(R)Resp-Rate NPP")
+    field(INPA, "$(P)$(R)Set-RespRate NPP")
     field(CALC, "60.0 / A")
     field(EGU,"Sec")
     field(VAL, "10.0")
+    field(FLNK, "$(P)$(R)Set-Texp" )
 }
+record(calc, "$(P)$(R)Set-Texp") {
+    field(DESC, "Calc Expiration")
+    field(PREC, "1")
+    field(INPA, "$(P)$(R)RR-MAXTIME")
+    field(INPB, "$(P)$(R)Set-Tinsp")
+    field(CALC, "(A-B)/B")
+    field(EGU,"")
+    field(VAL, "10.0")
+}
+# record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
+#     field(DESC,"Tidal Volume Expiration Setting")
+#     field(PREC,"0")
+#     field(EGU,"ml")
+#     field(VAL,"400.0")
+# # Drive High /Low
+#     field(DRVH,"1400")
+#     field(DRVL,"200")
+#     field(HOPR,"1400")
+#     field(LOPR,"200")
+#     field(HIGH,"800")
+#     field(LOW,"100")
+# }

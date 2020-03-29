@@ -1,3 +1,6 @@
+# FILE TO READ VALUES FROM SENSORS CONNECTED TO ARDUINO 
+
+
 ### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
 
 
