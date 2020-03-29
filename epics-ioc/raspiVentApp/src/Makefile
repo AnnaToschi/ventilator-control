@@ -52,6 +52,7 @@ raspiVent_DBD += initTrace.dbd
 raspiVent_DBD += asyn.dbd
 raspiVent_DBD += stream.dbd
 raspiVent_DBD += drvAsynSerialPort.dbd
+raspiVent_DBD += epidRecord.dbd
 
 # raspiVent_registerRecordDeviceDriver.cpp derives from raspiVent.dbd
 raspiVent_SRCS += raspiVent_registerRecordDeviceDriver.cpp
@@ -65,6 +66,7 @@ raspiVent_LIBS += raspiVentSupport
 # Add all the support libraries needed by this IOC
 raspiVent_LIBS += asyn
 raspiVent_LIBS += stream
+raspiVent_LIBS += std
 
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file

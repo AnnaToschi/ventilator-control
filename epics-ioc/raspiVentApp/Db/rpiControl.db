@@ -21,7 +21,26 @@ record(bo, "$(P)$(R)Flow-Direction" ) {
 	field( ZNAM, "Inspiration")
 	field( ONAM, "ExppirationF")
 }
-
+record(epid, "$(P)$(R)Pid-Pinsp") {
+  field(INP, "$(P)$(R)Sensor-Pinsp")
+  field(OUTL, "$(P)$(R)Set-Vinsp PP NMS")
+  field(FBON, "1")
+#  field(SCAN, "Passive")
+  field(FBON, "1")
+  field(KP, "0.5")
+  field(KI, "0.0")
+  field(KD, "0.0")
+  field(LOPR, "0")
+  field(HOPR, "255")
+  field(DRVL, "0")
+  field(DRVH, "255")
+  field(PREC, "2")
+#Setpoint Location
+  field(STPL, "0")
+#  field(STPL, "$(P)$(R)Ppeak")
+   field(VAL, "100")
+   field(SMSL, "supervisory")
+}
 record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Operator Mode")
     field(ZRVL, "0")

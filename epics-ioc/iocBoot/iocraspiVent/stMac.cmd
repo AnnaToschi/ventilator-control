@@ -24,7 +24,7 @@ dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyAMA0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
-drvAsynSerialPortConfigure("RS0","/dev/ttys005")
+drvAsynSerialPortConfigure("RS0","/dev/ttys006")
 
 asynSetOption("RS0", 0, "baud", "115200")
 asynSetOption("RS0", 0, "bits", "8")
