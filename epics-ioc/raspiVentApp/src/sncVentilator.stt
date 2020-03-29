@@ -30,9 +30,9 @@ short   OpMode;
 assign  OpMode to "{user}:OPMODE";
 monitor OpMode;
 
-short   FlowDir;
-assign  FlowDir to "{user}:Flow-Direction";
-monitor FlowDir;
+// short   FlowDir;
+// assign  FlowDir to "{user}:Flow-Direction";
+// monitor FlowDir;
 
 float   CycleTime;
 assign  CycleTime to "{user}:TIME-COUNTER";
@@ -51,7 +51,7 @@ assign  SensorPressure to "{user}:Sensor-Pressure";
 monitor SensorPressure;
 
 float SensorVolume;
-assign SensorVolume to "{user}:$(P)$(R)Sensor-Vt";
+assign SensorVolume to "{user}:Sensor-Volume";
 monitor SensorVolume;
 
 // Varuables set by the doctor
@@ -71,11 +71,11 @@ assign  SetPEEP to "{user}:Set-PEEP";
 // Variables calculated from states or other variables
 
 float SensorPpeak;
-assign SensorPpeak to "{user}:$(P)$(R)Sensor-Ppeak";
+assign SensorPpeak to "{user}:Sensor-Ppeak";
 monitor SensorPpeak;
 
 float SensorPEEP;
-assign SensorPEEP to "{user}:$(P)$(R)Sensor-PEEP";
+assign SensorPEEP to "{user}:Sensor-PEEP";
 monitor SensorPEEP;
 
 

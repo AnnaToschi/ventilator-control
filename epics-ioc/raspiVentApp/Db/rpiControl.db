@@ -66,14 +66,32 @@ record(stringin, "$(P)$(R)CurrentTime") {
     field(PINI, "YES")
     field(INP, "@%d/%m/%Y %H:%M:%S")
 }
-
 record(stringout, "$(P)$(R)TraceMessage") {
     field(DESC, "Trace Message from IOC")
     field(VAL, "Trace mode ON")
 }
-
 record(stringout, "$(P)$(R)LogMessage") {
     field(DESC, "Log Message ")
+}
+record(ai,"$(P)$(R)Sensor-Ppeak"){
+    field(DESC,"Maximum pressure reached in each cycle")
+    field(PREC,"1")
+    field(EGU,"cmH2O")
+    field(VAL,"40")
+    field(HOPR,"150")
+    field(LOPR,"0")
+    field(HIGH,"80")
+    field(LOW,"0")
+}
+record(ai,"$(P)$(R)Sensor-PEEP"){
+    field(DESC,"Current measured PEEP")
+    field(PREC,"1")
+    field(EGU,"cmH2O")
+    field(VAL,"5")
+    field(HOPR,"50")
+    field(LOPR,"0")
+    field(HIGH,"50")
+    field(LOW,"0")
 }
 record(ao,"$(P)$(R)Set-Vt"){
     field(DESC,"Tidal Volume Setting")
@@ -198,27 +216,16 @@ record(calc, "$(P)$(R)RR-MAXTIME") {
     field(EGU,"Sec")
     field(VAL, "10.0")
 }
-record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
-    field(DESC,"Tidal Volume Expiration Setting")
-    field(PREC,"0")
-    field(EGU,"ml")
-    field(VAL,"400.0")
-# Drive High /Low
-    field(DRVH,"1400")
-    field(DRVL,"200")
-    field(HOPR,"1400")
-    field(LOPR,"200")
-    field(HIGH,"800")
-    field(LOW,"100")
-}
-record(ao,"$(P)$(R)Flow"){
-    field(DESC,"Flow Setting")
-    field(PREC,"1")
-    field(EGU,"l/min")
-    field(HOPR,"150")
-    field(LOPR,"40")
-    field(DRVH,"150")
-    field(DRVL,"40")
-    field(HIGH,"120")
-    field(LOW,"60")
-}
+# record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
+#     field(DESC,"Tidal Volume Expiration Setting")
+#     field(PREC,"0")
+#     field(EGU,"ml")
+#     field(VAL,"400.0")
+# # Drive High /Low
+#     field(DRVH,"1400")
+#     field(DRVL,"200")
+#     field(HOPR,"1400")
+#     field(LOPR,"200")
+#     field(HIGH,"800")
+#     field(LOW,"100")
+# }

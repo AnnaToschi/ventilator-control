@@ -34,7 +34,7 @@ asynSetOption("RS0", 0, "clocal", "Y")
 asynSetOption("RS0", 0, "crtscts", "N")
 
 dbLoadRecords "db/rpiSensors-simul-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
-#dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
+dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
 # Stream DEBUG
 var streamError 1
 var streamDebug 1
