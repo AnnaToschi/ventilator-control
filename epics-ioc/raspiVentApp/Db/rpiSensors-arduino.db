@@ -3,6 +3,11 @@
 
 ### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
 
+record(stringout,"$(P)$(R)test"){
+    field(DESC,"Set Inspiratory Valve")
+    field(DTYP,"stream")
+    field (OUT, "@arduino.proto debug $(PORT)")
+}
 
 record(longin,"$(P)$(R)Sensor-id"){
     field(DESC,"Sensor Message Id")
