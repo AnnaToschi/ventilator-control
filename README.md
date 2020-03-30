@@ -1,4 +1,4 @@
-![Air 4 All Portugal](img/air4all.jpg "Air 4 All Portugal")
+![Air 4 All Portugal](./img/air4all.jpg =250x "Air 4 All Portugal")
 
 # Ventilator Control Project
 
