@@ -1,4 +1,4 @@
-![Air for All Portugal](img/air4all.jpeg "Air for All Portugalir4all")
+![Air 4 All Portugal](img/air4all.jpg "Air 4 All Portugal")
 
 # Ventilator Control Project
 
