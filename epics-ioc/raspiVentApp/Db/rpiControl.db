@@ -24,6 +24,7 @@ record(bo, "$(P)$(R)PID-mode" ) {
     field(VAL, "1") #TODO: add to OPI debug
     field( ZNAM, "supervisory") #check docs
     field( ONAM, "closed_loop") #check docs
+    field( OUT, "$(P)$(R)Pid-Pins.SMSL") #check docs
 }
 record(epid, "$(P)$(R)Pid-Pinsp") {
     field(INP, "$(P)$(R)Sensor-Pinsp")
@@ -41,7 +42,7 @@ record(epid, "$(P)$(R)Pid-Pinsp") {
     field(STPL, "$(P)$(R)Set-Ppeak") #Reference value -> add value Ppeak
     #  field(STPL, "$(P)$(R)Ppeak")
     field(VAL, "100")
-    field(SMSL, "$(P)$(R)PID-mode") #or closed-loop, check docs
+    field(SMSL, "supervisory") #or closed-loop, check docs
 }
 record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Operator Mode")
