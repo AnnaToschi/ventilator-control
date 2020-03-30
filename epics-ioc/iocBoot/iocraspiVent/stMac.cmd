@@ -16,7 +16,7 @@ raspiVent_registerRecordDeviceDriver pdbbase
 ## Load record instances
 dbLoadRecords "db/raspiVentVersion.db", "user=pi"
 dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
-#dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
+dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
 #dbLoadRecords "db/dbSubExample.db", "user=pi"
 #dbLoadTemplate "db/user.substitutions"
 
@@ -24,7 +24,7 @@ dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyAMA0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
-drvAsynSerialPortConfigure("RS0","/dev/ttys006")
+drvAsynSerialPortConfigure("RS0","/dev/ttys005")
 
 asynSetOption("RS0", 0, "baud", "115200")
 asynSetOption("RS0", 0, "bits", "8")

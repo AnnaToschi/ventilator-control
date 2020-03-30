@@ -66,12 +66,14 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(DESC, "0.1 s counter")
     field(INPA, "$(P)$(R)TIME-COUNTER")
     field(INPB, "$(P)$(R)RR-MAXTIME NPP MS")
+    field(PREC,"2")
 #    field(SCAN, ".1 second")
     field(SCAN, ".05 second")
     field(CALC, "(A>=B)? 0 : A + 0.05")
     field(VAL, "0")
 #    field(FLNK, "$(P)$(R)TIME-FNOUT" )
     field(FLNK, "$(P)$(R)Sensor-Flow")
+
 }
 # Fanout Proc records
 #record(fanout, "$(P)$(R)TIME-FNOUT"){
@@ -269,9 +271,9 @@ record(calc, "$(P)$(R)Sensor-RR") {
 record(calc, "$(P)$(R)Minute-Volume") {
     field(DESC, "Calc Minute Volume")
     field(PREC, "1")
-    field(INPA, "$(P)$(R)Sensor-Vt")
+    field(INPA, "$(P)$(R)Sensor-Volume") #TODO with arduino change to Sensor-Vt
     field(INPB, "$(P)$(R)Sensor-RR")
-    field(CALC, "A*B")
+    field(CALC, "A*B/1000")
     field(EGU,"L")
     field(VAL, "1000.0")
 }

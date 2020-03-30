@@ -38,7 +38,7 @@ assign  RrMaxTime to "{user}:RR-MAXTIME";
 monitor RrMaxTime;
 
 float   SensorPressure;
-assign  SensorPressure to "{user}:Sensor-Pressure"; //when connecting to arduino Sensor-Pinsp
+assign  SensorPressure to "{user}:Sensor-Pressure"; //when connecting to arduino: Sensor-Pinsp
 monitor SensorPressure;
 
 float   SensorPressurePS;
@@ -46,7 +46,7 @@ assign  SensorPressurePS to "{user}:Sensor-Pressure-PS"; // Simlating Patient00 
 monitor SensorPressurePS;
 
 float SensorVolume;
-assign SensorVolume to "{user}:Sensor-Volume"; //when connecting to arduino Sensor-Vt
+assign SensorVolume to "{user}:Sensor-Volume"; //when connecting to arduino: Sensor-Vt
 monitor SensorVolume;
 
 // Variables set by the doctor
@@ -129,15 +129,15 @@ ss ss1 {
 
 ss VolControl {
     state NON_VC {
-        entry {
-            strcpy(msg, "INIT: Sequence Entry");
-            pvPut(msg);
-            errlogSevPrintf(NO_ALARM, "%s\n",msg);
+        // entry {
+        //     strcpy(msg, "INIT: Sequence Entry");
+        //     pvPut(msg);
+        //     errlogSevPrintf(NO_ALARM, "%s\n",msg);
 
-            strcpy(msg, "Initializing...");
-            pvPut(msg);
-            errlogSevPrintf(NO_ALARM, "%s\n",msg);
-        }
+        //     strcpy(msg, "Initializing...");
+        //     pvPut(msg);
+        //     errlogSevPrintf(NO_ALARM, "%s\n",msg);
+        // }
         when (OpMode == OPM_VolumeControl)    {
             printf("sncVentilator: Startup delay over\n");
         } state Idle_VC
@@ -157,7 +157,7 @@ ss VolControl {
             printf("sncVentilator: Ending Insp VC Mode \n");
             /*Close Vinps, Open Vexp*/
         } state NON_VC
-        when (CycleTime >= SetTinsp) { //we should add condition if SensorPressure>= Set-Ppeak
+        when (CycleTime >= SetTinsp) { //we should add condition if SensorPressure>= SetPpeak
             printf("sncVentilator: VC Mode: Changing to Expiration\n");
             ValveInsp = 0; // Close Vinsp
             pvPut(ValveInsp);

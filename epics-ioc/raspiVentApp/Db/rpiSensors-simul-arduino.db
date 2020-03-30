@@ -71,4 +71,5 @@ record(ai,"$(P)$(R)Sensor-Volume"){
     field(LOPR,"0")
     field(HIGH,"800")
     field(LOW,"-1")
+    field(FLNK,"$(P)$(R)Minute-Volume")
 }
