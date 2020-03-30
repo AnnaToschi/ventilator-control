@@ -1,5 +1,4 @@
-// #define _POSIX_C_SOURCE 200809L
-#define OLCUC 0000002
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -45,7 +44,7 @@ float pressure[]= {
 };
 
 float volume[]= {
-#include "volume_in_mL.txt"
+#include "volume.txt"
 };
 
 int
@@ -96,7 +95,7 @@ main(int argc, char **argv)
 	* rfl is the read float
 	* idx is the index for the lookup table*/
 
-	int pbufi,i,ws,idx; 
+	int pbufi,i,ws,idx;
 	pbufi=0;
 	char wbuf[WBUF_SZ];
 	for(;;){
@@ -119,3 +118,4 @@ main(int argc, char **argv)
 	free(pbuf);
 	cdie("exit",FINAL);
 }
+
