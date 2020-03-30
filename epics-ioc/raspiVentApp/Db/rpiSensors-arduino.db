@@ -1,4 +1,4 @@
-# FILE TO READ VALUES FROM SENSORS CONNECTED TO ARDUINO 
+# FILE TO READ VALUES FROM SENSORS CONNECTED TO ARDUINO
 
 
 ### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
@@ -39,6 +39,22 @@ record(ai,"$(P)$(R)Sensor-Pinsp"){
     field(HIGH,"80")
     field(LOW,"0")
     field(LOLO,"0")
+    field(FLNK,"$(P)$(R)Sensor-Pressure-PS")
+}
+record(calc,"$(P)$(R)Sensor-Pressure-PS"){
+    field(DESC,"Sensor Input Air pressure with PS simul")
+#    field(PREC,"3")
+    field(INPA, "$(P)$(R)TIME-COUNTER")
+    field(INPB, "$(P)$(R)Sensor-Pressure")
+# Simulated Pressure Drop
+    field(CALC, "(A<=4.5)? B : ((A<4.6)? B*0.8 : B)")
+    field(EGU,"cmH2O")
+    field(HOPR,"30")
+    field(LOPR,"0")
+    field(HIHI,"30")
+    field(HIGH,"25")
+    field(LOW,"2")
+    field(LOLO,"1")
 }
 record(ai,"$(P)$(R)Sensor-Finsp"){
     field(DESC,"Sensor Insp Air Flow ")
@@ -105,4 +121,3 @@ record(ai,"$(P)$(R)Sensor-TotalFlow"){
     field(LOW,"0")
     field(LOLO,"")
 }
-
