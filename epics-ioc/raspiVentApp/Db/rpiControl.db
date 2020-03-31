@@ -290,3 +290,20 @@ record(calc, "$(P)$(R)Minute-Volume") {
 #     field(HIGH,"800")
 #     field(LOW,"100")
 # }
+#
+record(sub,"$(P)$(R)subExample")
+{
+    field(INAM,"mySubInit")
+    field(SNAM,"mySubProcess")
+    field(INPA, "$(P)$(R)TIME-COUNTER")
+    field(SCAN, "1 second")
+}
+#record(aSub,"$(P)$(R)aSubExample")
+#{
+#    field(INAM,"myAsubInit")
+#    field(SNAM,"myAsubProcess")
+#    field(FTA,"DOUBLE")
+#    field(NOA,"10")
+#    field(INPA,"$(P):compressExample CPP")
+#}
+
