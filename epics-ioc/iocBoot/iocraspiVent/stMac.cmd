@@ -16,7 +16,7 @@ raspiVent_registerRecordDeviceDriver pdbbase
 ## Load record instances
 dbLoadRecords "db/raspiVentVersion.db", "user=pi"
 dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
-#dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
+dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
 #dbLoadRecords "db/dbSubExample.db", "user=pi"
 #dbLoadTemplate "db/user.substitutions"
 

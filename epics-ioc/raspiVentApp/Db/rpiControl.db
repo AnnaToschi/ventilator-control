@@ -15,13 +15,35 @@
 
 ### include record bi with inspiration and expiration states. -> LED
 record(bo, "$(P)$(R)Flow-Direction" ) {
-   field(DESC,"Inspiration/Experiation Mode")
-#
-#	field( OUT,  "$(P)$(R)PCF8574:57:REGISTER.B2 PP MS")
-	field( ZNAM, "Inspiration")
-	field( ONAM, "ExppirationF")
+    field(DESC,"Inspiration/Expiriation Mode")
+    field( ZNAM, "Inspiration")
+    field( ONAM, "Expiration")
 }
-
+record(bo, "$(P)$(R)PID-mode" ) {
+    field(DESC,"Inspiration/Expiriation Mode")
+    field(VAL, "1") #TODO: add to OPI debug
+    field( ZNAM, "supervisory") #check docs
+    field( ONAM, "closed_loop") #check docs
+    field( OUT, "$(P)$(R)Pid-Pins.SMSL") #check docs
+}
+record(epid, "$(P)$(R)Pid-Pinsp") {
+    field(INP, "$(P)$(R)Sensor-Pinsp")
+    field(OUTL, "$(P)$(R)Set-Vinsp PP NMS")
+    field(FBON, "1")
+    field(KP, "0.5") #change to var.
+    field(KI, "0.0") #change to var.
+    field(KD, "0.0") #change to var.
+    field(LOPR, "0")
+    field(HOPR, "255")
+    field(DRVL, "0") #!important for saturation of pid
+    field(DRVH, "255")
+    field(PREC, "2")
+    #Setpoint Location
+    field(STPL, "$(P)$(R)Set-Ppeak") #Reference value -> add value Ppeak
+    #  field(STPL, "$(P)$(R)Ppeak")
+    field(VAL, "100")
+    field(SMSL, "supervisory") #or closed-loop, check docs
+}
 record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Operator Mode")
     field(ZRVL, "0")
@@ -44,12 +66,13 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(DESC, "0.1 s counter")
     field(INPA, "$(P)$(R)TIME-COUNTER")
     field(INPB, "$(P)$(R)RR-MAXTIME NPP MS")
+    field(PREC,"2")
 #    field(SCAN, ".1 second")
     field(SCAN, ".05 second")
     field(CALC, "(A>=B)? 0 : A + 0.05")
     field(VAL, "0")
 #    field(FLNK, "$(P)$(R)TIME-FNOUT" )
-#    field(FLNK, "$(P)$(R)Sensor-Flow")
+    field(FLNK, "$(P)$(R)Sensor-Flow")
 }
 # Fanout Proc records
 #record(fanout, "$(P)$(R)TIME-FNOUT"){
@@ -105,6 +128,7 @@ record(ao,"$(P)$(R)Set-Vt"){
     field(LOPR,"200")
     field(HIGH,"800")
     field(LOW,"100")
+    field(FLNK, "$(P)$(R)Minute-Volume" )
 }
 record(longout,"$(P)$(R)Set-FiO2"){
     field(DESC,"O2 Concentration Setting")
@@ -164,7 +188,7 @@ record(ao,"$(P)$(R)Set-Ptrigger"){
 record(ao,"$(P)$(R)Set-Tinsp"){
     field(DESC,"Inspiration Time Setting")
     field(PREC,"1")
-    field(EGU,"s")
+    field(EGU,"Sec")
     field(VAL,"1.3")
 # Drive High /Low
     field(DRVH,"10")
@@ -173,11 +197,12 @@ record(ao,"$(P)$(R)Set-Tinsp"){
     field(LOPR,"0.1")
     field(HIGH,"8")
     field(LOW,"0.2")
+    field(FLNK, "$(P)$(R)Set-Texp" )
 }
 record(ao,"$(P)$(R)Set-TinspRise") {
     field(DESC,"Time to rise to maximum P")
     field(PREC,"1")
-    field(EGU,"s")
+    field(EGU,"Sec")
     field(VAL,"0.5")
 # Drive High /Low
     field(DRVH,"10")
@@ -215,7 +240,43 @@ record(calc, "$(P)$(R)RR-MAXTIME") {
     field(CALC, "60.0 / A")
     field(EGU,"Sec")
     field(VAL, "10.0")
+    field(FLNK, "$(P)$(R)Set-Texp" )
 }
+record(calc, "$(P)$(R)Set-Texp") {
+    field(DESC, "Calc Expiration")
+    field(PREC, "1")
+    field(INPA, "$(P)$(R)RR-MAXTIME")
+    field(INPB, "$(P)$(R)Set-Tinsp")
+    field(CALC, "(A-B)/B")
+    field(EGU,"")
+    field(VAL, "10.0")
+}
+record(ai, "$(P)$(R)Sensor-RespTime") {
+    field(DESC, "Last cycle time")
+    field(PREC, "1")
+    field(EGU,"Sec")
+    field(VAL, "10.0")
+    field(FLNK, "$(P)$(R)Sensor-RR" )
+}
+record(calc, "$(P)$(R)Sensor-RR") {
+    field(DESC, "Calc Expiration")
+    field(PREC, "1")
+    field(INPA, "$(P)$(R)Sensor-RespTime")
+    field(CALC, "60.0/A")
+    field(EGU,"Sec")
+    field(VAL, "10.0")
+    field(FLNK, "$(P)$(R)Minute-Volume" )
+}
+record(calc, "$(P)$(R)Minute-Volume") {
+    field(DESC, "Calc Minute Volume")
+    field(PREC, "1")
+    field(INPA, "$(P)$(R)Sensor-Volume") #TODO with arduino change to Sensor-Vt
+    field(INPB, "$(P)$(R)Sensor-RR")
+    field(CALC, "A*B/1000")
+    field(EGU,"L")
+    field(VAL, "1000.0")
+}
+
 # record(ao,"$(P)$(R)Tidal-Volume-Expiration"){
 #     field(DESC,"Tidal Volume Expiration Setting")
 #     field(PREC,"0")

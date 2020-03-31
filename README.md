@@ -1,3 +1,5 @@
+<img src="./img/air4all.jpg" width="250" >
+
 # Ventilator Control Project
 
 Software for control a GUI  panel visualisation  for Open Source ventilator

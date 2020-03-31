@@ -1,6 +1,7 @@
 # EPICS ioc controller for Ventilator Support
 
 ## Install Steps
+### EPICS, ASYN, StreamDevice, SEQ, and STD
 
 1. Install EPICS [https://docs.epics-controls.org/projects/how-tos/en/latest/getting-started/installation.html]
 2. Install also `ASYN` and `StreamDevice` Packages according to Steps 6. and 7. of previous link.
@@ -15,19 +16,27 @@
   * `tar zxf seq-x.y.z.tar.gz`
   * `cd  seq-x.y.z`
   * `make `
+4. Install STD
+  * `cd [..]/EPICS/support`
+```bash
+git clone https://github.com/epics-modules/std
+```
+  * edit configure/RELEASE
+  * `make `
 
-## Get and build IOC application 
+## Get and build IOC application
 1. goto to `EPICS` folder:
 ```bash
 git clone https://gitlab.com/air4all-portugal/ventilator-control
 ```
 2. Create a file  `ventilator-control/RELEASE.local` (not versioned) with your installation details
 ```
-EPICS_BASE = ...
-MODULES = /Users/bernardo/EPICS/support
+EPICS_BASE = [/../EPICS/epics-base]
+MODULES = [/..]/EPICS/support
 SNCSEQ = $(MODULES)/seq-2.2.8
 ASYN = $(MODULES)/asyn
 STREAM = $(MODULES)/stream
+STD = $(MODULES)/std
 ```
 3. Build IOC
 ```
@@ -37,7 +46,7 @@ make
 cd iocBoot/iocraspiVent
 ```
 4. On file `st.cmd` or `stMac.cmd`
-    check the executable name on the first line  
+    check the executable name on the first line
     and Run:
 ```
 ./st.cmd
