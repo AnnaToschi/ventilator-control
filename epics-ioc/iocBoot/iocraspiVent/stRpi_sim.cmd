@@ -16,32 +16,25 @@ raspiVent_registerRecordDeviceDriver pdbbase
 ## Load record instances
 dbLoadRecords "db/raspiVentVersion.db", "user=pi"
 dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
-#dbLoadRecords "db/rpiSensors-arduino.db", "P=Raspi:,R=central:"
+#dbLoadRecords "db/rpiSensors-simul-arduino.db", "P=Raspi:,R=central:"
 #dbLoadRecords "db/dbSubExample.db", "user=pi"
 #dbLoadTemplate "db/user.substitutions"
 
 ## Load Serial drivers
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
-#drvAsynSerialPortConfigure("RS1","/dev/pts/4")
-drvAsynSerialPortConfigure("RS1","/dev/ttyUSB1")
-drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
+drvAsynSerialPortConfigure("RS0","/dev/pts/7")
+#drvAsynSerialPortConfigure("RS1","/dev/ttyACM0")
+#drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
 
-asynSetOption("RS0", 0, "baud", "9600")
+asynSetOption("RS0", 0, "baud", "115200")
 asynSetOption("RS0", 0, "bits", "8")
 asynSetOption("RS0", 0, "parity", "none")
 asynSetOption("RS0", 0, "stop", "1")
 asynSetOption("RS0", 0, "clocal", "Y")
 asynSetOption("RS0", 0, "crtscts", "N")
 
-asynSetOption("RS1", 0, "baud", "9600")
-asynSetOption("RS1", 0, "bits", "8")
-asynSetOption("RS1", 0, "parity", "none")
-asynSetOption("RS1", 0, "stop", "1")
-asynSetOption("RS1", 0, "clocal", "Y")
-asynSetOption("RS1", 0, "crtscts", "N")
-
-dbLoadRecords "db/rpiSensors-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
-dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS1")
+dbLoadRecords "db/rpiSensors-simul-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
+#dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
 
 # Stream DEBUG
 var streamError 1

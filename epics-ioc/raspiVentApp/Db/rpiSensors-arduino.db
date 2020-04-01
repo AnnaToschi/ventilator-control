@@ -113,16 +113,16 @@ record(ai,"$(P)$(R)Sensor-Vt"){
     field(LOW,"2")
     field(LOLO,"1")
 }
-record(ai,"$(P)$(R)Sensor-TotalFlow"){
-    field(DESC,"Sensor Calc Total Flow ")
-    field(DTYP, "stream")
-    field(INP, "@arduino.proto getTotalFlow $(PORT)")
-    field(SCAN, "I/O Intr")
-    field(EGU,"l/m")
-    field(HOPR,"120")
-    field(LOPR,"0")
-    field(HIHI,"100")
-    field(HIGH,"80")
-    field(LOW,"0")
-    field(LOLO,"")
-}
+#record(ai,"$(P)$(R)Sensor-TotalFlow"){
+#    field(DESC,"Sensor Calc Total Flow ")
+##    field(DTYP, "stream")
+#    field(INP, "@arduino.proto getTotalFlow $(PORT)")
+#    field(SCAN, "I/O Intr")
+#    field(EGU,"l/m")
+#    field(HOPR,"120")
+#    field(LOPR,"0")
+#    field(HIHI,"100")
+#    field(HIGH,"80")
+#    field(LOW,"0")
+#    field(LOLO,"")
+#}
