@@ -17,7 +17,7 @@
 14](https://www.oracle.com/java/technologies/javase-jdk14-downloads.html?fbclid=IwAR1Y75ohFxV7Qo0-v6Ue13KiLVWdGqx-Ij6AddHdJsaIK1_nIj-Yl4Zg2sU)
 2. Untar to /Library/Java/JavaVirtualMachines
 3. Get CS-Studio
-[CS-Studio 4.6.3](http://download.controlsystemstudio.org/release/4.6/)
+[CS-Studio 4.6.3](https://controlssoftware.sns.ornl.gov/css_phoebus/)
 
 #### Raspian Instalation
 ```bash
