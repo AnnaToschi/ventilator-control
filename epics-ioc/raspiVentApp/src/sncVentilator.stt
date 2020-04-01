@@ -175,7 +175,7 @@ ss VolControl {
         when (CycleTime >= RrMaxTime || SensorPressure <= SetPEEP) {
             printf("sncVentilator: VC Mode: Changing to Idle\n");
             ValveExp = 0; // Close Vexp
-            pvPut(ValveInsp);
+            pvPut(ValveExp);
             SensorPEEP = SensorPressure;
             pvPut(SensorPpeak);
         }state Idle_VC
