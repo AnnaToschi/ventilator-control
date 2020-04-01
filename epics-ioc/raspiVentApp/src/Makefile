@@ -23,7 +23,7 @@ raspiVentSupport_SRCS += devXxxSoft.c
 # Link locally-provided code into the support library,
 # rather than directly into the IOC application, that
 # causes problems on Windows DLL builds
-#raspiVentSupport_SRCS += dbSubExample.c
+raspiVentSupport_SRCS += dbSubExample.c
 raspiVentSupport_SRCS += devraspiVentVersion.c
 #raspiVentSupport_SRCS += raspiVentHello.c
 raspiVentSupport_SRCS += initTrace.c
@@ -45,7 +45,7 @@ DBD += raspiVent.dbd
 # raspiVent.dbd will include these files:
 raspiVent_DBD += base.dbd
 raspiVent_DBD += xxxSupport.dbd
-#raspiVent_DBD += dbSubExample.dbd
+raspiVent_DBD += dbSubExample.dbd
 raspiVent_DBD += devraspiVentVersion.dbd
 #raspiVent_DBD += raspiVentHello.dbd
 raspiVent_DBD += initTrace.dbd
