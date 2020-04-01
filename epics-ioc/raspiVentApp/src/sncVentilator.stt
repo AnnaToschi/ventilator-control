@@ -38,7 +38,7 @@ assign  RrMaxTime to "{user}:RR-MAXTIME";
 monitor RrMaxTime;
 
 float   SensorPressure;
-assign  SensorPressure to "{user}:Sensor-Pressure"; //when connecting to arduino: Sensor-Pinsp
+assign  SensorPressure to "{user}:Sensor-Pinsp"; //when connecting to arduino: Sensor-Pinsp
 monitor SensorPressure;
 
 float   SensorPressurePS;
@@ -46,7 +46,7 @@ assign  SensorPressurePS to "{user}:Sensor-Pressure-PS"; // Simlating Patient00 
 monitor SensorPressurePS;
 
 float SensorVolume;
-assign SensorVolume to "{user}:Sensor-Volume"; //when connecting to arduino: Sensor-Vt
+assign SensorVolume to "{user}:Sensor-Vt"; //when connecting to arduino: Sensor-Vt
 monitor SensorVolume;
 
 // Variables set by the doctor
