@@ -26,6 +26,7 @@ record(bo, "$(P)$(R)PID-mode" ) {
     field( ONAM, "closed_loop") #check docs
     field( OUT, "$(P)$(R)Pid-Pins.SMSL") #check docs
 }
+
 record(epid, "$(P)$(R)Pid-Pinsp") {
     field(INP, "$(P)$(R)Sensor-Pinsp")
     field(OUTL, "$(P)$(R)Set-Vinsp PP NMS")
@@ -72,7 +73,43 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
     field(CALC, "(A>=B)? 0 : A + 0.05")
     field(VAL, "0")
 #    field(FLNK, "$(P)$(R)TIME-FNOUT" )
-    #field(FLNK, "$(P)$(R)Sensor-Flow")
+    field(FLNK, "$(P)$(R)Sensor-Flow")
+}
+record( compress, "$(P)$(R)Plot-TIME-COUNTER" )
+{
+    field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)TIME-COUNTER" )
+    field( PREC, "2")
+    field( EGU, "sec")
+    field( NSAM, "100" )
+    field( ALG,  "Circular Buffer" )
+}
+record( compress, "$(P)$(R)Plot-Sensor-Pinsp" )
+{
+    field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)Sensor-Pressure" )
+    field( PREC, "2")
+    field( EGU, "cmH20")
+    field( NSAM, "100" )
+    field( ALG,  "Circular Buffer" )
+}
+record( compress, "$(P)$(R)Plot-Sensor-Finsp" )
+{
+    field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)Sensor-Flow" )
+    field( PREC, "2")
+    field( EGU, "L/m")
+    field( NSAM, "100" )
+    field( ALG,  "Circular Buffer" )
+}
+record( compress, "$(P)$(R)Plot-Sensor-Volume" )
+{
+    field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)Sensor-Volume" )
+    field( PREC, "2")
+    field( EGU, "mL")
+    field( NSAM, "100" )
+    field( ALG,  "Circular Buffer" )
 }
 # Fanout Proc records
 #record(fanout, "$(P)$(R)TIME-FNOUT"){
@@ -306,4 +343,3 @@ record(sub,"$(P)$(R)subExample")
 #    field(NOA,"10")
 #    field(INPA,"$(P):compressExample CPP")
 #}
-
