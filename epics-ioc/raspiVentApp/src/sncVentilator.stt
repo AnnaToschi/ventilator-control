@@ -91,6 +91,10 @@ assign  ValveInsp to "{user}:Set-Vinsp";
 short   ValveExp;
 assign  ValveExp to "{user}:Set-Vexp";
 
+float FlowFromTable;
+assign FlowFromTable to "{user}:subExample";
+monitor FlowFromTable;
+
 
 /*   BUzzer */
 
@@ -165,6 +169,7 @@ ss VolControl {
             pvPut(ValveExp);
             SensorPpeak = SensorPressure;
             pvPut(SensorPpeak);
+            // printf("Sensor FLOW From Table:\t %.2f \n", FlowFromTable);
         } state Expiration_VC
     }
     state Expiration_VC {

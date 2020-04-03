@@ -77,8 +77,8 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
 }
 record( compress, "$(P)$(R)Plot-TIME-COUNTER" )
 {
-    field( SCAN, ".5 second")
-    field( INP,  "$(P)$(R)TIME-COUNTER" )
+    #field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)TIME-COUNTER CP" )
     field( PREC, "2")
     field( EGU, "sec")
     field( NSAM, "100" )
@@ -86,8 +86,8 @@ record( compress, "$(P)$(R)Plot-TIME-COUNTER" )
 }
 record( compress, "$(P)$(R)Plot-Sensor-Pinsp" )
 {
-    field( SCAN, ".5 second")
-    field( INP,  "$(P)$(R)Sensor-Pressure" )
+    #field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)Sensor-Pressure CP" )
     field( PREC, "2")
     field( EGU, "cmH20")
     field( NSAM, "100" )
@@ -95,8 +95,8 @@ record( compress, "$(P)$(R)Plot-Sensor-Pinsp" )
 }
 record( compress, "$(P)$(R)Plot-Sensor-Finsp" )
 {
-    field( SCAN, ".5 second")
-    field( INP,  "$(P)$(R)Sensor-Flow" )
+    #field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)Sensor-Flow CP" )
     field( PREC, "2")
     field( EGU, "L/m")
     field( NSAM, "100" )
@@ -104,8 +104,8 @@ record( compress, "$(P)$(R)Plot-Sensor-Finsp" )
 }
 record( compress, "$(P)$(R)Plot-Sensor-Volume" )
 {
-    field( SCAN, ".5 second")
-    field( INP,  "$(P)$(R)Sensor-Volume" )
+    #field( SCAN, ".5 second")
+    field( INP,  "$(P)$(R)Sensor-Volume CP" )
     field( PREC, "2")
     field( EGU, "mL")
     field( NSAM, "100" )
@@ -332,10 +332,20 @@ record(sub,"$(P)$(R)subExample")
 {
     field(INAM,"mySubInit")
     field(SNAM,"mySubProcess")
-    field(INPA, "$(P)$(R)TIME-COUNTER")
-    field(INPB, "$(P)$(R)TIME-COUNTER")
-    field(SCAN, "1 second")
+    field(INPA, "$(P)$(R)TIME-COUNTER CP") #Change to Calc-Set-Flow
+    field(INPB, "$(P)$(R)TIME-COUNTER CP") #Change to Pinsp
+#    field(SCAN, ".5 second")
 }
+record(calc, "$(P)$(R)Calc-Set-Flow") {
+    field(DESC, "Calc Minute Volume")
+    field(PREC, "2")
+    field(INPA, "$(P)$(R)Set-Vt PC") #TODO with arduino change to Sensor-Vt
+    field(INPB, "$(P)$(R)Set-Tinsp PC")
+    field(CALC, "A/B")
+    field(EGU,"L/m")
+    field(VAL, "1000.0")
+}
+
 #record(aSub,"$(P)$(R)aSubExample")
 #{
 #    field(INAM,"myAsubInit")
