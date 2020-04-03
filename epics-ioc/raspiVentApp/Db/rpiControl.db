@@ -333,6 +333,7 @@ record(sub,"$(P)$(R)subExample")
     field(INAM,"mySubInit")
     field(SNAM,"mySubProcess")
     field(INPA, "$(P)$(R)TIME-COUNTER")
+    field(INPB, "$(P)$(R)TIME-COUNTER")
     field(SCAN, "1 second")
 }
 #record(aSub,"$(P)$(R)aSubExample")

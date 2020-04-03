@@ -8,7 +8,7 @@
 
 #include <math.h>
 
-const float flow[]= {
+const float flow[][] = {
 #include "flow.txt"
 };
 
@@ -23,13 +23,17 @@ static long mySubInit(subRecord *precord) {
 
 static long mySubProcess(subRecord *precord) {
   int idx;
+  int idy;
   if (mySubDebug)
     printf("Record %s called mySubProcess(%p)\n", precord->name,
            (void *)precord);
   idx = floor(20 * precord->a);
   idx = (idx < 0)? 0: idx; // Check LUT limits 
   idx = (idx > 199)? 199: idx;
-  precord->val = flow[idx];
+  idy = floor(20 * precord->b);
+  idy = (idy < 0)? 0: idx; // Check LUT limits 
+  idy = (idy > 199)? 199: idx;
+  precord->val = flow[idx][idy];
   // precord->val++;
   return 0;
 }
