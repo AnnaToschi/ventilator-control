@@ -1,0 +1,2589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<display version="2.0.0">
+  <background_color>
+    <color red="240" green="240" blue="240">
+    </color>
+  </background_color>
+  <actions>
+  </actions>
+  <widget type="label" version="2.0.0">
+    <name>ALARM</name>
+    <text>ALARM SHOWS HERE</text>
+    <x>448</x>
+    <y>2677</y>
+    <width>331</width>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color name="Major" red="255" green="0" blue="0">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>false</transparent>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="polygon" version="2.0.0">
+    <name>Polygon_1</name>
+    <x>882</x>
+    <y>2184</y>
+    <width>66</width>
+    <height>98</height>
+    <line_color>
+      <color red="255" green="0" blue="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="255" green="0" blue="0">
+      </color>
+    </background_color>
+    <points>
+      <point x="20.0" y="100.0">
+      </point>
+      <point x="45.0" y="100.0">
+      </point>
+      <point x="45.0" y="50.0">
+      </point>
+      <point x="65.0" y="50.0">
+      </point>
+      <point x="32.5" y="0.0">
+      </point>
+      <point x="0.0" y="50.0">
+      </point>
+      <point x="20.0" y="50.0">
+      </point>
+    </points>
+  </widget>
+  <widget type="polygon" version="2.0.0">
+    <name>Polygon_2</name>
+    <x>891</x>
+    <y>2389</y>
+    <width>66</width>
+    <height>98</height>
+    <line_color>
+      <color red="255" green="0" blue="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="255" green="0" blue="0">
+      </color>
+    </background_color>
+    <points>
+      <point x="20.0" y="100.0">
+      </point>
+      <point x="45.0" y="100.0">
+      </point>
+      <point x="45.0" y="50.0">
+      </point>
+      <point x="65.0" y="50.0">
+      </point>
+      <point x="32.5" y="0.0">
+      </point>
+      <point x="0.0" y="50.0">
+      </point>
+      <point x="20.0" y="50.0">
+      </point>
+    </points>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>bcakground_1</name>
+    <x>2</x>
+    <width>800</width>
+    <height>565</height>
+    <line_width>0</line_width>
+    <line_color>
+      <color red="128" green="0" blue="255">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="208" green="224" blue="227">
+      </color>
+    </background_color>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>vt_group_2</name>
+    <x>5</x>
+    <y>113</y>
+    <width>150</width>
+    <height>59</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>MV_group_1</name>
+    <x>5</x>
+    <y>44</y>
+    <width>150</width>
+    <height>62</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>footer</name>
+    <x>2</x>
+    <y>518</y>
+    <width>798</width>
+    <height>88</height>
+    <line_width>0</line_width>
+    <line_color>
+      <color red="128" green="0" blue="255">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>set_alarms</name>
+    <actions>
+      <action type="open_display">
+        <file>Final_PS.opi</file>
+        <target>replace</target>
+      </action>
+    </actions>
+    <text></text>
+    <x>685</x>
+    <y>538</y>
+    <width>97</width>
+    <height>49</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="230" green="77" blue="77">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <tooltip>$(actions)</tooltip>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>header_rect_1</name>
+    <x>2</x>
+    <y>1</y>
+    <width>800</width>
+    <height>37</height>
+    <line_width>0</line_width>
+    <line_color>
+      <color red="128" green="0" blue="255">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>OPMODE_button_1</name>
+    <actions>
+      <action type="open_display">
+        <file>PC.opi</file>
+        <target>replace</target>
+        <description>Pressure Control</description>
+      </action>
+      <action type="open_display">
+        <file>PS.opi</file>
+        <target>replace</target>
+        <description>Pressure Support</description>
+      </action>
+      <action type="open_display">
+        <file>alarms.opi</file>
+        <target>replace</target>
+        <description>SETTING ALARMS</description>
+      </action>
+    </actions>
+    <text>Set Alarms</text>
+    <x>2</x>
+    <y>1</y>
+    <width>255</width>
+    <height>37</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <tooltip>$(actions)</tooltip>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Power_suply_1</name>
+    <text>Power Supply</text>
+    <x>625</x>
+    <y>9</y>
+    <width>152</width>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="107" green="255" blue="107">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED_2</name>
+    <x>778</x>
+    <y>11</y>
+    <width>16</width>
+    <height>16</height>
+    <off_color>
+      <color red="0" green="100" blue="0">
+      </color>
+    </off_color>
+    <foreground_color>
+      <color red="192" green="192" blue="192">
+      </color>
+    </foreground_color>
+    <line_color>
+      <color red="150" green="150" blue="150">
+      </color>
+    </line_color>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>Set_variables</name>
+    <actions>
+      <action type="open_display">
+        <file>Final_PS_adjust.bob</file>
+        <target>replace</target>
+      </action>
+    </actions>
+    <text>SET</text>
+    <x>613</x>
+    <y>537</y>
+    <width>59</width>
+    <height>51</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <tooltip>$(actions)</tooltip>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>setting_peep</name>
+    <x>608</x>
+    <y>61</y>
+    <width>160</width>
+    <height>178</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>setting_vt_1</name>
+    <x>220</x>
+    <y>61</y>
+    <width>160</width>
+    <height>178</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>setting_vt_2</name>
+    <x>220</x>
+    <y>320</y>
+    <width>160</width>
+    <height>178</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>setting_vt_3</name>
+    <x>414</x>
+    <y>320</y>
+    <width>160</width>
+    <height>178</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>setting_vt_5</name>
+    <x>414</x>
+    <y>61</y>
+    <width>160</width>
+    <height>178</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>setting_peep_1</name>
+    <x>608</x>
+    <y>320</y>
+    <width>160</width>
+    <height>178</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>RR_group_1</name>
+    <x>5</x>
+    <y>182</y>
+    <width>150</width>
+    <height>57</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>fio2_group_1</name>
+    <x>5</x>
+    <y>249</y>
+    <width>150</width>
+    <height>60</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>PIP_Group_1</name>
+    <x>5</x>
+    <y>319</y>
+    <width>150</width>
+    <height>65</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>PEEP_group_1</name>
+    <x>5</x>
+    <y>394</y>
+    <width>150</width>
+    <height>64</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>vertical_separator_1</name>
+    <x>168</x>
+    <y>49</y>
+    <width>1</width>
+    <height>453</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="452.0">
+      </point>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="0.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>Polyline_14</name>
+    <x>5</x>
+    <y>108</y>
+    <width>150</width>
+    <height>1</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>Polyline_15</name>
+    <x>8</x>
+    <y>177</y>
+    <width>150</width>
+    <height>1</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>Polyline_16</name>
+    <x>5</x>
+    <y>243</y>
+    <width>150</width>
+    <height>1</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>Polyline_17</name>
+    <x>4</x>
+    <y>314</y>
+    <width>150</width>
+    <height>1</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>Polyline_18</name>
+    <x>2</x>
+    <y>389</y>
+    <width>150</width>
+    <height>1</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="polyline" version="2.0.0">
+    <name>Polyline_19</name>
+    <x>8</x>
+    <y>464</y>
+    <width>150</width>
+    <height>1</height>
+    <line_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </line_color>
+    <arrow_length>2</arrow_length>
+    <points>
+      <point x="0.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+      <point x="149.0" y="0.0">
+      </point>
+    </points>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>IE_group_1</name>
+    <x>7</x>
+    <y>472</y>
+    <width>132</width>
+    <height>48</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_76</name>
+    <pv_name>Raspi:central:Sensor-PEEP</pv_name>
+    <x>78</x>
+    <y>481</y>
+    <width>73</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group</name>
+    <x>206</x>
+    <y>525</y>
+    <width>79</width>
+    <height>70</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group</name>
+    <x>301</x>
+    <y>525</y>
+    <width>88</width>
+    <height>76</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group</name>
+    <x>501</x>
+    <y>525</y>
+    <width>95</width>
+    <height>77</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group</name>
+    <x>16</x>
+    <y>525</y>
+    <width>79</width>
+    <height>76</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_33</name>
+    <x>111</x>
+    <y>525</y>
+    <width>79</width>
+    <height>76</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group</name>
+    <x>401</x>
+    <y>525</y>
+    <width>79</width>
+    <height>69</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_27</name>
+    <x>7</x>
+    <y>113</y>
+    <width>32</width>
+    <height>32</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_203</name>
+    <text>T</text>
+    <x>25</x>
+    <y>120</y>
+    <width>15</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_204</name>
+    <text>V</text>
+    <x>9</x>
+    <y>113</y>
+    <width>22</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_64</name>
+    <pv_name>Raspi:central:Sensor-Volume</pv_name>
+    <x>45</x>
+    <y>134</y>
+    <width>67</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <precision>0</precision>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_205</name>
+    <text>L</text>
+    <x>135</x>
+    <y>113</y>
+    <width>22</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_66</name>
+    <pv_name>Raspi:central:Minute-Volume</pv_name>
+    <x>38</x>
+    <y>68</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_211</name>
+    <text>L/min</text>
+    <x>108</x>
+    <y>44</y>
+    <width>49</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_212</name>
+    <text>MV</text>
+    <x>7</x>
+    <y>44</y>
+    <width>34</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_8</name>
+    <x>638</x>
+    <y>103</y>
+    <width>105</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_133</name>
+    <text>(cmH  0)</text>
+    <x>640</x>
+    <y>103</y>
+    <width>104</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_134</name>
+    <text>2</text>
+    <x>678</x>
+    <y>111</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="20.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_46</name>
+    <pv_name>Raspi:central:Set-PEEP</pv_name>
+    <x>651</x>
+    <y>147</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_12</name>
+    <pv_name>Raspi:central:Set-PEEP</pv_name>
+    <x>610</x>
+    <y>199</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_135</name>
+    <text>PIP_max</text>
+    <x>631</x>
+    <y>62</y>
+    <width>118</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="polygon" version="2.0.0">
+    <name>Polygon_3</name>
+    <x>714</x>
+    <y>550</y>
+    <width>34</width>
+    <height>33</height>
+    <line_color>
+      <color red="0" green="0" blue="255" alpha="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="204" green="51" blue="51">
+      </color>
+    </background_color>
+    <points>
+      <point x="25.0" y="27.5">
+      </point>
+      <point x="0.0" y="13.75">
+      </point>
+      <point x="25.0" y="0.0">
+      </point>
+    </points>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>Rectangle_3</name>
+    <x>735</x>
+    <y>558</y>
+    <width>24</width>
+    <height>11</height>
+    <line_color>
+      <color red="0" green="0" blue="255" alpha="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="204" green="51" blue="51">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_161</name>
+    <text>(mL)</text>
+    <x>269</x>
+    <y>108</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_54</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>263</x>
+    <y>147</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_18</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>222</x>
+    <y>199</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_17</name>
+    <x>256</x>
+    <y>61</y>
+    <width>88</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_162</name>
+    <text>V</text>
+    <x>258</x>
+    <y>61</y>
+    <width>30</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_163</name>
+    <text>T_max</text>
+    <x>272</x>
+    <y>69</y>
+    <width>74</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="20.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_169</name>
+    <text>(mL)</text>
+    <x>269</x>
+    <y>367</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_56</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>263</x>
+    <y>406</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_20</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>222</x>
+    <y>458</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_19</name>
+    <x>256</x>
+    <y>320</y>
+    <width>88</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_170</name>
+    <text>V</text>
+    <x>258</x>
+    <y>320</y>
+    <width>30</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_171</name>
+    <text>T_min</text>
+    <x>272</x>
+    <y>328</y>
+    <width>74</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="20.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_177</name>
+    <text>(mL)</text>
+    <x>463</x>
+    <y>367</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_58</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>457</x>
+    <y>406</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_22</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>416</x>
+    <y>458</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_21</name>
+    <x>451</x>
+    <y>320</y>
+    <width>94</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_178</name>
+    <text>MV</text>
+    <x>453</x>
+    <y>320</y>
+    <width>46</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_179</name>
+    <text>min</text>
+    <x>473</x>
+    <y>328</y>
+    <width>74</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="20.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_185</name>
+    <text>(mL)</text>
+    <x>463</x>
+    <y>108</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_60</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>457</x>
+    <y>147</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_24</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>416</x>
+    <y>199</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_23</name>
+    <x>451</x>
+    <y>61</y>
+    <width>96</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_186</name>
+    <text>MV</text>
+    <x>453</x>
+    <y>61</y>
+    <width>46</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_187</name>
+    <text>max</text>
+    <x>475</x>
+    <y>69</y>
+    <width>74</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="20.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_25</name>
+    <x>638</x>
+    <y>362</y>
+    <width>105</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_193</name>
+    <text>(cmH  0)</text>
+    <x>640</x>
+    <y>362</y>
+    <width>104</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_194</name>
+    <text>2</text>
+    <x>678</x>
+    <y>370</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="20.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_62</name>
+    <pv_name>Raspi:central:Set-PEEP</pv_name>
+    <x>651</x>
+    <y>406</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_26</name>
+    <pv_name>Raspi:central:Set-PEEP</pv_name>
+    <x>610</x>
+    <y>458</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_195</name>
+    <text>PIP_min</text>
+    <x>631</x>
+    <y>321</y>
+    <width>118</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="24.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_68</name>
+    <pv_name>Raspi:central:Sensor-RR</pv_name>
+    <x>42</x>
+    <y>201</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_215</name>
+    <text>bpm</text>
+    <x>117</x>
+    <y>182</y>
+    <width>40</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_216</name>
+    <text>RR</text>
+    <x>7</x>
+    <y>182</y>
+    <width>39</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_29</name>
+    <x>7</x>
+    <y>249</y>
+    <width>51</width>
+    <height>32</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_219</name>
+    <text>2</text>
+    <x>47</x>
+    <y>256</y>
+    <width>15</width>
+    <height>25</height>
+    <font>
+      <font name="Fine Print" family="Liberation Sans" style="REGULAR" size="12.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_220</name>
+    <text>FiO</text>
+    <x>9</x>
+    <y>249</y>
+    <width>45</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_221</name>
+    <text>%</text>
+    <x>137</x>
+    <y>249</y>
+    <width>20</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_70</name>
+    <pv_name>Raspi:central:Sensor-FiO2</pv_name>
+    <x>42</x>
+    <y>271</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_227</name>
+    <text>PIP</text>
+    <x>7</x>
+    <y>319</y>
+    <width>44</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_72</name>
+    <pv_name>Raspi:central:Sensor-Ppeak</pv_name>
+    <x>42</x>
+    <y>346</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>cmH20_5</name>
+    <x>99</x>
+    <y>319</y>
+    <width>58</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_228</name>
+    <text>cmH  0</text>
+    <x>101</x>
+    <y>319</y>
+    <width>56</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_229</name>
+    <text>2</text>
+    <x>127</x>
+    <y>326</y>
+    <width>31</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="12.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_74</name>
+    <pv_name>Raspi:central:Sensor-PEEP</pv_name>
+    <x>42</x>
+    <y>420</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="14" green="19" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_235</name>
+    <text>PEEP</text>
+    <x>7</x>
+    <y>394</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>cmH20_7</name>
+    <x>99</x>
+    <y>394</y>
+    <width>58</width>
+    <height>33</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_236</name>
+    <text>cmH  0</text>
+    <x>101</x>
+    <y>394</y>
+    <width>56</width>
+    <height>25</height>
+    <font>
+      <font name="Header 3" family="Liberation Sans" style="BOLD" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="26" green="0" blue="104">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_237</name>
+    <text>2</text>
+    <x>127</x>
+    <y>401</y>
+    <width>31</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="12.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_31</name>
+    <x>38</x>
+    <y>482</y>
+    <width>103</width>
+    <height>38</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_243</name>
+    <text>1:</text>
+    <x>57</x>
+    <y>486</y>
+    <width>33</width>
+    <height>25</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.7">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_244</name>
+    <text>I:E</text>
+    <x>9</x>
+    <y>472</y>
+    <width>33</width>
+    <height>25</height>
+    <font>
+      <font name="Header 1" family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="26" blue="128">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>set_rr_1</name>
+    <pv_name>Raspi:central:Set-RespRate</pv_name>
+    <x>208</x>
+    <y>525</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text_set_RR_1</name>
+    <text>RR</text>
+    <x>215</x>
+    <y>570</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>text_set_tinsp_2</name>
+    <x>303</x>
+    <y>570</y>
+    <width>88</width>
+    <height>31</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_248</name>
+    <text>T</text>
+    <x>305</x>
+    <y>570</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_249</name>
+    <text>insp</text>
+    <x>326</x>
+    <y>576</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="14.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>set_tinsp_1</name>
+    <pv_name>Raspi:central:Set-Tinsp</pv_name>
+    <x>312</x>
+    <y>525</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>text_set_fio2_1</name>
+    <x>510</x>
+    <y>568</y>
+    <width>88</width>
+    <height>34</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_252</name>
+    <text>FiO</text>
+    <x>512</x>
+    <y>568</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_253</name>
+    <text>2</text>
+    <x>533</x>
+    <y>577</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="14.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>set_fio2_1</name>
+    <pv_name>Raspi:central:Set-FiO2</pv_name>
+    <x>503</x>
+    <y>525</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>set_vt_1</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>18</x>
+    <y>525</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text_set_vt_4</name>
+    <text>PIP</text>
+    <x>35</x>
+    <y>569</y>
+    <width>44</width>
+    <height>25</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>Group_34</name>
+    <x>118</x>
+    <y>569</y>
+    <width>68</width>
+    <height>32</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text_set_vt_6</name>
+    <text>P</text>
+    <x>120</x>
+    <y>569</y>
+    <width>18</width>
+    <height>25</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_256</name>
+    <text>trigger</text>
+    <x>121</x>
+    <y>576</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="14.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>set_vt_2</name>
+    <pv_name>Raspi:central:Set-Vt</pv_name>
+    <x>113</x>
+    <y>525</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>set_fio2_3</name>
+    <pv_name>Raspi:central:Set-PEEP</pv_name>
+    <x>403</x>
+    <y>525</y>
+    <width>79</width>
+    <height>38</height>
+    <font>
+      <font family=".SF NS Text" style="REGULAR" size="23.762376237623762">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <show_units>false</show_units>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text_set_tinsp_3</name>
+    <text>PEEP</text>
+    <x>409</x>
+    <y>569</y>
+    <width>67</width>
+    <height>25</height>
+    <font>
+      <font name="Header 2" family="Liberation Sans" style="BOLD" size="18.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <wrap_words>false</wrap_words>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
+  </widget>
+</display>
