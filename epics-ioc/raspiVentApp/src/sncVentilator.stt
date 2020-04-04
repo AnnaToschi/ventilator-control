@@ -49,6 +49,14 @@ float SensorVolume;
 assign SensorVolume to "{user}:Sensor-Vt"; //when connecting to arduino: Sensor-Vt
 monitor SensorVolume;
 
+float SensorVolumeCalibrated;
+assign SensorVolumeCalibrated to "{user}:Calibrated-Vt"; //when connecting to arduino: Sensor-Vt
+monitor SensorVolumeCalibrated; 
+
+float LastVinspVal;
+assign LastVinspVal to "{user}:Last-Vinsp-Val"; //when connecting to arduino: Sensor-Vt
+monitor LastVinspVal;
+
 // Variables set by the doctor
 float   RespRate;
 assign  RespRate to "{user}:Set-RespRate";
@@ -87,6 +95,10 @@ monitor SensorPEEP;
 float SensorVolExp;
 assign SensorVolExp to "{user}:Volume-expiration";
 monitor SensorVolExp;
+
+float SensorMaxVol;
+assign SensorMaxVol to "{user}:Sensor-Max-Vol";
+monitor SensorMaxVol;
 
 /* IOC PV actuator variables */
 short   ValveInsp;
@@ -148,6 +160,7 @@ ss VolControl {
         // }
         when (OpMode == OPM_VolumeControl)    {
             printf("sncVentilator: Startup delay over\n");
+	    ValveInsp = 100;
         } state Idle_VC
     }
     state Idle_VC {
@@ -156,10 +169,12 @@ ss VolControl {
         } state NON_VC
          when (CycleTime <= 0.1) { //check this condition of time
             printf("sncVentilator: VC Mode: Changing to Inspiration\n");
-            ValveInsp = 50; // Open valve, change to amount of based on Tinsp (SetVt/Tinsp)
+            // Open valve, change to amount of based on Tinsp (SetVt/Tinsp)
             pvPut(ValveInsp);
 	    SensorVolExp = SensorVolume;
             pvPut(SensorVolExp);
+	    LastVinspVal = ValveInsp;
+	    pvPut(LastVinspVal);
         } state Inspiration_VC
     }
     state Inspiration_VC {
@@ -168,13 +183,47 @@ ss VolControl {
             /*Close Vinps, Open Vexp*/
         } state NON_VC
         when (CycleTime >= SetTinsp) { //we should add condition if SensorPressure>= SetPpeak
-            printf("sncVentilator: VC Mode: Changing to Expiration\n");
+            printf("sncVentilator: VC Mode: Changing to Expiration Time\n");
+            printf("SensorMaxVol = %.2f , SetVt = %.2f, ValveInsp = %d \n", SensorMaxVol, SetVt, ValveInsp);
             ValveInsp = 0; // Close Vinsp
             pvPut(ValveInsp);
             ValveExp = 255; // Open Vexp
             pvPut(ValveExp);
             SensorPpeak = SensorPressure;
             pvPut(SensorPpeak);
+            SensorMaxVol = SensorVolumeCalibrated;
+	    pvPut(SensorMaxVol);
+            if (SensorMaxVol < (SetVt - 30)){
+	         ValveInsp = LastVinspVal + 5;
+	    }
+	    else if(SensorMaxVol > (SetVt + 30)){ 
+	         ValveInsp = LastVinspVal - 5;
+	    }
+ 	    else{
+		ValveInsp = LastVinspVal;
+	     }
+            // printf("Sensor FLOW From Table:\t %.2f \n", FlowFromTable);
+        } state Expiration_VC
+	when (SensorMaxVol >= SetVt) { //we should add condition if SensorPressure>= SetPpeak
+            printf("sncVentilator: VC Mode: Changing to Expiration Vol\n");
+	    printf("SensorMaxVol = %.2f , SetVt = %.2f, ValveInsp = %d \n", SensorMaxVol,SetVt, ValveInsp);
+            ValveInsp = 0; // Close Vinsp
+            pvPut(ValveInsp);
+            ValveExp = 255; // Open Vexp
+            pvPut(ValveExp);
+            SensorPpeak = SensorPressure;
+            pvPut(SensorPpeak);
+            SensorMaxVol = SensorVolumeCalibrated;
+	    pvPut(SensorMaxVol);
+            if (CycleTime < (SetTinsp - 0.3)){
+	         ValveInsp = LastVinspVal - 5;
+	    }
+	    else if(CycleTime > (SetTinsp + 0.3)){ 
+	         ValveInsp = LastVinspVal + 5;
+	    }
+ 	    else{
+		ValveInsp = LastVinspVal;
+	     }
             // printf("Sensor FLOW From Table:\t %.2f \n", FlowFromTable);
         } state Expiration_VC
     }
@@ -244,6 +293,8 @@ ss PressControl {
             pvPut(ValveInsp);
             ValveExp = 1; // Change to CONSTANT
             pvPut(ValveExp);
+	    SensorMaxVol = SensorVolumeCalibrated;
+	    pvPut(SensorMaxVol);
         } state Expiration_PC
     }
     state Expiration_PC {

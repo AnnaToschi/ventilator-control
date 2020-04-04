@@ -363,6 +363,24 @@ record(calc, "$(P)$(R)Calibrated-Vt") {
     field(EGU,"mL")
     field(VAL, "1000.0")
 }
+record(ai,"$(P)$(R)Sensor-Max-Vol"){
+    field(DESC,"Max measured vol")
+    field(PREC,"0")
+    field(EGU,"mL")
+    field(VAL,"0")
+# Drive High /Low
+    field(HOPR,"2000")
+    field(LOPR,"-2000")
+}
+record(ai,"$(P)$(R)Last-Vinsp-Val"){
+    field(DESC,"Last Vinsp measured vol")
+    field(PREC,"0")
+    field(EGU,"")
+    field(VAL,"0")
+# Drive High /Low
+    field(HOPR,"255")
+    field(LOPR,"0")
+}
 #record(aSub,"$(P)$(R)aSubExample")
 #{
 #    field(INAM,"myAsubInit")
