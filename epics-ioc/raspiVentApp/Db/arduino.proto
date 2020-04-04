@@ -9,33 +9,33 @@ ExtraInput = Ignore;
 
 # in millisecond
 #ReadTimeout = 2000;
-ReplyTimeout = 300;
+ReplyTimeout = 20;
 
 # Values are float
 # use ai and ao records
 
 # Using redirection to write time x.y and read records, First get Flow
 getId {
-  in  "%d;%*f;%*f;%*f;%*f;%*f;%*f";
+  in  "%d;%*f;%*f;%*f;%*f";
 }
 getFio2 {
-	in  "%*d;%f;%*f;%*f;%*f;%*f;%*f";
+	in  "%*d;%f;%*f;%*f;%*f";
 }
 getPinsp {
-	in  "%*d;%*f;%f;%*f;%*f;%*f;%*f";
+	in  "%*d;%*f;%f;%*f;%*f";
 }
 getFinsp {
-	in  "%*d;%*f;%*f;%f;%*f;%*f;%*f";
-}
-getPexp {
-	in  "%*d;%*f;%*f;%*f;%f;%*f;%*f";
-}
-getFexp {
-	in  "%*d;%*f;%*f;%*f;%*f;%f;%*f";
+	in  "%*d;%*f;%*f;%f;%*f";
 }
 getTidalVolume {
-	in  "%*d;%*f;%*f;%*f;%*f;%*f;%f";
+	in  "%*d;%*f;%*f;%*f;%f";
 }
+#getPexp {
+#	in  "%*d;%*f;%*f;%*f;%f;%*f;%*f";
+#}
+#getFexp {
+#	in  "%*d;%*f;%*f;%*f;%*f;%f;%*f";
+#}
 #getTotalFlow {
 #	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%f;%*f";
 #}
@@ -65,8 +65,8 @@ getVolume {
 
 
 WriteMsg {
-	out "%(A).0f;%(B).0f;%(C).0f;%(D).0f;%(E).0f;%(F).0f;%(G).0f\n";	
-	in "sent";
+	#out "%(A).0f;%(B).0f;%(C).0f;%(D).0f;%(E).0f;%(F).0f;%(G).0f\n";	
+	out "%(A).0f;%(B).0f\n";	
 }
 
 

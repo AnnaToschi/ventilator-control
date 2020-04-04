@@ -26,26 +26,26 @@ record(longout,"$(P)$(R)Set-Vexp"){
     field(LOPR,"0")
     field(FLNK, "$(P)$(R)MessageOut")
 }
-record(longout,"$(P)$(R)Set-BuzzPitch"){
-    field(DESC,"Set Buzzer Pitch")
-    field(EGU,"")
-    field(VAL,"0")
-    field(DRVH,"255")
-    field(DRVL,"0")
-    field(HOPR,"255")
-    field(LOPR,"0")
-    field(FLNK, "$(P)$(R)MessageOut")
-}
-record(longout,"$(P)$(R)Set-BuzzVol"){
-    field(DESC,"Set Buzzer Volume")
-    field(EGU,"")
-    field(VAL,"0")
-    field(DRVH,"255")
-    field(DRVL,"0")
-    field(HOPR,"255")
-    field(LOPR,"0")
-    field(FLNK, "$(P)$(R)MessageOut")
-}
+#record(longout,"$(P)$(R)Set-BuzzPitch"){
+#    field(DESC,"Set Buzzer Pitch")
+#    field(EGU,"")
+#    field(VAL,"0")
+#    field(DRVH,"255")
+#    field(DRVL,"0")
+#    field(HOPR,"255")
+#    field(LOPR,"0")
+#    field(FLNK, "$(P)$(R)MessageOut")
+#}
+#record(longout,"$(P)$(R)Set-BuzzVol"){
+#    field(DESC,"Set Buzzer Volume")
+#    field(EGU,"")
+#    field(VAL,"0")
+#    field(DRVH,"255")
+#    field(DRVL,"0")
+#    field(HOPR,"255")
+#    field(LOPR,"0")
+#    field(FLNK, "$(P)$(R)MessageOut")
+#}
 record(longout,"$(P)$(R)Set-InspExpState"){
     field(DESC,"Set Inspiration/Experiation")
     field(EGU,"")
@@ -59,11 +59,11 @@ record(longout,"$(P)$(R)Set-InspExpState"){
 record (calcout, "$(P)$(R)MessageOut") {
   field (INPA, "$(P)$(R)Set-Vinsp")
   field (INPB, "$(P)$(R)Set-Vexp")
-  field (INPC, "$(P)$(R)Set-BuzzPitch")
-  field (INPD, "$(P)$(R)Set-BuzzVol")
-  field (INPE, "$(P)$(R)Set-InspExpState")
-  field (INPF, 0)
-  field (INPG, 0)
+  field (INPC, "$(P)$(R)Set-InspExpState")
+#  field (INPD, "$(P)$(R)Set-BuzzVol")
+#  field (INPE, "$(P)$(R)Set-BuzzPitch")
+#  field (INPF, 0)
+#  field (INPG, 0)
   field (CALC, "0")
   field (DTYP, "stream")
   field (OUT, "@arduino.proto WriteMsg $(PORT)")
