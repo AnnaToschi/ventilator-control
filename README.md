@@ -3,6 +3,8 @@
 # Ventilator Control Project
 
 Software for control a GUI  panel visualisation  for Open Source ventilator
+# Home page 
+[Air4All](https://www.air4all.pt)
 
 # Learn:
 ## Usefull Simulators
@@ -26,17 +28,9 @@ alt="Overview of the Servo 900c Pneumatic Unit" width="240" height="180" border=
 2. [Project 3 - Ambu bag based](https://www.dropbox.com/home/Mechanics/Project%203%20-%20Ambu%20bag%20based%20-%20on%20hold)
 
 ---
-> Copyright © 2019-2020 Bernardo Carvalho, All rights reserved.
+Copyright © 2020 Bernardo Carvalho, All rights reserved.
 
-> "Air for All Portugal is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-> "Air for All Portugal  is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+LICENCE.md for more details.
 
-> You should have received a copy of the GNU General Public License
-along with "Air for All Portugal". If not, see <http://www.gnu.org/licenses/>.
