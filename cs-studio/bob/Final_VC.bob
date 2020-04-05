@@ -1813,35 +1813,6 @@ $(pv_value)</tooltip>
       </border_color>
     </widget>
   </widget>
-  <widget type="polygon" version="2.0.0">
-    <name>Polygon</name>
-    <x>263</x>
-    <y>8</y>
-    <width>20</width>
-    <line_color>
-      <color name="OK" red="0" green="255" blue="0">
-      </color>
-    </line_color>
-    <background_color>
-      <color name="OK" red="0" green="255" blue="0">
-      </color>
-    </background_color>
-    <points>
-      <point x="0.0" y="20.0">
-      </point>
-      <point x="20.0" y="11.428571428571425">
-      </point>
-      <point x="0.0" y="0.0">
-      </point>
-    </points>
-    <actions>
-      <action type="write_pv">
-        <pv_name>pva://Raspi:central:OPMODE</pv_name>
-        <value>2</value>
-        <description>Write PV</description>
-      </action>
-    </actions>
-  </widget>
   <widget type="label" version="2.0.0">
     <name>Label_82</name>
     <x>930</x>
@@ -1885,5 +1856,43 @@ $(pv_value)</tooltip>
       <color red="0" green="128" blue="255">
       </color>
     </border_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>Action Button_1</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>Raspi:central:OPMODE</pv_name>
+        <value>0</value>
+        <description>Write PV</description>
+      </action>
+    </actions>
+    <text>Stop VC</text>
+    <x>307</x>
+    <y>3</y>
+    <width>77</width>
+    <background_color>
+      <color name="MAJOR" red="255" green="0" blue="0">
+      </color>
+    </background_color>
+    <tooltip>$(actions)</tooltip>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>Action Button_2</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>Raspi:central:OPMODE</pv_name>
+        <value>2</value>
+        <description>Write PV</description>
+      </action>
+    </actions>
+    <text>Start VC</text>
+    <x>212</x>
+    <y>3</y>
+    <width>77</width>
+    <background_color>
+      <color name="On" red="0" green="255" blue="0">
+      </color>
+    </background_color>
+    <tooltip>$(actions)</tooltip>
   </widget>
 </display>

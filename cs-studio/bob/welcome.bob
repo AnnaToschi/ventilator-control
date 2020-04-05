@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<display version="2.0.0">
+  <width>1280</width>
+  <background_color>
+    <color red="240" green="240" blue="240">
+    </color>
+  </background_color>
+  <actions>
+  </actions>
+  <widget type="rectangle" version="2.0.0">
+    <name>bcakground</name>
+    <width>1280</width>
+    <height>600</height>
+    <line_width>0</line_width>
+    <line_color>
+      <color red="128" green="0" blue="255">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="60" green="60" blue="60">
+      </color>
+    </background_color>
+    <actions>
+    </actions>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>OPMODE_button</name>
+    <actions>
+      <action type="open_display">
+        <file>Final_VC.bob</file>
+        <target>replace</target>
+        <description>Volume Control</description>
+      </action>
+      <action type="open_display">
+        <file>Final_PC.bob</file>
+        <target>replace</target>
+        <description>Pressure Control</description>
+      </action>
+      <action type="open_display">
+        <file>Final_PS.bob</file>
+        <target>replace</target>
+        <description>Pressure Support</description>
+      </action>
+      <action type="open_display">
+        <file>Final_Set_alarm_VC.bob</file>
+        <target>replace</target>
+        <description>SETTING ALARMS</description>
+      </action>
+    </actions>
+    <text>Select Mode</text>
+    <x>570</x>
+    <y>372</y>
+    <width>195</width>
+    <height>37</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="22.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="231" blue="255" alpha="221">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="92" green="94" blue="149">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+    <tooltip>$(actions)</tooltip>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label</name>
+    <text>Welcome to Air4All</text>
+    <x>485</x>
+    <y>279</y>
+    <width>360</width>
+    <height>55</height>
+    <font>
+      <font family="Liberation Sans" style="BOLD" size="36.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="0" green="233" blue="255" alpha="229">
+      </color>
+    </foreground_color>
+  </widget>
+  <widget type="picture" version="2.0.0">
+    <name>Picture</name>
+    <file>../../../../Downloads/air4all.jpg</file>
+    <x>480</x>
+    <y>15</y>
+    <width>340</width>
+    <height>230</height>
+  </widget>
+</display>
