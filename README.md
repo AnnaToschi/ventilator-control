@@ -30,6 +30,7 @@ alt="Overview of the Servo 900c Pneumatic Unit" width="240" height="180" border=
 ---
 Copyright © 2020 Bernardo Carvalho, All rights reserved.
 
+"Air for All Portugal  is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 LICENCE.md for more details.
