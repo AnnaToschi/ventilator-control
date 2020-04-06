@@ -53,6 +53,7 @@ raspiVent_DBD += asyn.dbd
 raspiVent_DBD += stream.dbd
 raspiVent_DBD += drvAsynSerialPort.dbd
 raspiVent_DBD += epidRecord.dbd
+raspiVent_DBD += asSupport.dbd
 
 # raspiVent_registerRecordDeviceDriver.cpp derives from raspiVent.dbd
 raspiVent_SRCS += raspiVent_registerRecordDeviceDriver.cpp
@@ -67,6 +68,7 @@ raspiVent_LIBS += raspiVentSupport
 raspiVent_LIBS += asyn
 raspiVent_LIBS += stream
 raspiVent_LIBS += std
+raspiVent_LIBS += autosave
 
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file

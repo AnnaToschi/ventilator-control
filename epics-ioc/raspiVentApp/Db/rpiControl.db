@@ -75,6 +75,14 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
 #    field(FLNK, "$(P)$(R)TIME-FNOUT" )
 #    field(FLNK, "$(P)$(R)Sensor-Finsp")
 }
+record(waveform , "$(P)$(R)Plot-TIME-WVFRM" ) {
+    field(DESC, "TIME trace waveform")
+    field(NELM, "20")
+    field(FTVL, "FLOAT")
+    field(PINI, "YES")
+# Scan disable?
+#    field(DISV, "DISA")
+ }
 record( compress, "$(P)$(R)Plot-TIME-COUNTER" )
 {
     #field( SCAN, ".5 second")

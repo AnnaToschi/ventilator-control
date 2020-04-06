@@ -23,6 +23,13 @@ git clone https://github.com/epics-modules/std
 ```
   * edit configure/RELEASE
   * `make `
+5. Install AUTOSAVE
+  * `cd [..]/EPICS/support`
+```bash
+git clone https://github.com/epics-modules/autosave
+```
+  * edit configure/RELEASE
+  * `make `
 
 ## Get and build IOC application
 1. goto to `EPICS` folder:
@@ -37,6 +44,7 @@ SNCSEQ = $(MODULES)/seq-2.2.8
 ASYN = $(MODULES)/asyn
 STREAM = $(MODULES)/stream
 STD = $(MODULES)/std
+AUTOSAVE = $(MODULES)/autosave
 ```
 3. Build IOC
 ```
