@@ -36,7 +36,7 @@ record(epid, "$(P)$(R)Pid-Pinsp") {
     field(KD, "0.0") #change to var.
     field(LOPR, "0")
     field(HOPR, "255")
-    field(DRVL, "0") #!important for saturation of pid
+    field(DRVL, "0") #!important for saturation of pid  
     field(DRVH, "255")
     field(PREC, "2")
     #Setpoint Location
@@ -77,7 +77,7 @@ record(calc, "$(P)$(R)TIME-COUNTER") {
 }
 record(waveform , "$(P)$(R)Plot-TIME-WVFRM" ) {
     field(DESC, "TIME trace waveform")
-    field(NELM, "20")
+    field(NELM, "100")
     field(FTVL, "FLOAT")
     field(PINI, "YES")
 # Scan disable?
@@ -268,16 +268,24 @@ record(calcout, "$(P)$(R)calcout-test" ) {
     field( INPA, "$(P)$(R)Set-Tinsp CP NMS" )
     field( OUT,  "$(P)$(R)Set-RespRate.DRVH" )
     field( OOPT, "On Change" )
-    field( CALC, "60.0/A" )
+    field( CALC, "60.0/(A+0.2)" )
+}
+record(calcout, "$(P)$(R)calcout-test2" ) {
+    field( INPA, "$(P)$(R)Set-Tinsp CP NMS" )
+    field( INPB, "$(P)$(R)Set-RespRate CP NMS" )
+    field( CALC, "(B<(60.0/(A+0.2)))? B : (60.0/(A + 0.2)-0.05)")
+    field( OUT,  "$(P)$(R)Set-RespRate CP" )
+    field( OOPT, "On Change" )
 }
 record(ao,"$(P)$(R)Set-RespRate"){
     field(DESC,"Respiration Rate Setting")
+    field(PREC, "2")
     field(EGU,"b/min")
-    field(DRVH,"20")
-    field(DRVL,"2")
-    field(HOPR,"20")
+    field(DRVH,"60")
+    field(DRVL,"0.1")
+    field(HOPR,"30")
     field(LOPR,"2")
-    field(HIHI,"18")
+    field(HIHI,"25")
     field(HIGH,"7")
     field(LOW,"4")
     field(LOLO,"2")

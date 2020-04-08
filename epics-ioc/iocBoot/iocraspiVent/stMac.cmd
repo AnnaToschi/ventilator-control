@@ -17,7 +17,7 @@ raspiVent_registerRecordDeviceDriver pdbbase
 ## Load record instances
 dbLoadRecords "db/raspiVentVersion.db", "user=pi"
 dbLoadRecords "db/rpiControl.db", "P=Raspi:,R=central:"
-dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
+#dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
 #dbLoadRecords "db/dbSubExample.db", "user=pi"
 #dbLoadTemplate "db/user.substitutions"
 
@@ -25,7 +25,7 @@ dbLoadRecords "db/rpiSensors-simul.db", "P=Raspi:,R=central:"
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyAMA0")
 #drvAsynSerialPortConfigure("RS0","/dev/ttyUSB0")
-drvAsynSerialPortConfigure("RS0","/dev/ttys005")
+drvAsynSerialPortConfigure("RS0","/dev/cu.usbmodem14201")
 
 asynSetOption("RS0", 0, "baud", "115200")
 asynSetOption("RS0", 0, "bits", "8")
@@ -34,8 +34,8 @@ asynSetOption("RS0", 0, "stop", "1")
 asynSetOption("RS0", 0, "clocal", "Y")
 asynSetOption("RS0", 0, "crtscts", "N")
 
-dbLoadRecords "db/rpiSensors-simul-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
-dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
+dbLoadRecords "db/rpiSensors-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
+#dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
 # Stream DEBUG
 var streamError 1
 var streamDebug 1

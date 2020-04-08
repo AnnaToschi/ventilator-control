@@ -25,7 +25,7 @@ record(ai,"$(P)$(R)Sensor-FiO2"){
     field(DTYP, "stream")
     field(INP, "@arduino.proto getFiO2 $(PORT)")
 	field(SCAN, "I/O Intr")
-    field(PREC,"0")
+    field(PREC,"2")
     field(EGU,"l/m")
     field(HOPR,"100")
     field(LOPR,"0")
