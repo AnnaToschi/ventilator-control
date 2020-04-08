@@ -7,9 +7,22 @@
   </background_color>
   <actions>
   </actions>
+  <widget type="scrollbar" version="2.0.0">
+    <name>Scrollbar_7</name>
+    <pv_name>Raspi:central:Set-Tinsp</pv_name>
+    <x>510</x>
+    <y>690</y>
+    <width>160</width>
+    <height>40</height>
+    <actions>
+    </actions>
+    <maximum>6.0</maximum>
+    <increment>0.1</increment>
+  </widget>
   <widget type="rectangle" version="2.0.0">
     <name>bcakground</name>
-    <y>25</y>
+    <x>1</x>
+    <y>37</y>
     <width>1280</width>
     <height>565</height>
     <line_width>0</line_width>
@@ -2152,5 +2165,29 @@ $(pv_value)</tooltip>
       <color red="0" green="128" blue="255">
       </color>
     </border_color>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>Rectangle</name>
+    <x>651</x>
+    <y>687</y>
+    <width>22</width>
+    <height>47</height>
+    <line_color>
+      <color name="MAJOR" red="255" green="0" blue="0">
+      </color>
+    </line_color>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label</name>
+    <text>we can only tap here, which is very small for a 10inch screen.</text>
+    <x>684</x>
+    <y>670</y>
+    <width>126</width>
+    <height>64</height>
+    <foreground_color>
+      <color name="MAJOR" red="255" green="0" blue="0">
+      </color>
+    </foreground_color>
   </widget>
 </display>
