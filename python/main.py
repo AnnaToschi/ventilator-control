@@ -11,14 +11,18 @@ import os
 import re
 import pickle
 
-os.environ['EPICS_CA_ADDR_LIST'] = 'localhost'
-os.environ['EPICS_CA_AUTO_ADDR_LIST'] = 'NO'
+from epics import caget
+
+#os.environ['EPICS_CA_ADDR_LIST'] = 'localhost'
+#os.environ['EPICS_CA_AUTO_ADDR_LIST'] = 'NO'
 
 
-class tabdemo(QtGui.QTabWidget):
+class VentilatorWindow(QtGui.QTabWidget):
   
   def __init__(self, parent = None):
 
+    super(VentilatorWindow, self).__init__(parent)
+    
     self.accelBufferX = (0,0)
 
     self.BGCOLOR = pg.mkColor(220,220,220)
@@ -26,14 +30,12 @@ class tabdemo(QtGui.QTabWidget):
     self.plotcolor = QtGui.QColor(76,100,230)
     self.PLTWIDTH = 2
 
-    super(tabdemo, self).__init__(parent)
-    
     self.activeTab = 1
     self.activeChannel = 1
 
-    self.channelAccelX = [0]*1000
-    self.channelAccelY = [0]*1000
-    self.channelAccelZ = [0]*1000
+    self.channelAccelX = [0]*600
+    self.channelAccelY = [0]*600
+    self.channelAccelZ = [0]*600
 
     pg.setConfigOption('background', self.BGCOLOR)
     pg.setConfigOption('foreground', self.FGCOLOR)
@@ -41,49 +43,58 @@ class tabdemo(QtGui.QTabWidget):
    
     pen = pg.mkPen(color = self.plotcolor, width = 3)
     
-    self.graphAccel_x = pg.PlotWidget()
-    self.accelDataX = pg.PlotCurveItem()
-    self.graphAccel_x.addItem(self.accelDataX)
-    self.graphAccel_y = pg.PlotWidget()
-    self.accelDataY = pg.PlotCurveItem()
-    self.graphAccel_y.addItem(self.accelDataY)
-    self.graphAccel_z = pg.PlotWidget()
-    self.accelDataZ = pg.PlotCurveItem()
-    self.graphAccel_z.addItem(self.accelDataZ)
+    self.basePlot = pg.PlotCurveItem([0]*600, pen = self.plotcolor) 
+    self.basePlotX = pg.PlotCurveItem([0]*600, pen = self.plotcolor) 
 
-    self.graphAccel_x.setLabel('left', "Flow", "L/min")
-    self.graphAccel_x.setLabel('bottom', "Number of points")
-    self.graphAccel_x.setTitle("Flow ")
+    self.graphFlow = pg.PlotWidget()
+    self.flowData = pg.PlotCurveItem()
+    self.pfillX = pg.FillBetweenItem(self.flowData, self.basePlotX, brush = self.plotcolor)
+    self.graphFlow.addItem(self.flowData)
+    self.graphFlow.addItem(self.basePlotX)
+    self.graphFlow.addItem(self.pfillX)
 
-    self.graphAccel_y.setLabel('left', "Volume", "mL")
-    self.graphAccel_y.setLabel('bottom', "Number of points")
-    self.graphAccel_y.setTitle("Volume ")
+    self.graphVolume = pg.PlotWidget()
+    self.volumeData = pg.PlotCurveItem()
+    self.pfillY = pg.FillBetweenItem(self.volumeData, self.basePlot, brush = self.plotcolor)
+    self.graphVolume.addItem(self.volumeData)
+    self.graphVolume.addItem(self.basePlot)
+    self.graphVolume.addItem(self.pfillY)
+    
+    self.graphPressure = pg.PlotWidget()
+    self.pressureData = pg.PlotCurveItem()
+    self.pfillZ = pg.FillBetweenItem(self.pressureData, self.basePlot, brush = self.plotcolor)
+    self.graphPressure.addItem(self.pressureData)
+    self.graphPressure.addItem(self.basePlot)
+    self.graphPressure.addItem(self.pfillZ)
 
-    self.graphAccel_z.setLabel('left', "Pressure", "cmH20")
-    self.graphAccel_z.setLabel('bottom', "Number of points")
-    self.graphAccel_z.setTitle("Pressure ")
+    self.graphFlow.setLabel('left', "Flow", "L/min")
+    self.graphFlow.setLabel('bottom', "Number of points")
+    self.graphFlow.setTitle("Flow ")
+
+    self.graphVolume.setLabel('left', "Volume", "mL")
+    self.graphVolume.setLabel('bottom', "Number of points")
+    self.graphVolume.setTitle("Volume ")
+
+    self.graphPressure.setLabel('left', "Pressure", "cmH20")
+    self.graphPressure.setLabel('bottom', "Number of points")
+    self.graphPressure.setTitle("Pressure ")
     
     self.tabConnect = QtGui.QWidget()	#connect
     self.tabAccel = QtGui.QWidget() #accel
     self.connectTabIndex = self.addTab(self.tabConnect,"Connect") + 1
-    self.accelTabIndex = self.addTab(self.tabAccel,"Accel Data") + 1
+    self.plotTabIndex = self.addTab(self.tabAccel,"Accel Data") + 1
 
     self.connectTabUI()
     self.accelTabUI()
     self.connectTabs()
     
     self.setWindowTitle("Ventilator")
+    self.start_plotting()
   
     
   def connectTabUI(self):
     layout = QtGui.QVBoxLayout()
     self.tabConnect.setLayout(layout)
-
-  def changeDDMenu(self):
-    self.activeChannel = self.ddMenu.currentIndex() + 1
-    self.counter = 0
-    self.channeldata = [0]*5000
-
 
   def tabChanged(self):
     lastActiveTab = self.activeTab
@@ -92,65 +103,58 @@ class tabdemo(QtGui.QTabWidget):
     print("Active:", self.activeTab)
     
 
-    if(self.activeTab == self.accelTabIndex):
+    if(self.activeTab == self.plotTabIndex):
       print("tab tabAccel")
-      self.channelAccelX = [0]*1000
-      self.channelAccelY = [0]*1000
-      self.channelAccelZ = [0]*1000
-      self.counterAccel = 0
-    else:
-      self.counter = 0
+      self.channelFlow = [0]*600
+      self.channelVolume = [0]*600
+      self.channelPressure = [0]*600
+      self.counterPlots = 0
 
     
   def connectTabs(self):
     self.currentChanged.connect(self.tabChanged)
     
   def updateGraphs(self):
+    if(self.activeTab == self.plotTabIndex): #accel
 
-    if(self.activeTab == self.accelTabIndex): #accel
-
-        accelBufferX[2] = caget('Raspi:central:Sensor-Pinsp')
-        accelBufferX[0] = caget('Raspi:central:Sensor-TotalFlow')
-        accelBufferX[1] = caget('Raspi:central:Sensor-Vt')
-
-        self.channelAccelX[self.counterAccel] = accelBufferX[0]
-        self.channelAccelY[self.counterAccel] = accelBufferX[1]
-        self.channelAccelZ[self.counterAccel] = accelBufferX[2]
-        self.counterAccel += 1
-        if(self.counterAccel == 1000):
-          self.counterAccel = 0
-        self.accelDataX.setData(self.channelAccelX,pen= self.plotcolor)
-        self.accelDataY.setData(self.channelAccelY,pen= self.plotcolor)
-        self.accelDataZ.setData(self.channelAccelZ,pen= self.plotcolor)
-
-    else: # game
-      channel = self.activeChannel
+        self.channelFlow[self.counterPlots] = caget('Raspi:central:Sensor-Finsp') - 50
+        self.channelVolume[self.counterPlots] = caget('Raspi:central:Sensor-Vt')
+        self.channelPressure[self.counterPlots] = caget('Raspi:central:Sensor-Pinsp')
+        self.counterPlots += 1
+        if(self.counterPlots == 600):
+          self.counterPlots = 0
+        self.flowData.setData(self.channelFlow,pen= self.plotcolor)
+        self.volumeData.setData(self.channelVolume,pen= self.plotcolor)
+        self.pressureData.setData(self.channelPressure,pen= self.plotcolor)
 
   def accelTabUI(self):
     layoutAccel = QtGui.QVBoxLayout()
-    layoutAccel.addWidget(self.graphAccel_x)
-    layoutAccel.addWidget(self.graphAccel_y)
-    layoutAccel.addWidget(self.graphAccel_z)
+    layoutAccel.addWidget(self.graphFlow)
+    layoutAccel.addWidget(self.graphVolume)
+    layoutAccel.addWidget(self.graphPressure)
     self.tabAccel.setLayout(layoutAccel)
     self.updateGraphs()
 
   def keyPressEvent(self, event):
     # Did the user press the Escape key?
     if event.key() == QtCore.Qt.Key_Escape: # QtCore.Qt.Key_Escape is a value that equates to what the operating system passes to python from the keyboard when the escape key is pressed.
-      # Yes: Close the window
       self.app_after_exit = 0
       self.close()
+
+  def start(self):
+    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        QtGui.QApplication.instance().exec_()
   
   def start_plotting(self):
-    timer = QtCore.QTimer()
-    timer.timeout.connect(self.updateGraphs)
-    self.start()
-
+    self.timer = QtCore.QTimer()
+    self.timer.setInterval(10)
+    self.timer.timeout.connect(self.updateGraphs)
+    self.timer.start()
 
 def main():
   app = QtGui.QApplication(sys.argv)
-  ex = tabdemo()
-  ex.show()
+  win = VentilatorWindow()
+  win.show()
   sys.exit(app.exec_())
 
 if __name__ == '__main__':
