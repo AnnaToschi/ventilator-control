@@ -1,4 +1,4 @@
-<a href="www.air4all.pt" > <img alt="Air 4 All" src="./images/air4all.jpg" width="250" ></a>
+<a href="https://www.air4all.pt" > <img alt="Air 4 All" src="./images/air4all.jpg" width="250" ></a>
 
 # Ventilator Control Project
 
