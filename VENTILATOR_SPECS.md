@@ -19,7 +19,7 @@ However I think there are additional aspects that are important :
 
 ###    Volume Control:
   * The ventilator switches from the inspiratory phase to the expiratory phase when the ventilator  
-    reaches the tidal volume we chose( generaly from 5 to 7 ml/kg)
+    reaches the tidal volume we chose (generaly from 5 to 7 ml/kg)
 
    We also know that
 
@@ -53,8 +53,8 @@ However I think there are additional aspects that are important :
   * Possibilidade de ser pneumática por exemplo aspirando ar de atmosfera
 2. Modos ventilatórios
   *  Volume controlado ( de 100 a 900 ml)
-  *  Pressão controlada ( de 10 a 45 cm H<sup>2</sup>O)
-  *  PEEP aplicável em qualquer dos modos ( de 0 a 15 cm H2O)
+  *  Pressão controlada ( de 10 a 45 cm H<sub>2</sub>O)
+  *  PEEP aplicável em qualquer dos modos ( de 0 a 15 cm H<sub>2</sub>O)
 3. Fração inspirada de oxigénio
   *  De 21% (0,21) a 100% (1) para que o ventilador deverá ser ligado a 2 fontes de gás 
     + Oxigénio
@@ -62,11 +62,11 @@ However I think there are additional aspects that are important :
 Alarmes
   *  Alarme de baixa Fração inspirada de oxigénio FUNDAMENTAL ( abaixo de 21%)
   *  Alarme de apneia e desconexão FUNDAMENTAL
-  *  Alarme superior de pressão (regulável de 10 a 40 cm H_20)
+  *  Alarme superior de pressão (regulável de 10 a 40 cm H<sub>2</sub>20)
   *  Alarme superior de Volume (regulável de 200 a 900 ml)
 4. Visualização de curvas
   *  Pressão nas vias aéreas
-  *  Capnografia (End Tidal CO2))
+  *  Capnografia (End Tidal CO<sub>2</sub>))
   *  Deve haver indicador de espirometria
 5. Parâmetros que devemos poder controlar
   *  Pressão de ciclagem
@@ -75,8 +75,4 @@ Tidal x Frequência respiratória)
   *  Frequência respiratória
   *  PEEP
   * Fração inspirada de oxigénio
-
-
-## In the Press
-1. Portugal newspaper [Diário de Notícias](https://www.dn.pt/pais/air4all-e-uma-empresa-portuguesa-que-quer-fazer-ventiladores-para-oferecer-aos-hospitais-12000157.html)
 
