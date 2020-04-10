@@ -22,8 +22,8 @@ const float MAX_TARGET_INSP_VOLUME = 1000.00; //ml
 // state byte, as delivered by EPICs controller
 const int targetInspFlow = 0;
 const int targetInspPressure = 1;
-const int targetInspVolume = 2;
-const int targetState = 3;
+const int targetState = 2;
+
 
 
 int message_id = 0;
@@ -56,6 +56,7 @@ void switchOnBoardLEDState(){
    if (isLedOn) {
     digitalWrite(LED_BUILTIN, LOW);
     isLedOn = false;
+    return;
   }
   else {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -72,9 +73,6 @@ void handleInspiratoryPressure(float targetInspiratoryPressure){
   switchOnBoardLEDState();
 }
 
-void handleInspiratoryVolume(float targetInspiratoryVolume){
-  switchOnBoardLEDState();
-}
 
 
 void writeSerial(){
@@ -124,22 +122,22 @@ void interpretSerialCommand(){
       
     switch (intendedChange) {
       float intendedChangeValueAux;
+      
       case targetInspFlow: // define target Inspiration Flow in lpm, to be handled through the microcontroller/arduino PID controller.
         intendedChangeValueAux=intendedChangeValue.toFloat();
         constrain(intendedChangeValueAux, MIN_TARGET_INSP_FLOW, MAX_TARGET_INSP_FLOW); //sanitize/limit target inspiratory flow.
-        handleInspiratoryFlow(intendedChangeValue.toFloat());
+        handleInspiratoryFlow(intendedChangeValueAux);
+        break;
   
       case targetInspPressure: // define target Inspiration Pressure in cmH2O, to be handled through the microcontroller/arduino PID controller.
         intendedChangeValueAux=intendedChangeValue.toFloat();
         constrain(intendedChangeValueAux, MIN_TARGET_INSP_PRESSURE, MAX_TARGET_INSP_PRESSURE); //sanitize/limit target inspiratory pressure.
-        handleInspiratoryPressure(intendedChangeValue.toFloat());
+        handleInspiratoryPressure(intendedChangeValueAux);
+        break;
         
-      case targetInspVolume: // define target Inspiration Volume in ml, to be handled through the microcontroller/arduino PID controller.
-        intendedChangeValueAux=intendedChangeValue.toFloat();
-        constrain(intendedChangeValueAux, MIN_TARGET_INSP_VOLUME, MAX_TARGET_INSP_VOLUME); //sanitize/limit target inspiratory volume.
-        handleInspiratoryVolume(intendedChangeValue.toFloat());
-  
+        
       case targetState: // current state, as defined by EPICs controller
+        switchOnBoardLEDState(); // for debug purposes only, switchOnBoardLEDState
         if (intendedChangeValue == "inspiration" || intendedChangeValue == "expiration") { // filter out odd unknown states
             if (intendedChangeValue != currentState){ // does this represent a state change
               currentState=intendedChangeValue;
@@ -148,6 +146,7 @@ void interpretSerialCommand(){
               }
            }
         }
+        break;
     }
     
     inputString="";
