@@ -10,9 +10,10 @@ record(ao,"$(P)$(R)ArdOut-Pinsp"){
     field(DESC,"Set Inspiratory Pressure Valve HOERBIGER")
 #    field(DTYP,"stream")
 #    field (OUT, "@arduino.proto debug $(PORT)")
-    field(OMSL, "supervisory") #or closed-loop, check docs
+#    field(OMSL, "supervisory") #or closed_loop, check docs
+    field(OMSL, "closed_loop")
 # DOL	Desired Output Location
-    field(DOL,"$(P)$(R)Sel-Pinsp") # CP ?
+    field(DOL,"$(P)$(R)Sel-Pinsp CP NMS") # CP ?
     field(EGU,"cmH20")
     field(VAL,"0")
 #    field(DRVH,"255")

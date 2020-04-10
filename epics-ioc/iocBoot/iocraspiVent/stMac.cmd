@@ -35,7 +35,7 @@ asynSetOption("RS0", 0, "clocal", "Y")
 asynSetOption("RS0", 0, "crtscts", "N")
 
 dbLoadRecords "db/rpiSensors-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
-#dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
+dbLoadRecords "db/rpiControl-arduino.db", "P=Raspi:,R=central:,PORT=RS0")
 # Stream DEBUG
 var streamError 1
 var streamDebug 1
@@ -55,7 +55,8 @@ save_restoreSet_NumSeqFiles(3)
 #save_restoreSet_SeqPeriodInSeconds(600)
 set_pass0_restoreFile("$(IOC).sav")
 set_pass1_restoreFile("$(IOC).sav")
-dbLoadRecords("$(AUTOSAVE)/asApp/Db/save_restoreStatus.db", "P=Raspi:")
+#dbLoadRecords("$(AUTOSAVE)/asApp/Db/save_restoreStatus.db", "P=Raspi:")
+
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit

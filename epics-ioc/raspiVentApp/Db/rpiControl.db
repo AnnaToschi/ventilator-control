@@ -63,18 +63,19 @@ record(mbbo, "$(P)$(R)OPMODE") {
     field(FVST, "Alarm Setting")
     field(SXST, "Emergency")
     field(VAL, "0")
+    field(PINI,"YES")
 }
 #https://epics.anl.gov/docs/AES2011/08-Database2.pdf
 #
 record(sel, "$(P)$(R)Sel-Pinsp") {
     field(DESC, "Selection of source to P-Insp valve")
     field(SELM,"Specified")
-    field(NVL,"$(P)$(R)OPMODE.VAL NPP NMS")
+    field(NVL,"$(P)$(R)OPMODE.RVAL CP NMS")
 
     field(INPA, "0")
     field(INPB, "0")
     field(INPC, "$(P)$(R)Ref-Pinsp-PC") #  VC
-    field(INPD, "$(P)$(R)Ref-Pinsp-PC") # PC
+    field(INPD, "$(P)$(R)Ref-Pinsp-PC CP NMS") # PC
     field(INPE, "0") # PS
 }
 record(ao,"$(P)$(R)Ref-Pinsp-PC"){

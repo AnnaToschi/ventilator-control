@@ -272,7 +272,8 @@ ss PressControl {
             printf("sncVentilator: Ending PC Mode \n");
             /*Close Valves*/
         } state NON_PC
-        when (SensorPressure >= SetPpeak) {
+        when (CycleTime >= SetTinsp) { //we should add condition if SensorPressure>= SetPpeak
+        //when (SensorPressure >= SetPpeak) {
             printf("sncVentilator: PC Mode: Changing to Expiration\n");
             /*
             ValveInsp = 0; // Change to CONSTANT
@@ -292,14 +293,14 @@ ss PressControl {
             /*Close Valves*/
         } state NON_PC
          when (CycleTime >= RrMaxTime) {
-            printf("sncVentilator: VC Mode: Changing to Idle due to Time\n");
+            printf("sncVentilator: PC Mode: Changing to Idle due to Time\n");
             ValveExp = 0; // Close Vexp
             pvPut(ValveExp);
             SensorPEEP = SensorPressure;
             pvPut(SensorPEEP);
         }state Idle_PC
 	when (SensorPressure <= SetPEEP) {
-            printf("sncVentilator: VC Mode: Changing to Idle due to PEEP\n");
+            printf("sncVentilator: PC Mode: Changing to Idle due to PEEP\n");
             ValveExp = 0; // Close Vexp
             pvPut(ValveExp);
             SensorPEEP = SensorPressure;
