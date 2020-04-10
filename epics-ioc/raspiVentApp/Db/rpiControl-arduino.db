@@ -6,6 +6,22 @@ record(stringout,"$(P)$(R)test"){
     field (OUT, "@arduino.proto debug $(PORT)")
 }
 
+record(ao,"$(P)$(R)ArdOut-Pinsp"){
+    field(DESC,"Set Inspiratory Pressure Valve HOERBIGER")
+#    field(DTYP,"stream")
+#    field (OUT, "@arduino.proto debug $(PORT)")
+    field(OMSL, "supervisory") #or closed-loop, check docs
+# DOL	Desired Output Location
+    field(DOL,"$(P)$(R)Sel-Pinsp") # CP ?
+    field(EGU,"cmH20")
+    field(VAL,"0")
+#    field(DRVH,"255")
+#    field(DRVL,"0")
+#    field(HOPR,"255")
+#    field(LOPR,"0")
+#    field(FLNK, "$(P)$(R)MessageOut")
+# OROC	Maximum Output Rate of Change
+}
 record(longout,"$(P)$(R)Set-Vinsp"){
     field(DESC,"Set Inspiratory Valve")
     field(EGU,"")

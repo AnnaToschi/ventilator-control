@@ -36,7 +36,7 @@ record(epid, "$(P)$(R)Pid-Pinsp") {
     field(KD, "0.0") #change to var.
     field(LOPR, "0")
     field(HOPR, "255")
-    field(DRVL, "0") #!important for saturation of pid  
+    field(DRVL, "0") #!important for saturation of pid
     field(DRVH, "255")
     field(PREC, "2")
     #Setpoint Location
@@ -47,6 +47,7 @@ record(epid, "$(P)$(R)Pid-Pinsp") {
 }
 record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Operator Mode")
+    field(DTYP, "Raw Soft Channel")
     field(ZRVL, "0")
     field(ONVL, "1")
     field(TWVL, "2")
@@ -56,12 +57,32 @@ record(mbbo, "$(P)$(R)OPMODE") {
     field(SXVL, "6")
     field(ZRST, "Stopped")
     field(ONST, "Idle")
-    field(TWST, "AC Volume Control")
-    field(THST, "AC Pressure Control")
+    field(TWST, "VC Volume Control")
+    field(THST, "PC Pressure Control")
     field(FRST, "Pressure Support")
     field(FVST, "Alarm Setting")
     field(SXST, "Emergency")
     field(VAL, "0")
+}
+#https://epics.anl.gov/docs/AES2011/08-Database2.pdf
+#
+record(sel, "$(P)$(R)Sel-Pinsp") {
+    field(DESC, "Selection of source to P-Insp valve")
+    field(SELM,"Specified")
+    field(NVL,"$(P)$(R)OPMODE.VAL NPP NMS")
+
+    field(INPA, "0")
+    field(INPB, "0")
+    field(INPC, "$(P)$(R)Ref-Pinsp-PC") #  VC
+    field(INPD, "$(P)$(R)Ref-Pinsp-PC") # PC
+    field(INPE, "0") # PS
+}
+record(ao,"$(P)$(R)Ref-Pinsp-PC"){
+    field(DESC,"Peak Preassure PC controlled")
+#    field(PREC,"0")
+    field(EGU,"cmH20")
+    field(VAL,"0")
+#    field(PINI,"YES")
 }
 record(calc, "$(P)$(R)TIME-COUNTER") {
     field(DESC, "0.1 s counter")

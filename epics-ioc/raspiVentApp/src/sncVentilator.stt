@@ -51,7 +51,7 @@ monitor SensorVolume;
 
 float SensorVolumeCalibrated;
 assign SensorVolumeCalibrated to "{user}:Calibrated-Vt"; //when connecting to arduino: Sensor-Vt
-monitor SensorVolumeCalibrated; 
+monitor SensorVolumeCalibrated;
 
 float LastVinspVal;
 assign LastVinspVal to "{user}:Last-Vinsp-Val"; //when connecting to arduino: Sensor-Vt
@@ -111,35 +111,14 @@ float FlowFromTable;
 assign FlowFromTable to "{user}:subExample";
 monitor FlowFromTable;
 
+float  RefPinspPC;
+assign RefPinspPC to "{user}:Ref-Pinsp-PC";
 
 /*   BUzzer */
 
 /* Trace message record limited to 40 characters */
 string msg;
 assign msg to "{user}:TraceMessage.VAL";
-/*
-double v;
-assign v to "{user}:aiExample";
-monitor v;
-
-ss ss1 {
-    state init {
-    when (delay(10)) {
-        printf("sncExample: Startup delay over\n");
-    } state low
-    }
-    state low {
-    when (v > 5.0) {
-        printf("sncExample: Changing to high\n");
-    } state high
-    }
-    state high {
-    when (v <= 5.0) {
-        printf("sncExample: Changing to low\n");
-    } state low
-    }
-}
-*/
 
 /* Volume Control State Set */
 //Expiration cycling can be set by time or the pressure limit.
@@ -196,7 +175,7 @@ ss VolControl {
             if (SensorMaxVol < (SetVt - 30)){
 	         ValveInsp = LastVinspVal + 5;
 	    }
-	    else if(SensorMaxVol > (SetVt + 30)){ 
+	    else if(SensorMaxVol > (SetVt + 30)){
 	         ValveInsp = LastVinspVal - 5;
 	    }
  	    else{
@@ -218,7 +197,7 @@ ss VolControl {
             if (CycleTime < (SetTinsp - 0.3)){
 	         ValveInsp = LastVinspVal - 5;
 	    }
-	    else if(CycleTime > (SetTinsp + 0.3)){ 
+	    else if(CycleTime > (SetTinsp + 0.3)){
 	         ValveInsp = LastVinspVal + 5;
 	    }
  	    else{
@@ -255,8 +234,8 @@ ss VolControl {
 // increase to maintain the set inspiratory pressure
 ss PressControl {
     state NON_PC {
-        /*
         entry {
+        /*
             strcpy(msg, "INIT: Sequence Entry");
             pvPut(msg);
             errlogSevPrintf(NO_ALARM, "%s\n",msg);
@@ -264,8 +243,10 @@ ss PressControl {
             strcpy(msg, "Initializing...");
             pvPut(msg);
             errlogSevPrintf(NO_ALARM, "%s\n",msg);
-        }
         */
+            RefPinspPC= 0; // CLoses PC Pinsp Valve
+            pvPut(RefPinspPC);
+        }
         when (OpMode == OPM_PressureControl )    {
             printf("sncVentilator: Startup OPM_PressureControl\n");
         } state Idle_PC
@@ -276,10 +257,14 @@ ss PressControl {
         } state NON_PC
         when (CycleTime == 0.0) {
             printf("sncVentilator: PC Mode: Changing to Inspiration\n");
+            /*
             ValveInsp = 40; // Change to CONSTANT
             pvPut(ValveInsp);
-	    SensorVolExp = SensorVolume;
+    	    SensorVolExp = SensorVolume;
             pvPut(SensorVolExp);
+            */
+            RefPinspPC= 100; // Open PC Pinsp Valve
+            pvPut(RefPinspPC);
         } state Inspiration_PC
     }
     state Inspiration_PC {
@@ -289,12 +274,16 @@ ss PressControl {
         } state NON_PC
         when (SensorPressure >= SetPpeak) {
             printf("sncVentilator: PC Mode: Changing to Expiration\n");
+            /*
             ValveInsp = 0; // Change to CONSTANT
             pvPut(ValveInsp);
             ValveExp = 1; // Change to CONSTANT
             pvPut(ValveExp);
-	    SensorMaxVol = SensorVolumeCalibrated;
-	    pvPut(SensorMaxVol);
+            SensorMaxVol = SensorVolumeCalibrated;
+            pvPut(SensorMaxVol);
+            */
+            RefPinspPC= 0; // CLoses PC Pinsp Valve
+            pvPut(RefPinspPC);
         } state Expiration_PC
     }
     state Expiration_PC {
