@@ -1,5 +1,8 @@
 # Ventilator system specifications
 
+## Book Monitoring Mechanical Ventilation Using Ventilator Waveforms, Jean-Michel Arnal [Springer, 2018](https://link.springer.com/book/10.1007/978-3-319-58655-7)
+(look the chapter for Videos)
+
 ## Guidance to rapidly manufactured Ventilator system specification
 ### Published 20 March 2020 
 
@@ -56,8 +59,8 @@ However I think there are additional aspects that are important :
   *  Pressão controlada ( de 10 a 45 cm H<sub>2</sub>O)
   *  PEEP aplicável em qualquer dos modos ( de 0 a 15 cm H<sub>2</sub>O)
 3. Fração inspirada de oxigénio
-  *  De 21% (0,21) a 100% (1) para que o ventilador deverá ser ligado a 2 fontes de gás 
-    + Oxigénio
+  *  De 21% (0,21) a 100% (1) para que o ventilador deverá ser ligado a 2 fontes de gás  
+  + Oxigénio
     + Ar comprimido
 Alarmes
   *  Alarme de baixa Fração inspirada de oxigénio FUNDAMENTAL ( abaixo de 21%)
