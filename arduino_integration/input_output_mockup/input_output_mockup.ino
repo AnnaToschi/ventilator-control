@@ -111,7 +111,7 @@ void writeSerial(){
 
 void interpretSerialCommand(){
   if (stringComplete){
-    Serial.print("SERIAL ECHO: ")
+    Serial.print("SERIAL ECHO: ");
     Serial.println(inputString);
     for (int i = 0; i < inputString.length(); i++) {
       if (inputString.substring(i, i+1) == ";") {
