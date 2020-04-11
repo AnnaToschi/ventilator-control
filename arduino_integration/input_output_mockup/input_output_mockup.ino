@@ -111,7 +111,7 @@ void writeSerial(){
 
 void interpretSerialCommand(){
   if (stringComplete){
-    
+    Serial.println(inputString);
     for (int i = 0; i < inputString.length(); i++) {
       if (inputString.substring(i, i+1) == ";") {
         intendedChange =  inputString.substring(0, i).toInt();
