@@ -202,8 +202,8 @@ void handleExpiratoryValveAperture(int targetInspiratoryAperture)
 
 void getPressure(){
   if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval) {
-    pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - pressureOffset;  //CmH2O, two readings for weird stability issues
-    pressure =  (pressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - pressureOffset; 
+    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier;  //CmH2O, two readings for weird stability issues
+    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier; 
     previousPressureReadMillis = currentMillis;
   }
 }
