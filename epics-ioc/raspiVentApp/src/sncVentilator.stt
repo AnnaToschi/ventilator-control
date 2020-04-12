@@ -100,6 +100,12 @@ float SensorMaxVol;
 assign SensorMaxVol to "{user}:Sensor-Max-Vol";
 monitor SensorMaxVol;
 
+float InspExpState;
+assign InspExpState to "{user}:Set-InspExpState";
+monitor InspExpState;
+
+
+
 /* IOC PV actuator variables */
 short   ValveInsp;
 assign  ValveInsp to "{user}:Set-Vinsp";
@@ -128,18 +134,9 @@ assign msg to "{user}:TraceMessage.VAL";
 
 ss VolControl {
     state NON_VC {
-        // entry {
-        //     strcpy(msg, "INIT: Sequence Entry");
-        //     pvPut(msg);
-        //     errlogSevPrintf(NO_ALARM, "%s\n",msg);
-
-        //     strcpy(msg, "Initializing...");
-        //     pvPut(msg);
-        //     errlogSevPrintf(NO_ALARM, "%s\n",msg);
-        // }
         when (OpMode == OPM_VolumeControl)    {
             printf("sncVentilator: Startup delay over\n");
-	    ValveInsp = 100;
+            ValveInsp = 100;
         } state Idle_VC
     }
     state Idle_VC {
@@ -149,11 +146,14 @@ ss VolControl {
          when (CycleTime <= 0.1) { //check this condition of time
             printf("sncVentilator: VC Mode: Changing to Inspiration\n");
             // Open valve, change to amount of based on Tinsp (SetVt/Tinsp)
+            ValveInsp = 100;
             pvPut(ValveInsp);
-	    SensorVolExp = SensorVolume;
+            SensorVolExp = SensorVolume;
             pvPut(SensorVolExp);
-	    LastVinspVal = ValveInsp;
-	    pvPut(LastVinspVal);
+            LastVinspVal = ValveInsp;
+            pvPut(LastVinspVal);
+            InspExpState = 1;
+            pvPut(InspExpState);
         } state Inspiration_VC
     }
     state Inspiration_VC {
@@ -166,44 +166,46 @@ ss VolControl {
             printf("SensorMaxVol = %.2f , SetVt = %.2f, ValveInsp = %d \n", SensorMaxVol, SetVt, ValveInsp);
             ValveInsp = 0; // Close Vinsp
             pvPut(ValveInsp);
-            ValveExp = 255; // Open Vexp
+            ValveExp = 1; // Open Vexp
             pvPut(ValveExp);
             SensorPpeak = SensorPressure;
             pvPut(SensorPpeak);
             SensorMaxVol = SensorVolumeCalibrated;
-	    pvPut(SensorMaxVol);
-            if (SensorMaxVol < (SetVt - 30)){
-	         ValveInsp = LastVinspVal + 5;
-	    }
-	    else if(SensorMaxVol > (SetVt + 30)){
-	         ValveInsp = LastVinspVal - 5;
-	    }
- 	    else{
-		ValveInsp = LastVinspVal;
-	     }
-            // printf("Sensor FLOW From Table:\t %.2f \n", FlowFromTable);
+            pvPut(SensorMaxVol);
+            // if (SensorMaxVol < (SetVt - 30)){
+            //     ValveInsp = LastVinspVal + 5;
+            // }
+            // else if(SensorMaxVol > (SetVt + 30)){
+            //     ValveInsp = LastVinspVal - 5;
+            // }
+            // else{
+            //     ValveInsp = LastVinspVal;
+            // }
+            InspExpState = 2;
+            pvPut(InspExpState);
         } state Expiration_VC
-	when (SensorMaxVol >= SetVt) { //we should add condition if SensorPressure>= SetPpeak
+        when (SensorMaxVol >= SetVt) { //we should add condition if SensorPressure>= SetPpeak
             printf("sncVentilator: VC Mode: Changing to Expiration Vol\n");
-	    printf("SensorMaxVol = %.2f , SetVt = %.2f, ValveInsp = %d \n", SensorMaxVol,SetVt, ValveInsp);
+            printf("SensorMaxVol = %.2f , SetVt = %.2f, ValveInsp = %d \n", SensorMaxVol,SetVt, ValveInsp);
             ValveInsp = 0; // Close Vinsp
             pvPut(ValveInsp);
-            ValveExp = 255; // Open Vexp
+            ValveExp = 1; // Open Vexp
             pvPut(ValveExp);
             SensorPpeak = SensorPressure;
             pvPut(SensorPpeak);
             SensorMaxVol = SensorVolumeCalibrated;
-	    pvPut(SensorMaxVol);
-            if (CycleTime < (SetTinsp - 0.3)){
-	         ValveInsp = LastVinspVal - 5;
-	    }
-	    else if(CycleTime > (SetTinsp + 0.3)){
-	         ValveInsp = LastVinspVal + 5;
-	    }
- 	    else{
-		ValveInsp = LastVinspVal;
-	     }
-            // printf("Sensor FLOW From Table:\t %.2f \n", FlowFromTable);
+            pvPut(SensorMaxVol);
+            // if (CycleTime < (SetTinsp - 0.3)){
+            //     ValveInsp = LastVinspVal - 5;
+            // }
+            // else if(CycleTime > (SetTinsp + 0.3)){
+            //     ValveInsp = LastVinspVal + 5;
+            // }
+            // else{
+            //     ValveInsp = LastVinspVal;
+            // }
+            InspExpState = 2;
+            pvPut(InspExpState);
         } state Expiration_VC
     }
     state Expiration_VC {
@@ -217,13 +219,17 @@ ss VolControl {
             pvPut(ValveExp);
             SensorPEEP = SensorPressure;
             pvPut(SensorPEEP);
+            InspExpState = 0;
+            pvPut(InspExpState);
         }state Idle_VC
-	when (SensorPressure <= SetPEEP) {
+        when (SensorPressure <= SetPEEP) {
             printf("sncVentilator: VC Mode: Changing to Idle due to PEEP\n");
-            ValveExp = 0; // Close Vexp
-            pvPut(ValveExp);
             SensorPEEP = SensorPressure;
             pvPut(SensorPEEP);
+            ValveExp = 0; // Close Vexp
+            pvPut(ValveExp);
+            InspExpState = 0;
+            pvPut(InspExpState);
         }state Idle_VC
     }
 }
@@ -235,15 +241,6 @@ ss VolControl {
 ss PressControl {
     state NON_PC {
         entry {
-        /*
-            strcpy(msg, "INIT: Sequence Entry");
-            pvPut(msg);
-            errlogSevPrintf(NO_ALARM, "%s\n",msg);
-
-            strcpy(msg, "Initializing...");
-            pvPut(msg);
-            errlogSevPrintf(NO_ALARM, "%s\n",msg);
-        */
             RefPinspPC= 0; // CLoses PC Pinsp Valve
             pvPut(RefPinspPC);
         }
@@ -260,11 +257,13 @@ ss PressControl {
             /*
             ValveInsp = 40; // Change to CONSTANT
             pvPut(ValveInsp);
-    	    SensorVolExp = SensorVolume;
+            SensorVolExp = SensorVolume;
             pvPut(SensorVolExp);
             */
             RefPinspPC= 100; // Open PC Pinsp Valve
             pvPut(RefPinspPC);
+            InspExpState = 1;
+            pvPut(InspExpState);
         } state Inspiration_PC
     }
     state Inspiration_PC {
@@ -285,6 +284,8 @@ ss PressControl {
             */
             RefPinspPC= 0; // CLoses PC Pinsp Valve
             pvPut(RefPinspPC);
+            InspExpState = 2;
+            pvPut(InspExpState);
         } state Expiration_PC
     }
     state Expiration_PC {
@@ -292,19 +293,21 @@ ss PressControl {
             printf("sncVentilator: Ending PC Mode \n");
             /*Close Valves*/
         } state NON_PC
-         when (CycleTime >= RrMaxTime) {
+        when (CycleTime >= RrMaxTime) {
             printf("sncVentilator: PC Mode: Changing to Idle due to Time\n");
             ValveExp = 0; // Close Vexp
             pvPut(ValveExp);
             SensorPEEP = SensorPressure;
             pvPut(SensorPEEP);
         }state Idle_PC
-	when (SensorPressure <= SetPEEP) {
+        when (SensorPressure <= SetPEEP) {
             printf("sncVentilator: PC Mode: Changing to Idle due to PEEP\n");
             ValveExp = 0; // Close Vexp
             pvPut(ValveExp);
             SensorPEEP = SensorPressure;
             pvPut(SensorPEEP);
+            InspExpState = 0;
+            pvPut(InspExpState);
         }state Idle_PC
     }
 }
@@ -321,17 +324,6 @@ ss PressControl {
 
 ss PSControl {
     state NON_PS {
-        /*
-        entry {
-            strcpy(msg, "INIT: Sequence Entry");
-            pvPut(msg);
-            errlogSevPrintf(NO_ALARM, "%s\n",msg);
-
-            strcpy(msg, "Initializing...");
-            pvPut(msg);
-            errlogSevPrintf(NO_ALARM, "%s\n",msg);
-        }
-        */
         when (OpMode == OPM_PressureSupport  && CycleTime == 0.0)    {
             printf("sncVentilator: Startup OPM_PressureSupport \n");
             printf("sncVentilator: PS Mode: Changing to Inspiration\n");
@@ -350,6 +342,8 @@ ss PSControl {
             pvPut(ValveInsp);
             ValveExp = 1; // Change to CONSTANT
             pvPut(ValveExp);
+            InspExpState = 2;
+            pvPut(InspExpState);
         } state Expiration_PS
     }
     state Expiration_PS {
@@ -361,10 +355,12 @@ ss PSControl {
             printf("sncVentilator: PS Mode: Changing to After Insp\n");
             ValveInsp = 0; // Change to CONSTANT
             pvPut(ValveInsp);
+            InspExpState = 0;
+            pvPut(InspExpState);
         } state After_Expir_PS
         when (CycleTime >= RrMaxTime ) {
             printf("sncVentilator: PS Mode: Changing to Inspiration\n");
-            ValveInsp = 0; // Change to CONSTANT
+            ValveInsp = 1; // Change to CONSTANT
             pvPut(ValveInsp);
         } state Inspiration_PS
     }
@@ -380,6 +376,8 @@ ss PSControl {
             pvPut(CycleTime);
             ValveInsp = 0; // Change to CONSTANT
             pvPut(ValveInsp);
+            InspExpState = 1;
+            pvPut(InspExpState);
         } state Inspiration_PS
         when (CycleTime == 0.0) {
             printf("sncVentilator: PS Mode: Changing to Inspiration PS\n");
@@ -387,6 +385,8 @@ ss PSControl {
             //pvPut(Sensor_RR);
             ValveInsp = 1; // Change to CONSTANT
             pvPut(ValveInsp);
+            InspExpState = 1;
+            pvPut(InspExpState);
         } state Inspiration_PS
     }
 }

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QTextEdit, QDialog, QWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QTextEdit, QDialog, QWidget, QMessageBox
 from PyQt5 import uic, QtGui, QtCore
 import pyqtgraph as pg
 import sys
@@ -13,27 +13,36 @@ class VentilatorWindow(QDialog):
         super(VentilatorWindow, self).__init__()
         uic.loadUi("dashboard_ventilator.ui", self)
 
-        self.start_plotting()
+        self.start_timer()
 
         self.PlotsWidget = PlotsWidget(parent=self)
         self.SettingsWidget = SettingsWidget(parent=self)
         self.stacked_area.addWidget(self.PlotsWidget)
+        self.SettingsWidget.readInitialValues()
         self.stacked_area.addWidget(self.SettingsWidget)
         self.stacked_area.setCurrentWidget(self.PlotsWidget)
         self.timer.timeout.connect(self.PlotsWidget.updateGraphs)
         self.setButton.clicked.connect(self.toggleStackedArea)
         self.stackedArea_flag = 0
 
+
+        self.msg = QMessageBox()
+
         self.setWindowTitle("Ventilator")
 
-    def start_plotting(self):
+    def start_timer(self):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(50)
-        self.timer.timeout.connect(self.updateValues)
+        self.timer.timeout.connect(self.updateBottomBarValues)
         self.timer.start()
 
+    def check_alarms(self):
+        pass
+        #if self.sensorMVvar > caget('Raspi:central:Minute-Volume')
+
+
     def toggleStackedArea(self):
-        if self.stackedArea_flag == 1: #show plots
+        if self.stackedArea_flag == 1: #I am in the settings view and want to change to show plots
             self.stacked_area.setCurrentWidget(self.PlotsWidget)
             self.PlotsWidget.initializeGraphs()
             self.timer.timeout.connect(self.PlotsWidget.updateGraphs)
@@ -42,7 +51,11 @@ class VentilatorWindow(QDialog):
             except:
                 print('nothing to disconnect')
             self.stackedArea_flag = 0
-        elif self.stackedArea_flag == 0: #show settings VC
+            print('here')
+            self.SettingsWidget.commitValueChanges()
+            self.setButton.setStyleSheet("color: rgb(3, 43, 91);")
+            self.setButton.setText('Set\nValues')
+        elif self.stackedArea_flag == 0: #I am in the plots view and want to change to show VC settings
             self.timer.timeout.connect(self.SettingsWidget.updateValues)
             try:
                 self.timer.timeout.disconnect(self.PlotsWidget.updateGraphs)
@@ -50,8 +63,9 @@ class VentilatorWindow(QDialog):
                 print('nothing to disconnect')
             self.stacked_area.setCurrentWidget(self.SettingsWidget)
             self.stackedArea_flag = 1
+            self.setButton.setStyleSheet("background-color: #00e64d;");
 
-    def updateValues(self):
+    def updateBottomBarValues(self):
         self.sensorMVvar.setText("{:.1f}".format(caget('Raspi:central:Minute-Volume')))
         self.sensorVtvar.setText("{:.1f}".format(caget('Raspi:central:Sensor-Max-Vol')))
         self.sensorRRvar.setText("{:.1f}".format(caget('Raspi:central:Sensor-RR')))
@@ -64,6 +78,8 @@ class VentilatorWindow(QDialog):
         self.setRRvar_btm.setText("{:.0f}".format(caget('Raspi:central:Set-RespRate')))
         self.setTinspvar_btm.setText("{:.1f}".format(caget('Raspi:central:Set-Tinsp')))
         self.setPEEPvar_btm.setText("{:.0f}".format(caget('Raspi:central:Set-PEEP')))
+
+        self.check_alarms()
 
     def keyPressEvent(self, event):
         # Did the user press the Escape key?
@@ -127,35 +143,49 @@ class SettingsWidget(QWidget):
         self.setRRScrollBar.setMinimum(caget('Raspi:central:Set-RespRate.DRVL')*10)
         self.setPEEPScrollBar.setMinimum(caget('Raspi:central:Set-PEEP.DRVL'))
         self.setVtScrollBar.setMinimum(caget('Raspi:central:Set-Vt.DRVL'))
-
+        self.readInitialValues()
         self.updateValues()
 
-    def updateValues(self):
+    def readInitialValues(self):
 
         self.valueTinsp = caget('Raspi:central:Set-Tinsp')
         self.valueRR = caget('Raspi:central:Set-RespRate')
         self.valueVt = caget('Raspi:central:Set-Vt')
         self.valuePEEP = caget('Raspi:central:Set-PEEP')
 
+
         self.setTinspScrollBar.setValue(self.valueTinsp * 10)
         self.setRRScrollBar.setValue(self.valueRR*10)
         self.setPEEPScrollBar.setValue(self.valuePEEP)
         self.setVtScrollBar.setValue(self.valueVt)
+
+    def updateValues(self): 
 
         self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
         self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
         self.setVtvar_setting.setText("{:.0f}".format(self.valueVt))
         self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP))
 
-        self.setTinspScrollBar.valueChanged.connect(self.setValuesTinsp)
-        self.setRRScrollBar.valueChanged.connect(self.setValuesRR)
-        self.setVtScrollBar.valueChanged.connect(self.setValuesVt)
-        self.setPEEPScrollBar.valueChanged.connect(self.setValuesPEEP)
+        self.valueTinsp = (self.setTinspScrollBar.value() / 10)
+        self.valueRR = (self.setRRScrollBar.value() / 10)
+        self.valuePEEP = self.setPEEPScrollBar.value()
+        self.valueVt = self.setVtScrollBar.value()
+
+
+    def commitValueChanges(self):
+        print('Commiting values')
+        self.setValuesTinsp()
+        self.setValuesRR()
+        self.setValuesVt()
+        self.setValuesPEEP()
 
     def setValuesTinsp(self):
         self.valueTinsp = (self.setTinspScrollBar.value() / 10)
         caput('Raspi:central:Set-Tinsp', self.valueTinsp)
         self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
+
+        
+
         #self.setRRScrollBar.setMaximum(caget('Raspi:central:Set-RespRate.DRVH'))
 
     def setValuesRR(self):
@@ -164,6 +194,11 @@ class SettingsWidget(QWidget):
         self.valueRR = (caget('Raspi:central:Set-RespRate') )
         #print(self.valueRR )
         self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
+
+        if(self.valueTinsp>(60/self.valueRR - 0.3)):
+            self.parent().parent().msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
+            self.parent().parent().msg.setIcon(QMessageBox.Warning)
+            self.parent().parent().msg.exec_()
         
     def setValuesVt(self):
         self.valueVt = self.setVtScrollBar.value()
