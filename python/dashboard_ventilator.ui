@@ -545,7 +545,8 @@
     <string notr="true">color: rgb(3, 43, 91);</string>
    </property>
    <property name="text">
-    <string>SET</string>
+    <string>SET
+Values</string>
    </property>
   </widget>
   <widget class="QPushButton" name="alarmsButton">
@@ -558,10 +559,12 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(3, 43, 91);</string>
+    <string notr="true">background-color: rgba(252, 0, 6, 87);
+color: rgb(3, 43, 91);</string>
    </property>
    <property name="text">
-    <string>ALARMS</string>
+    <string>SET
+ALARMS</string>
    </property>
   </widget>
   <widget class="QLabel" name="sensorFiO2var_2">
@@ -648,7 +651,7 @@
      <height>501</height>
     </rect>
    </property>
-   <widget class="QWidget" name="verticalStackedWidget_4Page1_2" native="true">
+   <widget class="QWidget" name="verticalStackedWidget_4Page1_2">
     <layout class="QVBoxLayout" name="verticalLayout_8"/>
    </widget>
   </widget>
