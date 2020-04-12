@@ -2,9 +2,25 @@
 #include <PID_v1.h>           // https://github.com/br3ttb/Arduino-PID-Library/ Arduino PID Library v1.2.1 by Brett Beauregard
 #include <avr/wdt.h>          // AVR Watchdog Timer
 
+//Pressure Sensor includes
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BMP3XX.h>
+
+//Flow Meter includes
+#include <sfm3000wedo.h>
+
+#define SEALEVELPRESSURE_HPA (1013.25)
+
+Adafruit_BMP3XX inspirationPressureSensor;
+
+SFM3000wedo measInspFlow(64);
 Adafruit_MCP4725 dac;
 
-const int serialUpdateInterval = 50;
+unsigned int flowOffset = 32768; // Offset for the SFM3300 sensor 
+
+float flowScale = 120.0; // Scale factor for SFM3300
+
+
 
 //initialize the two strings being received from the controller
 String intendedChangeValue;
@@ -21,6 +37,7 @@ boolean isInspirationValveOpen = false;
 boolean isExpirationValveOpen = false;
 
 const int expiratoryValvePin = 2;
+const byte inspirationO2SensorPin = A0;
 
 const float MIN_TARGET_INSP_FLOW = 0.00;       //Litres per minute
 const float MAX_TARGET_INSP_FLOW = 200.00;     //Litres per minute
@@ -49,13 +66,39 @@ const int inspiration = 1;
 const int expiration = 2;
 
 int message_id = 0;
-float O2_percentage;
-float inspiratory_pressure;
-float inspiratory_flow;
 float tidal_volume;
 
+float inspiratoryO2percentage;
+float inspiratoryPressure = 0.00;
+float inspiratoryFlow;
+
+const int numO2readings = 100;                   //number of smoothing points for the O2 readout
+float inspirationO2readings[numO2readings];      // the readings from the analog input
+int   inspirationO2readIndex = 0;              // the index of the current reading
+float inspirationO2total = 0.00;                  // the running total
+float inspirationO2average = 0.00;                // the average
+
 unsigned long currentMillis = 0;
+unsigned long previousInspirationFlowReadMillis = 0;
+unsigned long previousInspirationPressureReadMillis = 0;
+unsigned long previousO2ReadMillis = 0;
 unsigned long previousSerialWriteMillis = 0;
+
+const int O2Offset = 28;
+const float pressureOffsetMultiplier = 2.7;
+float inspiratoryPressureOffset = 0.0;
+const float flowOffsetMultiplier = 2.7;
+
+const int serialUpdateInterval = 50;
+const int inspirationO2UpdateInterval = 100;
+const int inspirationFlowUpdateInterval = 50;
+const int InspirationVolumeUpdateInterval = 50;
+const int inspirationPressureUpdateInterval = 50;
+
+int inspiration_O2_raw_perc=0;
+float inspiratoryO2Percentage=0.00;
+
+float inspiratoryVolume = 0.00;
 
 // realistic mockup data for graphs
 //float flow[] = {0, 13.009, 25.037, 28.738, 31.956, 33.654, 34.567, 35.022, 35.212, 35.242, 35.183, 35.079, 34.95, 34.81, 34.668, 35.69, 35.477, 35.183, 34.949, 34.744, 34.554, 8.0112, -12.002, -20.371, -23.919, -25.319, -25.638, -25.362, -24.699, -23.885, -23, -22.049, -21.102, -20.147, -19.188, -18.23, -17.277, -16.341, -15.427, -14.546, -13.709, -12.913, -12.16, -11.448, -10.778, -10.148, -9.5569, -9.0041, -8.4873, -8.0048, -7.5546, -7.1346, -6.7429, -6.3777, -6.0368, -5.7189, -5.422, -5.1449, -4.8858, -4.6437, -4.4172, -4.2052, -4.0065, -3.8204, -3.6458, -3.4818, -3.3278, -3.183, -3.0468, -2.9186, -2.7977, -2.6838, -2.5763, -2.4748, -2.3787, -2.2877, -2.2015, -2.1197, -2.0419, -1.9681, -1.8975, 6.9948, 17.004, 18.669, 20.214, 20.979, 21.365, 21.845, 22.896, 24.205, 25.484, 26.632, 27.622, 28.458, 29.155, 29.727, 30.191, 30.571, 30.881, 31.133, 31.339, 7.127, -10.194, -17.708, -21.042, -22.449, -22.824, -22.587, -21.98, -21.203, -20.316, -19.39, -18.435, -17.475, -16.524, -15.596, -14.703, -13.846, -13.038, -12.275, -11.553, -10.875, -10.236, -9.6373, -9.0771, -8.5538, -8.0653, -7.6098, -7.185, -6.789, -6.4197, -6.0754, -5.754, -5.4542, -5.1744, -4.913, -4.6685, -4.4399, -4.2259, -4.0255, -3.8377, -3.6616, -3.4962, -3.3409, -3.1949, -3.0576, -2.9282, -2.8064, -2.6915, -2.5831, -2.4806, -2.3836, -2.2917, -2.2046, -2.1218, -2.0433, -1.9687, -1.8977, -1.8301, -1.7658, -1.7042, 6.929, 16.961, 18.579, 20.139, 20.863, 21.265, 21.725, 22.653, 23.923, 25.192, 26.333, 27.326, 28.165, 28.864, 29.448, 29.93, 30.325, 30.649, 30.913, 31.132, 7.3089, -9.8614, -17.245, -20.577, -21.943, -22.345, -22.115, -21.516, -20.734, -19.855, -18.923, -17.97, -17.017, -16.076, -15.164, -14.288, -13.456, -12.668, -11.924, -11.224, -10.563, -9.9435, -9.3633, -8.821, -8.3146, -7.8422, -7.4016, -6.9908, -6.6079, -6.2508, -5.9177, -5.6069, -5.3169, -5.0461, -4.7929, -4.5562, -4.3348, -4.1274, -3.9332, -3.7511, -3.5802, -3.4198, -3.269, -3.1272, -2.9938, -2.8681, -2.7497, -2.638, -2.5325, -2.4327, -2.3381, -2.2485, -2.1635, -2.0828, -2.0062, -1.9333, -1.8639, -1.7979, -1.735, -1.6747, 6.9013, 16.945, 18.554, 20.108, 20.843, 21.25, 21.704, 22.611, 23.881, 25.146, 26.281, 27.274, 28.115, 28.821, 29.405, 29.89, 30.286, 30.612, 30.877, 31.1, 7.3177, -9.5395, -17.171, -20.488, -21.906, -22.279, -22.049, -21.445, -20.668, -19.785, -18.851, -17.901, -16.947, -16.008, -15.095, -14.221, -13.395, -12.612, -11.87, -11.173, -10.515, -9.8986, -9.3211, -8.7815, -8.2776, -7.8077, -7.3698, -6.9613, -6.5801, -6.2228, -5.8916, -5.5834, -5.2943, -5.025, -4.7734, -4.5383, -4.318, -4.1118, -3.9185, -3.7373, -3.5673, -3.4076, -3.2576, -3.1165, -2.9837, -2.8587, -2.7407, -2.6295, -2.5245, -2.4251, -2.3309, -2.2417, -2.157, -2.0767, -2.0003, -1.9277, -1.8585, -1.7928, -1.7301, -1.6703, 6.9099, 16.938, 18.547, 20.102, 20.836, 21.245, 21.7, 22.605, 23.871, 25.136, 26.27, 27.263, 28.104, 28.811, 29.396, 29.88, 30.277, 30.604, 30.87, 31.093, 7.3374, -9.6585, -17.167, -20.484, -21.876, -22.263, -22.037, -21.432, -20.656, -19.772, -18.84, -17.888, -16.935, -15.995, -15.083, -14.21, -13.383, -12.602, -11.864, -11.165, -10.508, -9.8919, -9.315, -8.7758, -8.2725, -7.8028, -7.3649, -6.9566, -6.5759, -6.221, -5.8899, -5.5809, -5.2926, -5.0234, -4.7717, -4.5364, -4.3162, -4.11, -3.9169, -3.7358, -3.5658, -3.4062, -3.2563, -3.1152, -2.9825, -2.8575, -2.7397, -2.6285, -2.5235, -2.4241, -2.33, -2.2408, -2.1562, -2.0759, -1.9995, -1.9269, -1.8578, -1.7921, -1.7294, -1.6694, 6.9101, 16.937, 18.546, 20.101, 20.836, 21.244, 21.698, 22.603, 23.869, 25.134, 26.269, 27.261, 28.103, 28.81, 29.394, 29.879, 30.276, 30.603, 30.869, 31.092, 7.3385, -9.6223, -17.163, -20.479, -21.888, -22.256, -22.035, -21.432, -20.654, -19.769, -18.837, -17.886, -16.933, -15.993, -15.081, -14.214, -13.386, -12.603, -11.862, -11.163, -10.506, -9.8899, -9.3131, -8.774, -8.2708, -7.8012, -7.3634, -6.9552, -6.5747, -6.2198, -5.8888, -5.5799, -5.2917, -5.0224, -4.7708, -4.5356, -4.3154, -4.1093, -3.9162, -3.7351, -3.5652, -3.4057, -3.2557, -3.1147, -2.9821, -2.8572, -2.7393, -2.6282, -2.5231, -2.4238, -2.3297, -2.2405, -2.1559, -2.0756, -1.9992, -1.9267, -1.8576, -1.7919, -1.7292, -1.6692, 6.91, 16.937, 18.546, 20.101, 20.835, 21.244, 21.698, 22.603, 23.869, 25.134, 26.268, 27.261, 28.102, 28.809, 29.394, 29.879, 30.275, 30.602, 30.868, 31.092, 7.3386, -9.6331, -17.143, -20.474, -21.861, -22.24, -22.03, -21.434, -20.651, -19.768, -18.836, -17.884, -16.932, -15.993, -15.08, -14.21, -13.384, -12.601, -11.859, -11.159, -10.506, -9.8899, -9.3132, -8.7741, -8.2708, -7.8013, -7.3635, -6.9553, -6.5747, -6.2198, -5.8889, -5.58, -5.2918, -5.0224, -4.7708, -4.5357, -4.3155, -4.1094, -3.9163, -3.7352, -3.5653, -3.4057, -3.2558, -3.1148, -2.9821, -2.8571, -2.7393, -2.6281, -2.5231, -2.4238, -2.3297, -2.2405, -2.1559, -2.0756, -1.9993, -1.9267, -1.8576, -1.7919, -1.7292, -1.6693, 6.91, 16.937, 18.546, 20.101, 20.835, 21.244, 21.698, 22.603, 23.869, 25.134, 26.268, 27.261, 28.102, 28.809, 29.394, 29.879, 30.275, 30.602, 30.868, 31.092, 7.3387, -9.5957, -17.145, -20.475, -21.861, -22.24, -22.03, -21.433, -20.651, -19.768, -18.835, -17.885, -16.931, -15.993, -15.08, -14.21, -13.384, -12.6, -11.858, -11.158};
@@ -63,6 +106,7 @@ unsigned long previousSerialWriteMillis = 0;
 //float volume[] = {800, 801.2, 808.08, 817.36, 828.24, 840.08, 852.44, 865, 877.64, 890.24, 902.8, 915.28, 927.64, 939.88, 952.08, 964.28, 976.64, 988.84, 1000.96, 1012.92, 1024.8, 1033.28, 1033.08, 1028, 1020.84, 1012.88, 1004.6, 996.28, 988.12, 980.2, 972.56, 965.2, 958.2, 951.44, 945, 938.92, 933.08, 927.6, 922.4, 917.48, 912.88, 908.52, 904.4, 900.56, 896.92, 893.48, 890.24, 887.2, 884.36, 881.64, 879.08, 876.68, 874.4, 872.28, 870.24, 868.32, 866.48, 864.76, 863.12, 861.56, 860.08, 858.64, 857.32, 856.04, 854.8, 853.64, 852.52, 851.48, 850.44, 849.48, 848.52, 847.64, 846.76, 845.96, 845.16, 844.4, 843.64, 842.96, 842.28, 841.6, 840.96, 841, 845.2, 850.96, 857.32, 864.08, 871.04, 878.12, 885.48, 893.2, 901.4, 910, 918.96, 928.2, 937.72, 947.44, 957.36, 967.4, 977.56, 987.8, 998.12, 1005.44, 1005.16, 1000.8, 994.56, 987.52, 980.16, 972.76, 965.48, 958.44, 951.68, 945.16, 939, 933.12, 927.56, 922.28, 917.36, 912.68, 908.28, 904.12, 900.24, 896.56, 893.12, 889.84, 886.8, 883.92, 881.2, 878.6, 876.2, 873.92, 871.76, 869.68, 867.76, 865.92, 864.2, 862.52, 860.96, 859.48, 858.04, 856.72, 855.4, 854.2, 853, 851.88, 850.84, 849.8, 848.84, 847.88, 847, 846.12, 845.28, 844.48, 843.72, 843, 842.28, 841.6, 840.96, 840.32, 839.72, 839.12, 838.56, 838.6, 842.8, 848.52, 854.84, 861.56, 868.44, 875.48, 882.72, 890.32, 898.36, 906.8, 915.6, 924.72, 934.08, 943.64, 953.4, 963.32, 973.32, 983.44, 993.64, 1000.88, 1000.76, 996.48, 990.4, 983.48, 976.28, 969.04, 961.92, 955.04, 948.4, 942.08, 936.04, 930.32, 924.92, 919.8, 915, 910.44, 906.16, 902.16, 898.36, 894.8, 891.44, 888.28, 885.32, 882.48, 879.84, 877.36, 875, 872.76, 870.68, 868.68, 866.8, 865, 863.28, 861.68, 860.16, 858.72, 857.32, 856, 854.72, 853.52, 852.4, 851.28, 850.24, 849.24, 848.28, 847.36, 846.48, 845.64, 844.84, 844.04, 843.28, 842.56, 841.88, 841.2, 840.56, 839.96, 839.36, 838.76, 838.2, 838.28, 842.44, 848.2, 854.48, 861.16, 868.04, 875.08, 882.28, 889.88, 897.92, 906.32, 915.12, 924.16, 933.52, 943.04, 952.8, 962.68, 972.68, 982.76, 992.96, 1000.16, 1000, 995.8, 989.76, 982.88, 975.72, 968.48, 961.4, 954.52, 947.92, 941.64, 935.6, 929.88, 924.48, 919.4, 914.6, 910.08, 905.84, 901.84, 898.08, 894.52, 891.2, 888.04, 885.08, 882.28, 879.64, 877.16, 874.8, 872.6, 870.48, 868.52, 866.64, 864.84, 863.16, 861.56, 860.04, 858.56, 857.2, 855.88, 854.64, 853.44, 852.28, 851.2, 850.16, 849.16, 848.2, 847.28, 846.4, 845.56, 844.76, 843.96, 843.24, 842.52, 841.8, 841.16, 840.52, 839.88, 839.28, 838.72, 838.16, 838.2, 842.4, 848.12, 854.4, 861.12, 868, 875, 882.24, 889.8, 897.84, 906.24, 915, 924.08, 933.4, 942.96, 952.68, 962.56, 972.56, 982.64, 992.8, 1000, 999.96, 995.72, 989.64, 982.76, 975.6, 968.4, 961.32, 954.44, 947.84, 941.52, 935.52, 929.8, 924.44, 919.32, 914.56, 910.04, 905.8, 901.8, 898.04, 894.48, 891.16, 888, 885.04, 882.24, 879.6, 877.12, 874.76, 872.56, 870.48, 868.48, 866.6, 864.84, 863.12, 861.52, 860, 858.56, 857.16, 855.88, 854.6, 853.4, 852.28, 851.2, 850.16, 849.16, 848.2, 847.28, 846.4, 845.56, 844.72, 843.96, 843.2, 842.48, 841.8, 841.12, 840.48, 839.88, 839.28, 838.72, 838.16, 838.2, 842.4, 848.12, 854.4, 861.08, 867.96, 875, 882.2, 889.8, 897.8, 906.24, 915, 924.04, 933.4, 942.92, 952.64, 962.52, 972.52, 982.6, 992.8, 1000, 999.92, 995.68, 989.6, 982.76, 975.6, 968.36, 961.28, 954.4, 947.8, 941.52, 935.52, 929.8, 924.4, 919.32, 914.56, 910.04, 905.8, 901.8, 898, 894.48, 891.12, 888, 885.04, 882.24, 879.6, 877.12, 874.76, 872.56, 870.44, 868.48, 866.6, 864.8, 863.12, 861.52, 860, 858.56, 857.16, 855.84, 854.6, 853.4, 852.28, 851.16, 850.12, 849.12, 848.2, 847.28, 846.4, 845.56, 844.72, 843.96, 843.2, 842.48, 841.8, 841.12, 840.48, 839.88, 839.28, 838.68, 838.12, 838.2, 842.4, 848.12, 854.4, 861.08, 867.96, 875, 882.2, 889.8, 897.8, 906.24, 915, 924.04, 933.4, 942.92, 952.64, 962.52, 972.52, 982.6, 992.8, 1000, 999.92, 995.68, 989.6, 982.76, 975.56, 968.36, 961.28, 954.4, 947.8, 941.48, 935.52, 929.8, 924.4, 919.32, 914.56, 910.04, 905.8, 901.76, 898, 894.48, 891.12, 888, 885.04, 882.24, 879.6, 877.12, 874.76, 872.56, 870.44, 868.48, 866.6, 864.8, 863.12, 861.52, 860, 858.56, 857.16, 855.84, 854.6, 853.4, 852.28, 851.16, 850.12, 849.12, 848.2, 847.28, 846.4, 845.56, 844.72, 843.96, 843.2, 842.48, 841.8, 841.12, 840.48, 839.88, 839.28, 838.68, 838.12, 838.2, 842.4, 848.12, 854.4, 861.08, 867.96, 875, 882.2, 889.8, 897.8, 906.24, 915, 924.04, 933.36, 942.92, 952.64, 962.52, 972.52, 982.6, 992.76, 1000, 999.88, 995.68, 989.6, 982.76, 975.56, 968.36, 961.28, 954.4, 947.8, 941.52, 935.48, 929.8, 924.4, 919.32, 914.56, 910.04, 905.76, 901.76, 898};
 
 int icycle = 0;
+int i = 0;
 
 void setup()
 {
@@ -77,12 +121,41 @@ void setup()
   dac.begin(0x62);
 
   wdt_enable(WDTO_500MS); //watchdog timer with 500ms time out
+  
+  unsigned status;
+  status = inspirationPressureSensor.begin();
+  if (!status) {
+        Serial.println("Could not find a valid BMP388 (inspiration) sensor, check wiring, address, sensor ID!");
+  }
+  
+  // initialize the Inspiration Flow Sensor
+  measInspFlow.init();
+
+  pinMode(inspirationO2SensorPin, INPUT);
+ 
+ //initialize the O2 sensor smoothing array
+ for (int thisReading = 0; thisReading < numO2readings; thisReading++) {
+    inspirationO2readings[thisReading] = 0; // reset O2readings array
+  }
+
 }
 
 void loop()
 {
   wdt_reset();
   currentMillis = millis(); // capture the latest value of millis()
+  if (i==0){
+    getInspirationPressure();
+    delay(3000);
+    Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
+    Serial.println(inspiratoryPressure);
+    inspiratoryPressureOffset= inspiratoryPressure;
+    i++;                       
+  }
+  getInspirationO2perc();
+  //getInspirationFlow(); // Flow is received through Slave MCU
+  getInspirationPressure();
+
   writeSerial();
 }
 
@@ -130,6 +203,39 @@ void handleExpiratoryValveAperture(int targetInspiratoryAperture)
   }
 }
 
+void getInspirationPressure(){
+  if (currentMillis - previousInspirationPressureReadMillis >= inspirationPressureUpdateInterval) {
+    inspiratoryPressure = (inspirationPressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - inspiratoryPressureOffset;  //CmH2O, two readings for weird stability issues
+    inspiratoryPressure =  (inspirationPressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - inspiratoryPressureOffset; 
+    previousInspirationPressureReadMillis = currentMillis;
+  }
+}
+
+void getInspirationO2perc(){
+  if (currentMillis - previousO2ReadMillis >= inspirationO2UpdateInterval) {
+    inspirationO2total = inspirationO2total - inspirationO2readings[inspirationO2readIndex];
+    // read from the sensor: 
+    inspiration_O2_raw_perc = analogRead(inspirationO2SensorPin);
+    inspiratoryO2Percentage=map(inspiration_O2_raw_perc, 806, 740, 0, 10000)/100.00;
+    inspirationO2readings[inspirationO2readIndex] = inspiratoryO2Percentage;
+    // add the reading to the total:
+    inspirationO2total = inspirationO2total + inspirationO2readings[inspirationO2readIndex];
+    // advance to the next position in the array:
+    inspirationO2readIndex++;
+  
+    // if we're at the end of the array...
+    if (inspirationO2readIndex >= numO2readings) {
+      // ...wrap around to the beginning:
+      inspirationO2readIndex = 0;
+    }
+    // calculate the average:
+    inspiratoryO2Percentage = inspirationO2total / (float) numO2readings + O2Offset;
+    // send it to the computer as ASCII digits
+    previousO2ReadMillis=currentMillis;
+  }
+}
+
+
 void writeSerial()
 {
   if (currentMillis - previousSerialWriteMillis >= serialUpdateInterval)
@@ -148,20 +254,20 @@ void writeSerial()
       icycle = 0;
     }
 
-    O2_percentage = random(0, 10000) / 100.0;
-    //inspiratory_pressure = pressure[icycle]; //random(0,100000)/100.0;
-    //inspiratory_flow = flow[icycle];         //random(0,12000)/100.0;
+    inspiratoryO2percentage = random(0, 10000) / 100.0;
+    //inspiratoryPressure = pressure[icycle]; //random(0,100000)/100.0;
+    //inspiratoryFlow = flow[icycle];         //random(0,12000)/100.0;
     //tidal_volume = volume[icycle];           //random(0,140000)/100.0;
-    inspiratory_pressure=random(0,100000)/100.0;
-    inspiratory_flow=random(0,12000)/100.0;
+    inspiratoryPressure=random(0,100000)/100.0;
+    inspiratoryFlow=random(0,12000)/100.0;
     tidal_volume=random(0,140000)/100.0;
     Serial.print(icycle);
     Serial.print(";");
-    Serial.print(O2_percentage);
+    Serial.print(inspiratoryO2percentage);
     Serial.print(";");
-    Serial.print(inspiratory_pressure);
+    Serial.print(inspiratoryPressure);
     Serial.print(";");
-    Serial.print(inspiratory_flow);
+    Serial.print(inspiratoryFlow);
     Serial.print(";");
     Serial.println(tidal_volume);
 
@@ -203,10 +309,14 @@ void interpretEPICsCommand()
     case targetInspValveAperture: // define target Inspiration Valve Aperture, in this mode the PID is controlled through EPICs.
       intendedChangeValueAuxInt = intendedChangeValue.toInt();
       constrain(intendedChangeValueAuxInt, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE); //sanitize/limit target inspiratory pressure.
+      handleInspiratoryValveAperture(intendedChangeValueAuxInt);
+      break;
 
     case targetExpValveAperture: // define target Expiration Valve Aperture, in this mode the PID is controlled through EPICs.
       intendedChangeValueAuxInt = intendedChangeValue.toInt();
       constrain(intendedChangeValueAuxInt, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE); //sanitize/limit target inspiratory pressure.
+      handleExpiratoryValveAperture(intendedChangeValueAuxInt);
+      break;
 
     case targetState: // current state, as defined by EPICs controller
       //switchOnBoardLEDState(); // for debug purposes only, switchOnBoardLEDState
@@ -238,7 +348,10 @@ void interpretEPICsCommand()
   void interpretSlaveMCUReading()
   {
     {
-      inspiratory_flow = stringFromSlaveMCU.toFloat();
+      unsigned long currentMCUReadMillis = millis();
+      inspiratoryFlow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
+      inspiratoryVolume = inspiratoryVolume + (inspiratoryFlow * (currentMCUReadMillis - previousInspirationFlowReadMillis)/60);
+      previousInspirationFlowReadMillis=currentMCUReadMillis;
     }
     stringFromSlaveMCU = "";
     stringFromSlaveMCUComplete = false;
