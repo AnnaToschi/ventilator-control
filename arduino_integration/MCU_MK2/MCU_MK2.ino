@@ -6,19 +6,12 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP3XX.h>
 
-//Flow Meter includes
-#include <sfm3000wedo.h>
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-Adafruit_BMP3XX inspirationPressureSensor;
+Adafruit_BMP3XX pressureSensor;
 
-SFM3000wedo measInspFlow(64);
 Adafruit_MCP4725 dac;
-
-unsigned int flowOffset = 32768; // Offset for the SFM3300 sensor 
-
-float flowScale = 120.0; // Scale factor for SFM3300
 
 
 
@@ -37,7 +30,7 @@ boolean isInspirationValveOpen = false;
 boolean isExpirationValveOpen = false;
 
 const int expiratoryValvePin = 2;
-const byte inspirationO2SensorPin = A0;
+const byte O2SensorPin = A0;
 
 const float MIN_TARGET_INSP_FLOW = 0.00;       //Litres per minute
 const float MAX_TARGET_INSP_FLOW = 200.00;     //Litres per minute
@@ -66,39 +59,38 @@ const int inspiration = 1;
 const int expiration = 2;
 
 int message_id = 0;
-float tidal_volume;
 
-float inspiratoryO2percentage;
-float inspiratoryPressure = 0.00;
-float inspiratoryFlow;
+float pressure = 0.00;
+float flow;
 
 const int numO2readings = 100;                   //number of smoothing points for the O2 readout
-float inspirationO2readings[numO2readings];      // the readings from the analog input
-int   inspirationO2readIndex = 0;              // the index of the current reading
-float inspirationO2total = 0.00;                  // the running total
-float inspirationO2average = 0.00;                // the average
+float O2readings[numO2readings];      // the readings from the analog input
+int   O2readIndex = 0;              // the index of the current reading
+float O2total = 0.00;                  // the running total
+float O2average = 0.00;                // the average
+int O2RawPercentage=0;
+float O2Percentage=0.00;
 
 unsigned long currentMillis = 0;
-unsigned long previousInspirationFlowReadMillis = 0;
-unsigned long previousInspirationPressureReadMillis = 0;
+unsigned long previousFlowReadMillis = 0;
+unsigned long previousPressureReadMillis = 0;
 unsigned long previousO2ReadMillis = 0;
 unsigned long previousSerialWriteMillis = 0;
 
 const int O2Offset = 28;
 const float pressureOffsetMultiplier = 2.7;
-float inspiratoryPressureOffset = 0.0;
+float pressureOffset = 0.0;
 const float flowOffsetMultiplier = 2.7;
 
 const int serialUpdateInterval = 50;
-const int inspirationO2UpdateInterval = 100;
-const int inspirationFlowUpdateInterval = 50;
-const int InspirationVolumeUpdateInterval = 50;
-const int inspirationPressureUpdateInterval = 50;
+const int O2UpdateInterval = 100;
+const int flowUpdateInterval = 50;
+const int volumeUpdateInterval = 50;
+const int pressureUpdateInterval = 50;
 
-int inspiration_O2_raw_perc=0;
-float inspiratoryO2Percentage=0.00;
 
-float inspiratoryVolume = 0.00;
+
+float tidalVolume = 0.00;
 
 // realistic mockup data for graphs
 //float flow[] = {0, 13.009, 25.037, 28.738, 31.956, 33.654, 34.567, 35.022, 35.212, 35.242, 35.183, 35.079, 34.95, 34.81, 34.668, 35.69, 35.477, 35.183, 34.949, 34.744, 34.554, 8.0112, -12.002, -20.371, -23.919, -25.319, -25.638, -25.362, -24.699, -23.885, -23, -22.049, -21.102, -20.147, -19.188, -18.23, -17.277, -16.341, -15.427, -14.546, -13.709, -12.913, -12.16, -11.448, -10.778, -10.148, -9.5569, -9.0041, -8.4873, -8.0048, -7.5546, -7.1346, -6.7429, -6.3777, -6.0368, -5.7189, -5.422, -5.1449, -4.8858, -4.6437, -4.4172, -4.2052, -4.0065, -3.8204, -3.6458, -3.4818, -3.3278, -3.183, -3.0468, -2.9186, -2.7977, -2.6838, -2.5763, -2.4748, -2.3787, -2.2877, -2.2015, -2.1197, -2.0419, -1.9681, -1.8975, 6.9948, 17.004, 18.669, 20.214, 20.979, 21.365, 21.845, 22.896, 24.205, 25.484, 26.632, 27.622, 28.458, 29.155, 29.727, 30.191, 30.571, 30.881, 31.133, 31.339, 7.127, -10.194, -17.708, -21.042, -22.449, -22.824, -22.587, -21.98, -21.203, -20.316, -19.39, -18.435, -17.475, -16.524, -15.596, -14.703, -13.846, -13.038, -12.275, -11.553, -10.875, -10.236, -9.6373, -9.0771, -8.5538, -8.0653, -7.6098, -7.185, -6.789, -6.4197, -6.0754, -5.754, -5.4542, -5.1744, -4.913, -4.6685, -4.4399, -4.2259, -4.0255, -3.8377, -3.6616, -3.4962, -3.3409, -3.1949, -3.0576, -2.9282, -2.8064, -2.6915, -2.5831, -2.4806, -2.3836, -2.2917, -2.2046, -2.1218, -2.0433, -1.9687, -1.8977, -1.8301, -1.7658, -1.7042, 6.929, 16.961, 18.579, 20.139, 20.863, 21.265, 21.725, 22.653, 23.923, 25.192, 26.333, 27.326, 28.165, 28.864, 29.448, 29.93, 30.325, 30.649, 30.913, 31.132, 7.3089, -9.8614, -17.245, -20.577, -21.943, -22.345, -22.115, -21.516, -20.734, -19.855, -18.923, -17.97, -17.017, -16.076, -15.164, -14.288, -13.456, -12.668, -11.924, -11.224, -10.563, -9.9435, -9.3633, -8.821, -8.3146, -7.8422, -7.4016, -6.9908, -6.6079, -6.2508, -5.9177, -5.6069, -5.3169, -5.0461, -4.7929, -4.5562, -4.3348, -4.1274, -3.9332, -3.7511, -3.5802, -3.4198, -3.269, -3.1272, -2.9938, -2.8681, -2.7497, -2.638, -2.5325, -2.4327, -2.3381, -2.2485, -2.1635, -2.0828, -2.0062, -1.9333, -1.8639, -1.7979, -1.735, -1.6747, 6.9013, 16.945, 18.554, 20.108, 20.843, 21.25, 21.704, 22.611, 23.881, 25.146, 26.281, 27.274, 28.115, 28.821, 29.405, 29.89, 30.286, 30.612, 30.877, 31.1, 7.3177, -9.5395, -17.171, -20.488, -21.906, -22.279, -22.049, -21.445, -20.668, -19.785, -18.851, -17.901, -16.947, -16.008, -15.095, -14.221, -13.395, -12.612, -11.87, -11.173, -10.515, -9.8986, -9.3211, -8.7815, -8.2776, -7.8077, -7.3698, -6.9613, -6.5801, -6.2228, -5.8916, -5.5834, -5.2943, -5.025, -4.7734, -4.5383, -4.318, -4.1118, -3.9185, -3.7373, -3.5673, -3.4076, -3.2576, -3.1165, -2.9837, -2.8587, -2.7407, -2.6295, -2.5245, -2.4251, -2.3309, -2.2417, -2.157, -2.0767, -2.0003, -1.9277, -1.8585, -1.7928, -1.7301, -1.6703, 6.9099, 16.938, 18.547, 20.102, 20.836, 21.245, 21.7, 22.605, 23.871, 25.136, 26.27, 27.263, 28.104, 28.811, 29.396, 29.88, 30.277, 30.604, 30.87, 31.093, 7.3374, -9.6585, -17.167, -20.484, -21.876, -22.263, -22.037, -21.432, -20.656, -19.772, -18.84, -17.888, -16.935, -15.995, -15.083, -14.21, -13.383, -12.602, -11.864, -11.165, -10.508, -9.8919, -9.315, -8.7758, -8.2725, -7.8028, -7.3649, -6.9566, -6.5759, -6.221, -5.8899, -5.5809, -5.2926, -5.0234, -4.7717, -4.5364, -4.3162, -4.11, -3.9169, -3.7358, -3.5658, -3.4062, -3.2563, -3.1152, -2.9825, -2.8575, -2.7397, -2.6285, -2.5235, -2.4241, -2.33, -2.2408, -2.1562, -2.0759, -1.9995, -1.9269, -1.8578, -1.7921, -1.7294, -1.6694, 6.9101, 16.937, 18.546, 20.101, 20.836, 21.244, 21.698, 22.603, 23.869, 25.134, 26.269, 27.261, 28.103, 28.81, 29.394, 29.879, 30.276, 30.603, 30.869, 31.092, 7.3385, -9.6223, -17.163, -20.479, -21.888, -22.256, -22.035, -21.432, -20.654, -19.769, -18.837, -17.886, -16.933, -15.993, -15.081, -14.214, -13.386, -12.603, -11.862, -11.163, -10.506, -9.8899, -9.3131, -8.774, -8.2708, -7.8012, -7.3634, -6.9552, -6.5747, -6.2198, -5.8888, -5.5799, -5.2917, -5.0224, -4.7708, -4.5356, -4.3154, -4.1093, -3.9162, -3.7351, -3.5652, -3.4057, -3.2557, -3.1147, -2.9821, -2.8572, -2.7393, -2.6282, -2.5231, -2.4238, -2.3297, -2.2405, -2.1559, -2.0756, -1.9992, -1.9267, -1.8576, -1.7919, -1.7292, -1.6692, 6.91, 16.937, 18.546, 20.101, 20.835, 21.244, 21.698, 22.603, 23.869, 25.134, 26.268, 27.261, 28.102, 28.809, 29.394, 29.879, 30.275, 30.602, 30.868, 31.092, 7.3386, -9.6331, -17.143, -20.474, -21.861, -22.24, -22.03, -21.434, -20.651, -19.768, -18.836, -17.884, -16.932, -15.993, -15.08, -14.21, -13.384, -12.601, -11.859, -11.159, -10.506, -9.8899, -9.3132, -8.7741, -8.2708, -7.8013, -7.3635, -6.9553, -6.5747, -6.2198, -5.8889, -5.58, -5.2918, -5.0224, -4.7708, -4.5357, -4.3155, -4.1094, -3.9163, -3.7352, -3.5653, -3.4057, -3.2558, -3.1148, -2.9821, -2.8571, -2.7393, -2.6281, -2.5231, -2.4238, -2.3297, -2.2405, -2.1559, -2.0756, -1.9993, -1.9267, -1.8576, -1.7919, -1.7292, -1.6693, 6.91, 16.937, 18.546, 20.101, 20.835, 21.244, 21.698, 22.603, 23.869, 25.134, 26.268, 27.261, 28.102, 28.809, 29.394, 29.879, 30.275, 30.602, 30.868, 31.092, 7.3387, -9.5957, -17.145, -20.475, -21.861, -22.24, -22.03, -21.433, -20.651, -19.768, -18.835, -17.885, -16.931, -15.993, -15.08, -14.21, -13.384, -12.6, -11.858, -11.158};
@@ -123,19 +115,16 @@ void setup()
   wdt_enable(WDTO_500MS); //watchdog timer with 500ms time out
   
   unsigned status;
-  status = inspirationPressureSensor.begin();
+  status = pressureSensor.begin();
   if (!status) {
         Serial.println("Could not find a valid BMP388 (inspiration) sensor, check wiring, address, sensor ID!");
   }
   
-  // initialize the Inspiration Flow Sensor
-  measInspFlow.init();
-
-  pinMode(inspirationO2SensorPin, INPUT);
+  pinMode(O2SensorPin, INPUT);
  
  //initialize the O2 sensor smoothing array
  for (int thisReading = 0; thisReading < numO2readings; thisReading++) {
-    inspirationO2readings[thisReading] = 0; // reset O2readings array
+    O2readings[thisReading] = 0; // reset O2readings array
   }
 
 }
@@ -145,16 +134,16 @@ void loop()
   wdt_reset();
   currentMillis = millis(); // capture the latest value of millis()
   if (i==0){
-    getInspirationPressure();
+    getPressure();
     delay(3000);
     Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
-    Serial.println(inspiratoryPressure);
-    inspiratoryPressureOffset= inspiratoryPressure;
+    Serial.println(pressure);
+    pressureOffset= pressure;
     i++;                       
   }
-  getInspirationO2perc();
+  getO2perc();
   //getInspirationFlow(); // Flow is received through Slave MCU
-  getInspirationPressure();
+  getPressure();
 
   writeSerial();
 }
@@ -174,12 +163,12 @@ void switchOnBoardLEDState()
   }
 }
 
-void handleInspiratoryFlow(float targetInspiratoryFlow)
+void handleflow(float targetflow)
 {
   switchOnBoardLEDState();
 }
 
-void handleInspiratoryPressure(float targetInspiratoryPressure)
+void handlepressure(float targetpressure)
 {
   switchOnBoardLEDState();
 }
@@ -203,33 +192,33 @@ void handleExpiratoryValveAperture(int targetInspiratoryAperture)
   }
 }
 
-void getInspirationPressure(){
-  if (currentMillis - previousInspirationPressureReadMillis >= inspirationPressureUpdateInterval) {
-    inspiratoryPressure = (inspirationPressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - inspiratoryPressureOffset;  //CmH2O, two readings for weird stability issues
-    inspiratoryPressure =  (inspirationPressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - inspiratoryPressureOffset; 
-    previousInspirationPressureReadMillis = currentMillis;
+void getPressure(){
+  if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval) {
+    pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - pressureOffset;  //CmH2O, two readings for weird stability issues
+    pressure =  (pressureSensor.readPressure() / 100.0 * 1.019744288922 / pressureOffsetMultiplier) - pressureOffset; 
+    previousPressureReadMillis = currentMillis;
   }
 }
 
-void getInspirationO2perc(){
-  if (currentMillis - previousO2ReadMillis >= inspirationO2UpdateInterval) {
-    inspirationO2total = inspirationO2total - inspirationO2readings[inspirationO2readIndex];
+void getO2perc(){
+  if (currentMillis - previousO2ReadMillis >= O2UpdateInterval) {
+    O2total = O2total - O2readings[O2readIndex];
     // read from the sensor: 
-    inspiration_O2_raw_perc = analogRead(inspirationO2SensorPin);
-    inspiratoryO2Percentage=map(inspiration_O2_raw_perc, 806, 740, 0, 10000)/100.00;
-    inspirationO2readings[inspirationO2readIndex] = inspiratoryO2Percentage;
+    O2RawPercentage = analogRead(O2SensorPin);
+    O2Percentage=map(O2RawPercentage, 806, 740, 0, 10000)/100.00;
+    O2readings[O2readIndex] = O2Percentage;
     // add the reading to the total:
-    inspirationO2total = inspirationO2total + inspirationO2readings[inspirationO2readIndex];
+    O2total = O2total + O2readings[O2readIndex];
     // advance to the next position in the array:
-    inspirationO2readIndex++;
+    O2readIndex++;
   
     // if we're at the end of the array...
-    if (inspirationO2readIndex >= numO2readings) {
+    if (O2readIndex >= numO2readings) {
       // ...wrap around to the beginning:
-      inspirationO2readIndex = 0;
+      O2readIndex = 0;
     }
     // calculate the average:
-    inspiratoryO2Percentage = inspirationO2total / (float) numO2readings + O2Offset;
+    O2Percentage = O2total / (float) numO2readings + O2Offset;
     // send it to the computer as ASCII digits
     previousO2ReadMillis=currentMillis;
   }
@@ -254,22 +243,22 @@ void writeSerial()
       icycle = 0;
     }
 
-    //inspiratoryO2percentage = random(0, 10000) / 100.0;
-    //inspiratoryPressure = pressure[icycle]; //random(0,100000)/100.0;
-    //inspiratoryFlow = flow[icycle];         //random(0,12000)/100.0;
+    //O2Percentage = random(0, 10000) / 100.0;
+    //pressure = pressure[icycle]; //random(0,100000)/100.0;
+    //flow = flow[icycle];         //random(0,12000)/100.0;
     //tidal_volume = volume[icycle];           //random(0,140000)/100.0;
-    //inspiratoryPressure=random(0,100000)/100.0;
-    //inspiratoryFlow=random(0,12000)/100.0;
+    //pressure=random(0,100000)/100.0;
+    //flow=random(0,12000)/100.0;
     //tidal_volume=random(0,140000)/100.0;
     Serial.print(message_id);
     Serial.print(";");
-    Serial.print(inspiratoryO2percentage);
+    Serial.print(O2Percentage);
     Serial.print(";");
-    Serial.print(inspiratoryPressure);
+    Serial.print(pressure);
     Serial.print(";");
-    Serial.print(inspiratoryFlow);
+    Serial.print(flow);
     Serial.print(";");
-    Serial.println(tidal_volume);
+    Serial.println(tidalVolume);
 
     previousSerialWriteMillis = currentMillis;
   }
@@ -297,13 +286,13 @@ void interpretEPICsCommand()
     case targetInspFlow: // define target Inspiration Flow in lpm, to be handled through the microcontroller/arduino PID controller.
       intendedChangeValueAuxFloat = intendedChangeValue.toFloat();
       constrain(intendedChangeValueAuxFloat, MIN_TARGET_INSP_FLOW, MAX_TARGET_INSP_FLOW); //sanitize/limit target inspiratory flow.
-      handleInspiratoryFlow(intendedChangeValueAuxFloat);
+      handleflow(intendedChangeValueAuxFloat);
       break;
 
     case targetInspPressure: // define target Inspiration Pressure in cmH2O, to be handled through the microcontroller/arduino PID controller.
       intendedChangeValueAuxFloat = intendedChangeValue.toFloat();
       constrain(intendedChangeValueAuxFloat, MIN_TARGET_INSP_PRESSURE, MAX_TARGET_INSP_PRESSURE); //sanitize/limit target inspiratory pressure.
-      handleInspiratoryPressure(intendedChangeValueAuxFloat);
+      handlepressure(intendedChangeValueAuxFloat);
       break;
 
     case targetInspValveAperture: // define target Inspiration Valve Aperture, in this mode the PID is controlled through EPICs.
@@ -325,7 +314,8 @@ void interpretEPICsCommand()
       {
         switch (intendedChangeValueAuxInt)
         {
-        case inspiration: // close expiration valve. Opening of the inspiration valve will be handled by a direct command through EPICs
+        case inspiration: // close expiration valve. Opening of the inspiration valve will be handled by a direct command through EPICs, reset tidalVolume
+          tidalVolume=0.00;
           handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
           break;
         case expiration: // close inspiration valve, open expiration valve
@@ -350,9 +340,9 @@ void interpretEPICsCommand()
   {
     {
       unsigned long currentMCUReadMillis = millis();
-      inspiratoryFlow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
-      inspiratoryVolume = inspiratoryVolume + (inspiratoryFlow * (currentMCUReadMillis - previousInspirationFlowReadMillis)/60);
-      previousInspirationFlowReadMillis=currentMCUReadMillis;
+      flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
+      tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis)/60);
+      previousFlowReadMillis=currentMCUReadMillis;
     }
     stringFromSlaveMCU = "";
     stringFromSlaveMCUComplete = false;
