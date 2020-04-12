@@ -254,14 +254,14 @@ void writeSerial()
       icycle = 0;
     }
 
-    inspiratoryO2percentage = random(0, 10000) / 100.0;
+    //inspiratoryO2percentage = random(0, 10000) / 100.0;
     //inspiratoryPressure = pressure[icycle]; //random(0,100000)/100.0;
     //inspiratoryFlow = flow[icycle];         //random(0,12000)/100.0;
     //tidal_volume = volume[icycle];           //random(0,140000)/100.0;
-    inspiratoryPressure=random(0,100000)/100.0;
-    inspiratoryFlow=random(0,12000)/100.0;
-    tidal_volume=random(0,140000)/100.0;
-    Serial.print(icycle);
+    //inspiratoryPressure=random(0,100000)/100.0;
+    //inspiratoryFlow=random(0,12000)/100.0;
+    //tidal_volume=random(0,140000)/100.0;
+    Serial.print(message_id);
     Serial.print(";");
     Serial.print(inspiratoryO2percentage);
     Serial.print(";");
