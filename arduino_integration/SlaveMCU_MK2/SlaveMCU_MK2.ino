@@ -52,7 +52,10 @@ void getInspirationFlow(){
         else {
             sensorConsecutiveErrorReadCount++;
         }
-    }
+    }else if(sensorConsecutiveErrorReadCount > 0)
+      {
+        sensorConsecutiveErrorReadCount = 0; // reset the sensor consecutive error read count after a good 
+      }
     previousInspirationFlowReadMillis=currentMillis;
   }
 }
