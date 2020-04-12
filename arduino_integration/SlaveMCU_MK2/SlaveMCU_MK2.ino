@@ -35,7 +35,9 @@ void loop() {
   writeSerial(); // write flow reading towards Master MCU
 }
 
-void(* resetMCU) (void) = 0; //declare reset function @ address 0
+void resetMCU(){
+  delay(1000); // blocking the main loop for 1000ms will trigger the watchdogTimer
+}
 
 void getInspirationFlow(){
   if (currentMillis - previousInspirationFlowReadMillis >= flowUpdateInterval) {
