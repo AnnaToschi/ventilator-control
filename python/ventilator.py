@@ -123,11 +123,13 @@ class SettingsWidget(QWidget):
             """
 
         self.setTinspScrollBar.setStyleSheet(self.scrollbarSettings)
+        self.setTplateauScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setRRScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setPEEPScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setVtScrollBar.setStyleSheet(self.scrollbarSettings)
         
         self.setTinspScrollBar.setPageStep(1)
+        self.setTplateauScrollBar.setPageStep(1)
         self.setTinspScrollBar.setSingleStep(1)
         self.setRRScrollBar.setPageStep(1)
         self.setPEEPScrollBar.setPageStep(1)
@@ -138,8 +140,11 @@ class SettingsWidget(QWidget):
         self.setRRScrollBar.setMaximum(30*10)
         self.setPEEPScrollBar.setMaximum(caget('Raspi:central:Set-PEEP.DRVH'))
         self.setVtScrollBar.setMaximum(caget('Raspi:central:Set-Vt.DRVH'))
+        self.setTplateauScrollBar.setMaximum(caget('Raspi:central:Set-Tinsp.DRVH')*10)
+
 
         self.setTinspScrollBar.setMinimum(caget('Raspi:central:Set-Tinsp.DRVL')*10)
+        self.setTplateauScrollBar.setMinimum(caget('Raspi:central:Set-Tinsp.DRVL')*10)
         self.setRRScrollBar.setMinimum(caget('Raspi:central:Set-RespRate.DRVL')*10)
         self.setPEEPScrollBar.setMinimum(caget('Raspi:central:Set-PEEP.DRVL'))
         self.setVtScrollBar.setMinimum(caget('Raspi:central:Set-Vt.DRVL'))
@@ -149,12 +154,14 @@ class SettingsWidget(QWidget):
     def readInitialValues(self):
 
         self.valueTinsp = caget('Raspi:central:Set-Tinsp')
+        self.valueTplateau = caget('Raspi:central:Set-Tplateau')
         self.valueRR = caget('Raspi:central:Set-RespRate')
         self.valueVt = caget('Raspi:central:Set-Vt')
         self.valuePEEP = caget('Raspi:central:Set-PEEP')
 
 
         self.setTinspScrollBar.setValue(self.valueTinsp * 10)
+        self.setTplateauScrollBar.setValue(self.valueTplateau * 10)
         self.setRRScrollBar.setValue(self.valueRR*10)
         self.setPEEPScrollBar.setValue(self.valuePEEP)
         self.setVtScrollBar.setValue(self.valueVt)
@@ -162,11 +169,13 @@ class SettingsWidget(QWidget):
     def updateValues(self): 
 
         self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
+        self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau))
         self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
         self.setVtvar_setting.setText("{:.0f}".format(self.valueVt))
         self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP))
 
         self.valueTinsp = (self.setTinspScrollBar.value() / 10)
+        self.valueTplateau = (self.setTplateauScrollBar.value() / 10)
         self.valueRR = (self.setRRScrollBar.value() / 10)
         self.valuePEEP = self.setPEEPScrollBar.value()
         self.valueVt = self.setVtScrollBar.value()
@@ -175,6 +184,7 @@ class SettingsWidget(QWidget):
     def commitValueChanges(self):
         print('Commiting values')
         self.setValuesTinsp()
+        self.setValuesTplateau()
         self.setValuesRR()
         self.setValuesVt()
         self.setValuesPEEP()
@@ -184,9 +194,11 @@ class SettingsWidget(QWidget):
         caput('Raspi:central:Set-Tinsp', self.valueTinsp)
         self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
 
-        
+    def setValuesTplateau(self):
+        self.valueTplateau = (self.setTplateauScrollBar.value() / 10)
+        caput('Raspi:central:Set-Tplateau', self.valueTplateau)
+        self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau))
 
-        #self.setRRScrollBar.setMaximum(caget('Raspi:central:Set-RespRate.DRVH'))
 
     def setValuesRR(self):
         self.valueRR = (self.setRRScrollBar.value() / 10)
@@ -195,7 +207,7 @@ class SettingsWidget(QWidget):
         #print(self.valueRR )
         self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
 
-        if(self.valueTinsp>(60/self.valueRR - 0.3)):
+        if((self.valueTinsp+self.valueTplateau)>(60/self.valueRR - 0.3)):
             self.parent().parent().msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
             self.parent().parent().msg.setIcon(QMessageBox.Warning)
             self.parent().parent().msg.exec_()

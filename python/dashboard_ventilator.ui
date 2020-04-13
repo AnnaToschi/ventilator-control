@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1093</width>
-    <height>609</height>
+    <width>1280</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>523</y>
-     <width>701</width>
+     <x>70</x>
+     <y>610</y>
+     <width>851</width>
      <height>72</height>
     </rect>
    </property>
@@ -223,8 +223,8 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>510</y>
-     <width>841</width>
+     <y>597</y>
+     <width>961</width>
      <height>16</height>
     </rect>
    </property>
@@ -236,7 +236,7 @@
    <property name="geometry">
     <rect>
      <x>123</x>
-     <y>399</y>
+     <y>479</y>
      <width>141</width>
      <height>51</height>
     </rect>
@@ -249,7 +249,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>12</y>
+     <y>60</y>
      <width>139</width>
      <height>401</height>
     </rect>
@@ -386,7 +386,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>10</y>
+     <y>60</y>
      <width>151</width>
      <height>403</height>
     </rect>
@@ -535,8 +535,8 @@
   <widget class="QPushButton" name="setButton">
    <property name="geometry">
     <rect>
-     <x>890</x>
-     <y>520</y>
+     <x>1020</x>
+     <y>620</y>
      <width>81</width>
      <height>61</height>
     </rect>
@@ -552,8 +552,8 @@ Values</string>
   <widget class="QPushButton" name="alarmsButton">
    <property name="geometry">
     <rect>
-     <x>990</x>
-     <y>520</y>
+     <x>1120</x>
+     <y>620</y>
      <width>71</width>
      <height>61</height>
     </rect>
@@ -571,7 +571,7 @@ ALARMS</string>
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>469</y>
+     <y>549</y>
      <width>35</width>
      <height>35</height>
     </rect>
@@ -596,7 +596,7 @@ ALARMS</string>
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>469</y>
+     <y>549</y>
      <width>104</width>
      <height>35</height>
     </rect>
@@ -621,7 +621,7 @@ ALARMS</string>
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>430</y>
+     <y>510</y>
      <width>149</width>
      <height>21</height>
     </rect>
@@ -645,10 +645,10 @@ ALARMS</string>
   <widget class="QStackedWidget" name="stacked_area">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>10</y>
-     <width>660</width>
-     <height>501</height>
+     <x>410</x>
+     <y>40</y>
+     <width>810</width>
+     <height>520</height>
     </rect>
    </property>
    <widget class="QWidget" name="verticalStackedWidget_4Page1_2">
