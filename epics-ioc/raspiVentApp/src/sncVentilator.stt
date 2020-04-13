@@ -192,7 +192,8 @@ ss VolControl {
         //     InspExpState = 2;
         //     pvPut(InspExpState);
         // } state Expiration_VC
-        when (SensorMaxVol >= SetVt) { //we should add condition if SensorPressure>= SetPpeak
+
+        when (SensorVolume >= SetVt) { //we should add condition if SensorPressure>= SetPpeak
             printf("sncVentilator: VC Mode: Changing to Expiration Vol\n");
             printf("SensorMaxVol = %.2f , SetVt = %.2f, ValveInsp = %d \n", SensorMaxVol,SetVt, ValveInsp);
             ValveInsp = 0; // Close Vinsp
@@ -201,7 +202,7 @@ ss VolControl {
             pvPut(ValveExp);
             SensorPpeak = SensorPressure;
             pvPut(SensorPpeak);
-            SensorMaxVol = SensorVolumeCalibrated;
+            SensorMaxVol = SensorVolume;
             pvPut(SensorMaxVol);
             // if (CycleTime < (SetTinsp - 0.3)){
             //     ValveInsp = LastVinspVal - 5;
@@ -227,7 +228,7 @@ ss VolControl {
             pvPut(ValveExp);
             SensorPpeak = SensorPressure;
             pvPut(SensorPpeak);
-            SensorMaxVol = SensorVolumeCalibrated;
+            SensorMaxVol = SensorVolume;
             pvPut(SensorMaxVol);
         } state Expiration_VC
 

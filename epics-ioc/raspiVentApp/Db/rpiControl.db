@@ -86,7 +86,7 @@ record(ao,"$(P)$(R)Ref-Pinsp-PC"){
 #    field(PINI,"YES")
 }
 record(calc, "$(P)$(R)TIME-COUNTER") {
-    field(DESC, "0.1 s counter")
+    field(DESC, "0.05 s counter")
     field(INPA, "$(P)$(R)TIME-COUNTER")
     field(INPB, "$(P)$(R)RR-MAXTIME NPP MS")
     field(PREC,"2")

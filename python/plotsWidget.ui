@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>500</height>
+    <width>810</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <property name="geometry">
     <rect>
      <x>12</x>
-     <y>320</y>
-     <width>637</width>
+     <y>310</y>
+     <width>771</width>
      <height>171</height>
     </rect>
    </property>
@@ -40,12 +40,12 @@
     </brush>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>12</x>
-     <y>20</y>
-     <width>637</width>
+     <y>10</y>
+     <width>771</width>
      <height>291</height>
     </rect>
    </property>
@@ -95,6 +95,42 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="manualPauseButton">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>490</y>
+     <width>91</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(254, 192, 16,177);
+color: rgb(3, 43, 91);</string>
+   </property>
+   <property name="text">
+    <string>Manual
+Pause</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="manualVentButton">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>490</y>
+     <width>91</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(254, 192, 16,177);
+color: rgb(3, 43, 91);</string>
+   </property>
+   <property name="text">
+    <string>Manual
+Ventilation</string>
+   </property>
   </widget>
  </widget>
  <customwidgets>
