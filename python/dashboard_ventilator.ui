@@ -448,7 +448,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>PPeak</string>
+       <string>PIP</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -523,9 +523,9 @@
    <property name="geometry">
     <rect>
      <x>360</x>
-     <y>20</y>
+     <y>6</y>
      <width>20</width>
-     <height>481</height>
+     <height>581</height>
     </rect>
    </property>
    <property name="orientation">
@@ -669,7 +669,7 @@ ALARMS</string>
    <property name="geometry">
     <rect>
      <x>380</x>
-     <y>10</y>
+     <y>9</y>
      <width>371</width>
      <height>31</height>
     </rect>
@@ -681,13 +681,40 @@ ALARMS</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(3, 43, 91);</string>
+    <string notr="true">background-color: rgba(255, 255, 255, 0);
+color: rgb(3, 43, 91);</string>
    </property>
    <property name="text">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#011e3d;&quot;&gt;Current Mode&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="Line" name="line_8">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>35</y>
+     <width>921</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="Line" name="line_4">
+   <property name="geometry">
+    <rect>
+     <x>750</x>
+     <y>6</y>
+     <width>20</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
    </property>
   </widget>
  </widget>

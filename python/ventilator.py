@@ -4,93 +4,10 @@ import pyqtgraph as pg
 import sys
 from epics import caget, caput
 import numpy as np
+from qrangeslider import QRangeSlider
 
-x_axis_length = 200;
-MAXVAL = 650000
 
-class RangeSliderClass(QtWidgets.QWidget):
-
-    def __init__(self):
-        super().__init__()
-
-        self.minTime = 0
-        self.maxTime = 0
-        self.minRangeTime = 0
-        self.maxRangeTime = 0
-
-        self.sliderMin = MAXVAL
-        self.sliderMax = MAXVAL
-
-        self.setupUi(self)
-
-    def setupUi(self, RangeSlider):
-        RangeSlider.setObjectName("RangeSlider")
-        RangeSlider.resize(1000, 65)
-        RangeSlider.setMaximumSize(QtCore.QSize(16777215, 65))
-        self.RangeBarVLayout = QtWidgets.QVBoxLayout(RangeSlider)
-        self.RangeBarVLayout.setContentsMargins(5, 0, 5, 0)
-        self.RangeBarVLayout.setSpacing(0)
-        self.RangeBarVLayout.setObjectName("RangeBarVLayout")
-
-        self.slidersFrame = QtWidgets.QFrame(RangeSlider)
-        self.slidersFrame.setMaximumSize(QtCore.QSize(16777215, 25))
-        self.slidersFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.slidersFrame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.slidersFrame.setObjectName("slidersFrame")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.slidersFrame)
-        self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
-        self.horizontalLayout.setContentsMargins(5, 2, 5, 2)
-        self.horizontalLayout.setSpacing(0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-
-        ## Start Slider Widget
-        self.startSlider = QtWidgets.QSlider(self.slidersFrame)
-        self.startSlider.setMaximum(self.sliderMin)
-        self.startSlider.setMinimumSize(QtCore.QSize(100, 5))
-        self.startSlider.setMaximumSize(QtCore.QSize(16777215, 10))
-
-        font = QtGui.QFont()
-        font.setKerning(True)
-
-        self.startSlider.setFont(font)
-        self.startSlider.setAcceptDrops(False)
-        self.startSlider.setAutoFillBackground(False)
-        self.startSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.startSlider.setInvertedAppearance(True)
-        self.startSlider.setObjectName("startSlider")
-        self.startSlider.setValue(MAXVAL)
-        self.startSlider.valueChanged.connect(self.handleStartSliderValueChange)
-        self.horizontalLayout.addWidget(self.startSlider)
-
-        ## End Slider Widget
-        self.endSlider = QtWidgets.QSlider(self.slidersFrame)
-        self.endSlider.setMaximum(MAXVAL)
-        self.endSlider.setMinimumSize(QtCore.QSize(100, 5))
-        self.endSlider.setMaximumSize(QtCore.QSize(16777215, 10))
-        self.endSlider.setTracking(True)
-        self.endSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.endSlider.setObjectName("endSlider")
-        self.endSlider.setValue(self.sliderMax)
-        self.endSlider.valueChanged.connect(self.handleEndSliderValueChange)
-
-        #self.endSlider.sliderReleased.connect(self.handleEndSliderValueChange)
-
-        self.horizontalLayout.addWidget(self.endSlider)
-
-        self.RangeBarVLayout.addWidget(self.slidersFrame)
-
-        #self.retranslateUi(RangeSlider)
-        QtCore.QMetaObject.connectSlotsByName(RangeSlider)
-
-        self.show()
-
-    @QtCore.pyqtSlot(int)
-    def handleStartSliderValueChange(self, value):
-        self.startSlider.setValue(value)
-
-    @QtCore.pyqtSlot(int)
-    def handleEndSliderValueChange(self, value):
-        self.endSlider.setValue(value)
+X_AXIS_LENGTH = 200;
 
 
 class VentilatorWindow(QDialog):
@@ -102,12 +19,19 @@ class VentilatorWindow(QDialog):
 
         self.PlotsWidget = PlotsWidget(parent=self)
         self.SettingsWidget_VC = SettingsWidget_VC(parent=self)
+        self.SettingsWidget_PC = SettingsWidget_PC(parent=self)
+        self.SettingsWidget_PS = SettingsWidget_PS(parent=self)
+        self.AlarmsWidget = AlarmsWidget(parent=self)
         self.stacked_area.addWidget(self.PlotsWidget)
         self.SettingsWidget_VC.readInitialValues()
         self.stacked_area.addWidget(self.SettingsWidget_VC)
+        self.stacked_area.addWidget(self.SettingsWidget_PC)
+        self.stacked_area.addWidget(self.SettingsWidget_PS)
+        self.stacked_area.addWidget(self.AlarmsWidget)
         self.stacked_area.setCurrentWidget(self.PlotsWidget)
         self.timer.timeout.connect(self.PlotsWidget.updateGraphs)
         self.setButton.clicked.connect(self.toggleStackedArea)
+        self.alarmsButton.clicked.connect(self.toggleStackedArea)
         self.stackedArea_flag = 0
         self.chooseOPMODEbutton.addItem("Volume Control")
         self.chooseOPMODEbutton.addItem("Pressure Control")
@@ -126,8 +50,6 @@ class VentilatorWindow(QDialog):
 
 
         self.msg = QMessageBox()
-        awindow = RangeSliderClass()
-
         self.setWindowTitle("Ventilator")
 
     def start_timer(self):
@@ -151,9 +73,15 @@ class VentilatorWindow(QDialog):
             self.currentModeLabel.setText('Pressure Support')
             caput('Raspi:central:OPMODE',4)
 
+    def slideroptions(self):
+        pass
+
 
     def toggleStackedArea(self):
-        if self.stackedArea_flag == 1: #I am in the settings view and want to change to show plots
+        sending_button = self.sender()
+        if sending_button.objectName() == 'alarmsButton':
+            self.stacked_area.setCurrentWidget(self.AlarmsWidget)
+        elif self.stackedArea_flag == 1: #I am in the settings view and want to change to show plots
             self.stacked_area.setCurrentWidget(self.PlotsWidget)
             self.PlotsWidget.initializeGraphs()
             self.timer.timeout.connect(self.PlotsWidget.updateGraphs)
@@ -177,8 +105,22 @@ class VentilatorWindow(QDialog):
             self.setButton.setStyleSheet("background-color: #00e64d;");
         elif self.stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Control':
             print('Pressure Control')
+            try:
+                self.timer.timeout.disconnect(self.PlotsWidget.updateGraphs)
+            except:
+                print('nothing to disconnect')
+            self.stacked_area.setCurrentWidget(self.SettingsWidget_PC)
+            self.stackedArea_flag = 1
+            self.setButton.setStyleSheet("background-color: #00e64d;");
         elif self.stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Support':
             print('Pressure Support')
+            try:
+                self.timer.timeout.disconnect(self.PlotsWidget.updateGraphs)
+            except:
+                print('nothing to disconnect')
+            self.stacked_area.setCurrentWidget(self.SettingsWidget_PS)
+            self.stackedArea_flag = 1
+            self.setButton.setStyleSheet("background-color: #00e64d;");
 
     def updateBottomBarValues(self):
         self.sensorMVvar.setText("{:.1f}".format(caget('Raspi:central:Minute-Volume')))
@@ -341,52 +283,23 @@ class SettingsWidget_VC(QWidget):
             caput('Raspi:central:Set-PEEP',self.valuePEEP)
             self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP))
 
-
-        
-
-
-
-
+class SettingsWidget_PC(QWidget):
+    def __init__(self, parent=None):
+        super(SettingsWidget_PC, self).__init__(parent)
+        uic.loadUi("settingsWidget_PC.ui", self)
 
 
-    #     self.setValuesTinsp()
-    #     self.setValuesTplateau()
-    #     self.setValuesRR()
-    #     self.setValuesVt()
-    #     self.setValuesPEEP()
-
-    # def setValuesTinsp(self):
-    #     self.valueTinsp = (self.setTinspScrollBar.value() / 10)
-    #     caput('Raspi:central:Set-Tinsp', self.valueTinsp)
-    #     self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
-
-    # def setValuesTplateau(self):
-    #     self.valueTplateau = (self.setTplateauScrollBar.value() / 10)
-    #     caput('Raspi:central:Set-Tplateau', self.valueTplateau)
-    #     self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau))
+class SettingsWidget_PS(QWidget):
+    def __init__(self, parent=None):
+        super(SettingsWidget_PS, self).__init__(parent)
+        uic.loadUi("settingsWidget_PS.ui", self)
 
 
-    # def setValuesRR(self):
-    #     self.valueRR = (self.setRRScrollBar.value() / 10)
-    #     if((self.valueTinsp+self.valueTplateau)>(60/self.valueRR - 0.3)):
-    #         self.parent().parent().msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
-    #         self.parent().parent().msg.setIcon(QMessageBox.Warning)
-    #         self.parent().parent().msg.exec_()
-    #     else:       
-    #         caput('Raspi:central:Set-RespRate',self.valueRR)
-    #         self.valueRR = (caget('Raspi:central:Set-RespRate') )
-    #         #print(self.valueRR )
-    #         self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
-        
-    # def setValuesVt(self):
-    #     self.valueVt = self.setVtScrollBar.value()
-    #     caput('Raspi:central:Set-Vt',self.valueVt)
-    #     self.setVtvar_setting.setText("{:.0f}".format(self.valueVt))
 
-    # def setValuesPEEP(self):
-    #     self.valuePEEP = self.setPEEPScrollBar.value()
-    #     caput('Raspi:central:Set-PEEP',self.valuePEEP)
-    #     self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP))
+class AlarmsWidget(QWidget):
+    def __init__(self, parent=None):
+        super(AlarmsWidget, self).__init__(parent)
+        uic.loadUi("alarmsWidget.ui", self)
 
 
 class PlotsWidget(QWidget):
@@ -394,14 +307,9 @@ class PlotsWidget(QWidget):
         super(PlotsWidget, self).__init__(parent)
         uic.loadUi("plotsWidget.ui", self)
 
-        #self.manualVentButton.setCheckable(True)
-        #self.manualVentButton.toggle()
         self.manualVentButton.pressed.connect(self.manualVentilationPressed)
         self.manualVentButton.released.connect(self.manualVentilationReleased)
 
-
-        #self.manualPauseButton.setCheckable(True)
-        #self.manualPauseButton.toggle()
         self.manualPauseButton.pressed.connect(self.manualPausePressed)
         self.manualPauseButton.released.connect(self.manualVentilationReleased)
 
@@ -412,9 +320,9 @@ class PlotsWidget(QWidget):
         self.plotcolor = QtGui.QColor(26, 76, 156)
         self.PLTWIDTH = 2
 
-        self.basePlotFlow = pg.PlotCurveItem([0]*x_axis_length, pen = self.plotcolor)
-        self.basePlotVol = pg.PlotCurveItem([0]*x_axis_length, pen = self.plotcolor) 
-        self.basePlotPres = pg.PlotCurveItem([0]*x_axis_length, pen = self.plotcolor)
+        self.basePlotFlow = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor)
+        self.basePlotVol = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor) 
+        self.basePlotPres = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor)
 
         #self.graphFlow = pg.PlotWidget()
         self.flowData = pg.PlotCurveItem()
@@ -444,7 +352,7 @@ class PlotsWidget(QWidget):
         self.graphFlow.setYRange(-60, 60) 
         self.graphVolume.setYRange(0, 160) 
         self.graphPressure.setYRange(0, 10) 
-        tticks = (np.array(range(0,x_axis_length+1,20))/20)
+        tticks = (np.array(range(0,X_AXIS_LENGTH+1,20))/20)
         ax=self.graphFlow.getAxis('bottom')    #This is the trick  
         ax.setTicks([[(v*20, '') for v in tticks ]])
         
@@ -464,8 +372,8 @@ class PlotsWidget(QWidget):
        
         pen = pg.mkPen(color = self.plotcolor, width = 3)
         
-        self.basePlot = pg.PlotCurveItem([0]*x_axis_length, pen = self.plotcolor) 
-        self.basePlotX = pg.PlotCurveItem([0]*x_axis_length, pen = self.plotcolor)
+        self.basePlot = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor) 
+        self.basePlotX = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor)
         
         self.initializeGraphs()
         self.updateGraphs()
@@ -476,17 +384,21 @@ class PlotsWidget(QWidget):
         self.currentVexp = caget('Raspi:central:Set-Vexp')
         caput('Raspi:central:Set-Vinsp', 30)
         caput('Raspi:central:Set-Vexp', 0)
+        caput('Raspi:central:TIME-COUNTER.SCAN','Passive')
         print('Setting Valve Insp at 30')
+
     def manualVentilationReleased(self):
         caput('Raspi:central:Set-Vinsp', self.currentVinsp)
         caput('Raspi:central:Set-Vexp', self.currentVexp)
         caput('Raspi:central:TIME-COUNTER', self.currentTime)
+        caput('Raspi:central:TIME-COUNTER.SCAN','.05 second')
         print('restarting all')
 
     def manualPausePressed(self):
         self.currentTime = caget('Raspi:central:TIME-COUNTER')
         self.currentVinsp = caget('Raspi:central:Set-Vinsp')
         self.currentVexp = caget('Raspi:central:Set-Vexp')
+        caput('Raspi:central:TIME-COUNTER.SCAN','Passive')
         caput('Raspi:central:Set-Vinsp', 0)
         caput('Raspi:central:Set-Vexp', 0)
         print('Setting Valve Insp at 0')
@@ -494,12 +406,13 @@ class PlotsWidget(QWidget):
         caput('Raspi:central:Set-Vinsp', self.currentVinsp)
         caput('Raspi:central:Set-Vexp', self.currentVexp)
         caput('Raspi:central:TIME-COUNTER', self.currentTime)
+        caput('Raspi:central:TIME-COUNTER.SCAN','.05 second')
         print('restarting all')
 
     def initializeGraphs(self):
-        self.channelFlow = [0]*x_axis_length
-        self.channelVolume = [0]*x_axis_length
-        self.channelPressure = [0]*x_axis_length
+        self.channelFlow = [0]*X_AXIS_LENGTH
+        self.channelVolume = [0]*X_AXIS_LENGTH
+        self.channelPressure = [0]*X_AXIS_LENGTH
         self.counterPlots = 0
 
 
@@ -508,7 +421,7 @@ class PlotsWidget(QWidget):
         self.channelVolume[self.counterPlots] = caget('Raspi:central:Calibrated-Vt')
         self.channelPressure[self.counterPlots] = caget('Raspi:central:Sensor-Pinsp')
         self.counterPlots += 1
-        if(self.counterPlots == x_axis_length):
+        if(self.counterPlots == X_AXIS_LENGTH):
             self.initializeGraphs()
         self.flowData.setData(self.channelFlow,pen= self.plotcolor)
         self.volumeData.setData(self.channelVolume,pen= self.plotcolor)

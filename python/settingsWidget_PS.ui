@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>810</width>
-    <height>520</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>RR</string>
+       <string>RR_min</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -231,7 +231,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_7">
     <item>
-     <widget class="QLabel" name="Vt_label_set">
+     <widget class="QLabel" name="PIP_label_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -242,7 +242,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Vt</string>
+       <string>PIP</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -250,7 +250,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setVt_units">
+     <widget class="QLabel" name="setPIP_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -261,7 +261,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>(mL)</string>
+       <string>(cmH2O)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -269,7 +269,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setVtvar_setting">
+     <widget class="QLabel" name="setPIPvar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -324,7 +324,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QScrollBar" name="setVtScrollBar">
+  <widget class="QScrollBar" name="setPIPScrollBar">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -361,7 +361,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_11">
     <item>
-     <widget class="QLabel" name="Tplateau_label_set">
+     <widget class="QLabel" name="Ptriggerlabel_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -372,7 +372,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Tplateau</string>
+       <string>P_trigger</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -380,7 +380,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setTplateau_units">
+     <widget class="QLabel" name="setPtrigger_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -391,7 +391,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>(sec)</string>
+       <string>(cmH2O)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -399,7 +399,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setTplateauvar_setting">
+     <widget class="QLabel" name="setPtriggervar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -419,7 +419,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QScrollBar" name="setTplateauScrollBar">
+  <widget class="QScrollBar" name="setPtriggerScrollBar">
    <property name="geometry">
     <rect>
      <x>330</x>
