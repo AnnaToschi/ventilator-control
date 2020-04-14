@@ -368,7 +368,7 @@ void serialEvent()
     }
   }
 }
-
+ 
 void serialEvent1()
 {
   while (Serial1.available())
