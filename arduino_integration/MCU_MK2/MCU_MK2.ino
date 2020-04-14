@@ -1,6 +1,6 @@
 #include <Adafruit_MCP4725.h> // https://github.com/adafruit/Adafruit_MCP4725 Adafruit MCP4725 12-bit DAC Driver Library
-#include <PID_v1.h>           // https://github.com/br3ttb/Arduino-PID-Library/ Arduino PID Library v1.2.1 by Brett Beauregard
-#include <avr/wdt.h>          // AVR Watchdog Timer
+//#include <PID_v1.h>           // https://github.com/br3ttb/Arduino-PID-Library/ Arduino PID Library v1.2.1 by Brett Beauregard
+//#include <avr/wdt.h>          // AVR Watchdog Timer
 
 //Pressure Sensor includes
 #include <Adafruit_Sensor.h>
@@ -97,26 +97,19 @@ int i = 0;
 
 void setup()
 {
-  if (i == 0)
-  { // absolute to relative pressure sensor conversion, this means that the pressure sensor readout at the beginning of this cycle should be the floor/zero reference point!
-    getPressure();
-    delay(500);
-    getPressure();
-    delay(50);
-    pressureOffset = pressure;
-    i++;
-  }
+ 
   Serial.begin(115200); // Initialize Serial interface towards EPICs controller
-  Serial1.begin(9600);  // Initialize Serial interface towards Slave MCU reading Flow Sensor
+  Serial1.begin(115200);  // Initialize Serial interface towards Slave MCU reading Flow Sensor
 
   stringFromEPICs.reserve(200);
   stringFromSlaveMCU.reserve(200);
-
+  
+  pinMode(expiratoryValvePin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT); // For Debug purpose, initialize onboard led for physical feedback
 
   dac.begin(0x60);
 
-  wdt_enable(WDTO_500MS); //watchdog timer with 500ms time out
+ // wdt_enable(WDTO_500MS); //watchdog timer with 500ms time out
 
   unsigned status;
   status = pressureSensor.begin(0x76);
@@ -136,17 +129,9 @@ void setup()
 
 void loop()
 {
-  wdt_reset();
+  //wdt_reset();
   currentMillis = millis(); // capture the latest value of millis()
-  if (i == 0)
-  {
-    getPressure();
-    delay(3000);
-    Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
-    Serial.println(pressure);
-    pressureOffset = pressure;
-    i++;
-  }
+  
   getO2perc();
   //getInspirationFlow(); // Flow is received through Slave MCU
   getPressure();
@@ -182,7 +167,7 @@ void handleflow(float targetflow)
 }
 
 void handlepressure(float targetpressure)
-{
+{3
   switchOnBoardLEDState();
 }
 
@@ -195,22 +180,30 @@ void handleExpiratoryValveAperture(int targetInspiratoryAperture)
 {
   if (targetInspiratoryAperture == MIN_TARGET_APERTURE && isExpirationValveOpen)
   {
-    digitalWrite(expiratoryValvePin, HIGH);
+    digitalWrite(expiratoryValvePin, LOW);
     isExpirationValveOpen = false;
   }
   else if (targetInspiratoryAperture > MIN_TARGET_APERTURE && !isExpirationValveOpen)
   {
-    digitalWrite(expiratoryValvePin, LOW);
+    digitalWrite(expiratoryValvePin, HIGH);
     isExpirationValveOpen = true;
   }
 }
 
-void getPressure()
-{
-  if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval)
-  {
-    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922) - pressureOffset) / pressureOffsetMultiplier; //CmH2O, two readings for weird stability issues
-    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922) - pressureOffset) / pressureOffsetMultiplier;
+void getPressure(){
+  if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval) {
+    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier;  //CmH2O, two readings for weird stability issues
+    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier; 
+    //Serial.print("pressure reading is: ");
+    //Serial.println(pressure);
+    if (i==0){
+      delay(5000);
+      pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 );
+    Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
+    Serial.println(pressure);
+    pressureOffset= pressure;
+    i++;                       
+  }
     previousPressureReadMillis = currentMillis;
   }
 }
@@ -321,15 +314,15 @@ void interpretEPICsCommand()
         {
         case inspiration: // close expiration valve. Opening of the inspiration valve will be handled by a direct command through EPICs, reset tidalVolume
           tidalVolume = 0.00;
-          handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+          //handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
           break;
         case expiration: // close inspiration valve, open expiration valve
-          handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-          handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
+          //handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+          //handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
           break;
         case expirationHold: // close both valves
-          handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-          handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+          //handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+          //handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
           break;
         }
       }
