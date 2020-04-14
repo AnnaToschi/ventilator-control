@@ -43,33 +43,7 @@ record(longout,"$(P)$(R)Set-Vexp"){
     field(LOPR,"0")
     # field(FLNK, "$(P)$(R)MessageOut")
 }
-#record(longout,"$(P)$(R)Set-BuzzPitch"){
-#    field(DESC,"Set Buzzer Pitch")
-#    field(EGU,"")
-#    field(VAL,"0")
-#    field(DRVH,"255")
-#    field(DRVL,"0")
-#    field(HOPR,"255")
-#    field(LOPR,"0")
-#    field(FLNK, "$(P)$(R)MessageOut")
-#}
-#record(longout,"$(P)$(R)Set-BuzzVol"){
-#    field(DESC,"Set Buzzer Volume")
-#    field(EGU,"")
-#    field(VAL,"0")
-#    field(DRVH,"255")
-#    field(DRVL,"0")
-#    field(HOPR,"255")
-#    field(LOPR,"0")
-#    field(FLNK, "$(P)$(R)MessageOut")
-#}
-# record (calcout, "$(P)$(R)MessageOut") {
-#   field (INPA, "$(P)$(R)Set-Vinsp CP")
-#   field (INPB, "$(P)$(R)Set-Vexp CP")
-#   field (CALC, "0")
-#   field (DTYP, "stream")
-#   field (OUT, "@arduino.proto WriteMsg $(PORT)")
-# }
+
 record(longout,"$(P)$(R)Set-InspExpState"){
     field(DESC,"Set Inspiration/Experiation") #0,1,2 -> idle, Insp, Exp
     field(EGU,"")
