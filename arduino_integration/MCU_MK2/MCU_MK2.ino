@@ -6,14 +6,11 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP3XX.h>
 
-
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 Adafruit_BMP3XX pressureSensor;
 
 Adafruit_MCP4725 dac;
-
-
 
 //initialize the two strings being received from the controller
 String intendedChangeValue;
@@ -63,13 +60,13 @@ int message_id = 0;
 float pressure = 0.00;
 float flow;
 
-const int numO2readings = 100;                   //number of smoothing points for the O2 readout
-float O2readings[numO2readings];      // the readings from the analog input
-int   O2readIndex = 0;              // the index of the current reading
-float O2total = 0.00;                  // the running total
-float O2average = 0.00;                // the average
-int O2RawPercentage=0;
-float O2Percentage=0.00;
+const int numO2readings = 100;   //number of smoothing points for the O2 readout
+float O2readings[numO2readings]; // the readings from the analog input
+int O2readIndex = 0;             // the index of the current reading
+float O2total = 0.00;            // the running total
+float O2average = 0.00;          // the average
+int O2RawPercentage = 0;
+float O2Percentage = 0.00;
 
 unsigned long currentMillis = 0;
 unsigned long previousFlowReadMillis = 0;
@@ -88,8 +85,6 @@ const int flowUpdateInterval = 50;
 const int volumeUpdateInterval = 50;
 const int pressureUpdateInterval = 50;
 
-
-
 float tidalVolume = 0.00;
 
 // realistic mockup data for graphs
@@ -102,13 +97,14 @@ int i = 0;
 
 void setup()
 {
-  if (i==0){ // absolute to relative pressure sensor conversion, this means that the pressure sensor readout at the beginning of this cycle should be the floor/zero reference point!
+  if (i == 0)
+  { // absolute to relative pressure sensor conversion, this means that the pressure sensor readout at the beginning of this cycle should be the floor/zero reference point!
     getPressure();
     delay(500);
     getPressure();
     delay(50);
     pressureOffset = pressure;
-    i++;                       
+    i++;
   }
   Serial.begin(115200); // Initialize Serial interface towards EPICs controller
   Serial1.begin(9600);  // Initialize Serial interface towards Slave MCU reading Flow Sensor
@@ -118,41 +114,50 @@ void setup()
 
   pinMode(LED_BUILTIN, OUTPUT); // For Debug purpose, initialize onboard led for physical feedback
 
-  dac.begin(0x62);
+  dac.begin(0x60);
 
   wdt_enable(WDTO_500MS); //watchdog timer with 500ms time out
-  
+
   unsigned status;
-  status = pressureSensor.begin();
-  if (!status) {
-        Serial.println("Could not find a valid BMP388 (inspiration) sensor, check wiring, address, sensor ID!");
-  }
-  
-  pinMode(O2SensorPin, INPUT);
- 
- //initialize the O2 sensor smoothing array
- for (int thisReading = 0; thisReading < numO2readings; thisReading++) {
-    O2readings[thisReading] = 0; // reset O2readings array
+  status = pressureSensor.begin(0x76);
+  if (!status)
+  {
+    Serial.println("Could not find a valid BMP388 (inspiration) sensor, check wiring, address, sensor ID!");
   }
 
+  pinMode(O2SensorPin, INPUT);
+
+  //initialize the O2 sensor smoothing array
+  for (int thisReading = 0; thisReading < numO2readings; thisReading++)
+  {
+    O2readings[thisReading] = 0; // reset O2readings array
+  }
 }
 
 void loop()
 {
   wdt_reset();
   currentMillis = millis(); // capture the latest value of millis()
-  if (i==0){
+  if (i == 0)
+  {
     getPressure();
     delay(3000);
     Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
     Serial.println(pressure);
-    pressureOffset= pressure;
-    i++;                       
+    pressureOffset = pressure;
+    i++;
   }
   getO2perc();
   //getInspirationFlow(); // Flow is received through Slave MCU
   getPressure();
-
+  if (stringFromSlaveMCUComplete)
+  {
+    interpretSlaveMCUReading();
+  }
+  if (stringFromEPICsComplete)
+  {
+    interpretEPICsCommand();
+  }
   writeSerial();
 }
 
@@ -200,38 +205,42 @@ void handleExpiratoryValveAperture(int targetInspiratoryAperture)
   }
 }
 
-void getPressure(){
-  if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval) {
-    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier;  //CmH2O, two readings for weird stability issues
-    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier; 
+void getPressure()
+{
+  if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval)
+  {
+    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922) - pressureOffset) / pressureOffsetMultiplier; //CmH2O, two readings for weird stability issues
+    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922) - pressureOffset) / pressureOffsetMultiplier;
     previousPressureReadMillis = currentMillis;
   }
 }
 
-void getO2perc(){
-  if (currentMillis - previousO2ReadMillis >= O2UpdateInterval) {
+void getO2perc()
+{
+  if (currentMillis - previousO2ReadMillis >= O2UpdateInterval)
+  {
     O2total = O2total - O2readings[O2readIndex];
-    // read from the sensor: 
+    // read from the sensor:
     O2RawPercentage = analogRead(O2SensorPin);
-    O2Percentage=map(O2RawPercentage, 806, 740, 0, 10000)/100.00;
+    O2Percentage = map(O2RawPercentage, 806, 740, 0, 10000) / 100.00;
     O2readings[O2readIndex] = O2Percentage;
     // add the reading to the total:
     O2total = O2total + O2readings[O2readIndex];
     // advance to the next position in the array:
     O2readIndex++;
-  
+
     // if we're at the end of the array...
-    if (O2readIndex >= numO2readings) {
+    if (O2readIndex >= numO2readings)
+    {
       // ...wrap around to the beginning:
       O2readIndex = 0;
     }
     // calculate the average:
-    O2Percentage = O2total / (float) numO2readings + O2Offset;
+    O2Percentage = O2total / (float)numO2readings + O2Offset;
     // send it to the computer as ASCII digits
-    previousO2ReadMillis=currentMillis;
+    previousO2ReadMillis = currentMillis;
   }
 }
-
 
 void writeSerial()
 {
@@ -245,7 +254,6 @@ void writeSerial()
     {
       message_id++;
     }
-
 
     Serial.print(message_id);
     Serial.print(";");
@@ -312,7 +320,7 @@ void interpretEPICsCommand()
         switch (intendedChangeValueAuxInt)
         {
         case inspiration: // close expiration valve. Opening of the inspiration valve will be handled by a direct command through EPICs, reset tidalVolume
-          tidalVolume=0.00;
+          tidalVolume = 0.00;
           handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
           break;
         case expiration: // close inspiration valve, open expiration valve
@@ -325,60 +333,56 @@ void interpretEPICsCommand()
           break;
         }
       }
+    }
+  }
+  stringFromEPICs = "";
+  stringFromEPICsComplete = false;
+}
 
-      stringFromEPICs = "";
-      stringFromEPICsComplete = false;
+void interpretSlaveMCUReading()
+{
+  {
+    unsigned long currentMCUReadMillis = millis();
+    flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
+    tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
+    previousFlowReadMillis = currentMCUReadMillis;
+  }
+  stringFromSlaveMCU = "";
+  stringFromSlaveMCUComplete = false;
+}
+
+void serialEvent()
+{
+  while (Serial.available())
+  {
+
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    stringFromEPICs += inChar;
+    // if the incoming character is a newline, set a flag
+    // so other function spaces can do something about it:
+    if (inChar == '\n')
+    {
+      stringFromEPICsComplete = true;
     }
   }
 }
 
-
-  void interpretSlaveMCUReading()
+void serialEvent1()
+{
+  while (Serial1.available())
   {
+
+    // get the new byte:
+    char inChar = (char)Serial1.read();
+    // add it to the inputString:
+    stringFromSlaveMCU += inChar;
+    // if the incoming character is a newline, set a flag
+    // so other function spaces can do something about it:
+    if (inChar == '\n')
     {
-      unsigned long currentMCUReadMillis = millis();
-      flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
-      tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis)/60);
-      previousFlowReadMillis=currentMCUReadMillis;
+      stringFromSlaveMCUComplete = true;
     }
-    stringFromSlaveMCU = "";
-    stringFromSlaveMCUComplete = false;
   }
-
-  void serialEvent()
-  {
-    while (Serial.available())
-    {
-
-      // get the new byte:
-      char inChar = (char)Serial.read();
-      // add it to the inputString:
-      stringFromEPICs += inChar;
-      // if the incoming character is a newline, set a flag
-      // so other function spaces can do something about it:
-      if (inChar == '\n')
-      {
-        stringFromEPICsComplete = true;
-      }
-    }
-    interpretEPICsCommand();
-  }
-
-  void serialEvent1()
-  {
-    while (Serial1.available())
-    {
-
-      // get the new byte:
-      char inChar = (char)Serial1.read();
-      // add it to the inputString:
-      stringFromSlaveMCU += inChar;
-      // if the incoming character is a newline, set a flag
-      // so other function spaces can do something about it:
-      if (inChar == '\n')
-      {
-        stringFromSlaveMCUComplete = true;
-      }
-    }
-    interpretSlaveMCUReading();
-  }
+}
