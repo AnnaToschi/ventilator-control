@@ -219,7 +219,7 @@ ss VolControl {
             // }
             InspExpState = 2;
             pvPut(InspExpState);
-            printf("state - 2");
+            printf("state - 2\n");
         } state Inspiration_VC_plateau
     }
     state Inspiration_VC_plateau {
@@ -271,7 +271,7 @@ ss VolControl {
             pvPut(SensorPEEP);
             ValveExp = 0; // Close Vexp
             pvPut(ValveExp);
-            printf("vexp - 205\n");
+            printf("vexp - 0\n");
             ValveInsp = 0;
             pvPut(ValveInsp);
             printf("vinsp - 0\n");

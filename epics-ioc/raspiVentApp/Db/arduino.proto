@@ -71,23 +71,23 @@ WriteMsg {
 
 
 SendTargetFlow{
-	out "0;%(A).2f";
+	out "0;%.2f";
 }
 
 SendTargetPressure{
-	out "1;%(A).2f";
+	out "1;%.2f";
 }
 
 SendTargetVinsp{
-	out "2;%(A).0f";
+	out "2;%.0f";
 }
 
 SendTargetVexp{
-	out "3;%(A).0f";
+	out "3;%.0f";
 }
 
 SendInspExpState{
-	out "4;%(A).0f";
+	out "4;%.0f";
 }
 
 

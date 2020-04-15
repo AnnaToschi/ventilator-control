@@ -23,7 +23,7 @@ record(ao,"$(P)$(R)ArdOut-Pinsp"){
 #    field(FLNK, "$(P)$(R)MessageOut")
 # OROC	Maximum Output Rate of Change
 }
-record(longout,"$(P)$(R)Set-Vinsp"){
+record(ao,"$(P)$(R)Set-Vinsp"){
     field(DESC,"Set Inspiratory Valve")
     field(EGU,"")
     field(VAL,"0")
@@ -31,9 +31,11 @@ record(longout,"$(P)$(R)Set-Vinsp"){
     field(DRVL,"0")
     field(HOPR,"255")
     field(LOPR,"0")
+    field (DTYP, "stream")
+    field (OUT, "@arduino.proto SendTargetVinsp $(PORT)")
     # field(FLNK, "$(P)$(R)MessageOut")
 }
-record(longout,"$(P)$(R)Set-Vexp"){
+record(ao,"$(P)$(R)Set-Vexp"){
     field(DESC,"Set Expiratory Valve")
     field(EGU,"")
     field(VAL,"0")
@@ -41,6 +43,8 @@ record(longout,"$(P)$(R)Set-Vexp"){
     field(DRVL,"0")
     field(HOPR,"1")
     field(LOPR,"0")
+    field (DTYP, "stream")
+    field (OUT, "@arduino.proto SendTargetVexp $(PORT)")
     # field(FLNK, "$(P)$(R)MessageOut")
 }
 
@@ -52,6 +56,8 @@ record(longout,"$(P)$(R)Set-InspExpState"){
     field(DRVL,"0")
     field(HOPR,"2")
     field(LOPR,"0")
+    field (DTYP, "stream")
+    field (OUT, "@arduino.proto SendInspExpState $(PORT)")
 }
 record (calcout, "$(P)$(R)MessageTargetFlow") {
   field (INPA, "$(P)$(R)Calc-Set-Flow CP")
@@ -65,24 +71,23 @@ record (calcout, "$(P)$(R)MessageTargetPressure") {
   field (DTYP, "stream")
   field (OUT, "@arduino.proto SendTargetPressure $(PORT)")
 }
-record (calcout, "$(P)$(R)MessageTargetVinsp") {
-  field (INPA, "$(P)$(R)Set-Vinsp CP")
-  field (CALC, "0")
-  field (DTYP, "stream")
-  field (OUT, "@arduino.proto SendTargetVinsp $(PORT)")
-}
-record (calcout, "$(P)$(R)MessageTargetVexp") {
-  field (INPA, "$(P)$(R)Set-Vexp CP")
-  field (CALC, "0")
-  field (DTYP, "stream")
-  field (OUT, "@arduino.proto SendTargetVexp $(PORT)")
-}
-record (calcout, "$(P)$(R)MessageTargetInspExp") {
-  field (INPA, "$(P)$(R)Set-InspExpState CP")
-  field (CALC, "0")
-  field (DTYP, "stream")
-  field (OUT, "@arduino.proto SendInspExpState $(PORT)")
-}
+
+# record (calcout, "$(P)$(R)MessageTargetVinsp") {
+#   field (INPA, "$(P)$(R)Set-Vinsp CP")
+#   field (CALC, "0")
+# }
+# record (calcout, "$(P)$(R)MessageTargetVexp") {
+#   field (INPA, "$(P)$(R)Set-Vexp CP")
+#   field (CALC, "0")
+#   field (DTYP, "stream")
+#   field (OUT, "@arduino.proto SendTargetVexp $(PORT)")
+# }
+# record (calcout, "$(P)$(R)MessageTargetInspExp") {
+#   field (INPA, "$(P)$(R)Set-InspExpState CP")
+#   field (CALC, "0")
+#   field (DTYP, "stream")
+#   field (OUT, "@arduino.proto SendInspExpState $(PORT)")
+# }
 
 
 
