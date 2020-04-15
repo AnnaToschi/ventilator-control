@@ -36,7 +36,7 @@ const float MAX_TARGET_INSP_PRESSURE = 300.00; // cmH2O (0.3 Bar)
 const float MIN_TARGET_INSP_VOLUME = 0.00;     //ml
 const float MAX_TARGET_INSP_VOLUME = 1000.00;  //ml
 
-const int MIN_INSP_VALVE_APERTURE = 0; // 0V - Hoerbiger / Bronkhorst
+const int MIN_INSP_VALVE_APERTURE = 350; // 0V - Hoerbiger / Bronkhorst
 //const int MAX_INSP_VALVE_APERTURE = 820; // 1V - Hoerbiger
 const int MAX_INSP_VALVE_APERTURE = 4095; // 5V - Bronkhorst
 
@@ -77,7 +77,7 @@ unsigned long previousSerialWriteMillis = 0;
 const int O2Offset = 28;
 const float pressureOffsetMultiplier = 2.7;
 float pressureOffset = 0.0;
-const float flowOffsetMultiplier = 2.7;
+const float flowOffsetMultiplier = 2.0;
 
 const int serialUpdateInterval = 50;
 const int O2UpdateInterval = 100;
@@ -167,7 +167,7 @@ void handleflow(float targetflow)
 }
 
 void handlepressure(float targetpressure)
-{3
+{
   switchOnBoardLEDState();
 }
 
@@ -266,7 +266,8 @@ void interpretEPICsCommand()
 {
   if (stringFromEPICsComplete)
   {
-
+    Serial.print("SERIAL ECHO: ");
+    Serial.println(stringFromEPICs)
     for (int i = 0; i < stringFromEPICs.length(); i++)
     {
       if (stringFromEPICs.substring(i, i + 1) == ";")
@@ -327,9 +328,10 @@ void interpretEPICsCommand()
         }
       }
     }
-  }
   stringFromEPICs = "";
   stringFromEPICsComplete = false;
+  }
+  
 }
 
 void interpretSlaveMCUReading()
@@ -338,10 +340,13 @@ void interpretSlaveMCUReading()
     unsigned long currentMCUReadMillis = millis();
     flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
     tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
+    if (tidalVolume < 0){
+      tidalVolume = 0;
+    }
     previousFlowReadMillis = currentMCUReadMillis;
   }
   stringFromSlaveMCU = "";
-  stringFromSlaveMCUComplete = false;
+  stringFromSlaveMCUComplete = false;§
 }
 
 void serialEvent()
