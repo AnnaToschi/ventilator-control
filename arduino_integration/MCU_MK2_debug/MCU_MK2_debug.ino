@@ -255,6 +255,7 @@ void writeSerial()
   }
 }
 
+
 void interpretEPICsCommand()
 {
   if (stringFromEPICsComplete)
