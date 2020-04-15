@@ -281,12 +281,12 @@ ss VolControl {
         }state Idle_VC
  
         when (CycleTime > (valveInspInExpTime + 0.1)){
-            printf("to Idle, due PEEP\n",CycleTime);
+            printf("to Idle, due PEEP\n");
             SensorPEEP = SensorPressure;
             pvPut(SensorPEEP);
             ValveExp = 0; // Close Vexp
             pvPut(ValveExp);
-            rintf("vexp - 205\n");
+            printf("vexp - 205\n");
             ValveInsp = 0;
             pvPut(ValveInsp);
             printf("vinsp - 0\n");
