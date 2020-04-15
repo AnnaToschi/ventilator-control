@@ -31,6 +31,8 @@ record(longout,"$(P)$(R)Set-Vinsp"){
     field(DRVL,"0")
     field(HOPR,"255")
     field(LOPR,"0")
+    field (DTYP, "stream")
+    field (OUT, "@arduino.proto SendTargetVinsp $(PORT)")
     # field(FLNK, "$(P)$(R)MessageOut")
 }
 record(longout,"$(P)$(R)Set-Vexp"){
@@ -65,12 +67,10 @@ record (calcout, "$(P)$(R)MessageTargetPressure") {
   field (DTYP, "stream")
   field (OUT, "@arduino.proto SendTargetPressure $(PORT)")
 }
-record (calcout, "$(P)$(R)MessageTargetVinsp") {
-  field (INPA, "$(P)$(R)Set-Vinsp CP")
-  field (CALC, "0")
-  field (DTYP, "stream")
-  field (OUT, "@arduino.proto SendTargetVinsp $(PORT)")
-}
+# record (calcout, "$(P)$(R)MessageTargetVinsp") {
+#   field (INPA, "$(P)$(R)Set-Vinsp CP")
+#   field (CALC, "0")
+# }
 record (calcout, "$(P)$(R)MessageTargetVexp") {
   field (INPA, "$(P)$(R)Set-Vexp CP")
   field (CALC, "0")
