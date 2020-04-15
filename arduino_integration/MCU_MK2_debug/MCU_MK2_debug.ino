@@ -35,6 +35,8 @@ const float MAX_TARGET_INSP_PRESSURE = 300.00; // cmH2O (0.3 Bar)
 const float MIN_TARGET_INSP_VOLUME = 0.00;     //ml
 const float MAX_TARGET_INSP_VOLUME = 1000.00;  //ml
 
+const int INSPIRATION_APERTURE_TARGET = 80;
+
 const int MIN_INSP_VALVE_APERTURE = 350; // 0V - Hoerbiger / Bronkhorst
 //const int MAX_INSP_VALVE_APERTURE = 820; // 1V - Hoerbiger
 const int MAX_INSP_VALVE_APERTURE = 4095; // 5V - Bronkhorst
@@ -53,6 +55,28 @@ const int targetState = 4;
 const int expirationHold = 0;
 const int inspiration = 1;
 const int expiration = 2;
+const int inspirationHold = 3;
+
+
+float inspiratoryVolume = 0.00;
+float expiratoryVolume = 0.00;
+float tidalVolume = 0.00;
+
+float tidalVolumeUpperLimit = 0.6;
+bool inspirationValveIsOpen;
+bool expirationValveIsOpen;
+
+int cyclePhase = inspiration;
+
+// Hard-coded Variables
+float peakInspirationPressure = 1200.00; //hPa (PIP)
+float positiveEndExpiratoryPressure = 1100.00; //hpa (PEEP)
+
+int breathsPerMinute = 12; // 5s breaths
+int inspirationPhaseDuration = 60000 / breathsPerMinute * 0.25; //25% of each Breath Cycle
+int inspirationHoldPhaseDuration = 60000 / breathsPerMinute * 0.05; //5% of each Breath Cycle
+int expirationPhaseDuration = (60000 / breathsPerMinute) - (inspirationHoldPhaseDuration + inspirationPhaseDuration); //remainder of each Breath Cycle
+
 
 int message_id = 0;
 
@@ -72,6 +96,11 @@ unsigned long previousFlowReadMillis = 0;
 unsigned long previousPressureReadMillis = 0;
 unsigned long previousO2ReadMillis = 0;
 unsigned long previousSerialWriteMillis = 0;
+unsigned long previousControlCycleMillis = 0;
+unsigned long inspirationPhaseStartMillis = 0;
+
+unsigned long inspirationHoldPhaseStartMillis = 0;
+unsigned long expirationPhaseStartMillis = 0;
 
 const int O2Offset = 28;
 const float pressureOffsetMultiplier = 2.7;
@@ -83,8 +112,10 @@ const int O2UpdateInterval = 100;
 const int flowUpdateInterval = 50;
 const int volumeUpdateInterval = 50;
 const int pressureUpdateInterval = 50;
+const int controlCycleInterval = 10;
 
-float tidalVolume = 0.00;
+
+//float tidalVolume = 0.00;
 
 // realistic mockup data for graphs
 //float flow[] = {0, 13.009, 25.037, 28.738, 31.956, 33.654, 34.567, 35.022, 35.212, 35.242, 35.183, 35.079, 34.95, 34.81, 34.668, 35.69, 35.477, 35.183, 34.949, 34.744, 34.554, 8.0112, -12.002, -20.371, -23.919, -25.319, -25.638, -25.362, -24.699, -23.885, -23, -22.049, -21.102, -20.147, -19.188, -18.23, -17.277, -16.341, -15.427, -14.546, -13.709, -12.913, -12.16, -11.448, -10.778, -10.148, -9.5569, -9.0041, -8.4873, -8.0048, -7.5546, -7.1346, -6.7429, -6.3777, -6.0368, -5.7189, -5.422, -5.1449, -4.8858, -4.6437, -4.4172, -4.2052, -4.0065, -3.8204, -3.6458, -3.4818, -3.3278, -3.183, -3.0468, -2.9186, -2.7977, -2.6838, -2.5763, -2.4748, -2.3787, -2.2877, -2.2015, -2.1197, -2.0419, -1.9681, -1.8975, 6.9948, 17.004, 18.669, 20.214, 20.979, 21.365, 21.845, 22.896, 24.205, 25.484, 26.632, 27.622, 28.458, 29.155, 29.727, 30.191, 30.571, 30.881, 31.133, 31.339, 7.127, -10.194, -17.708, -21.042, -22.449, -22.824, -22.587, -21.98, -21.203, -20.316, -19.39, -18.435, -17.475, -16.524, -15.596, -14.703, -13.846, -13.038, -12.275, -11.553, -10.875, -10.236, -9.6373, -9.0771, -8.5538, -8.0653, -7.6098, -7.185, -6.789, -6.4197, -6.0754, -5.754, -5.4542, -5.1744, -4.913, -4.6685, -4.4399, -4.2259, -4.0255, -3.8377, -3.6616, -3.4962, -3.3409, -3.1949, -3.0576, -2.9282, -2.8064, -2.6915, -2.5831, -2.4806, -2.3836, -2.2917, -2.2046, -2.1218, -2.0433, -1.9687, -1.8977, -1.8301, -1.7658, -1.7042, 6.929, 16.961, 18.579, 20.139, 20.863, 21.265, 21.725, 22.653, 23.923, 25.192, 26.333, 27.326, 28.165, 28.864, 29.448, 29.93, 30.325, 30.649, 30.913, 31.132, 7.3089, -9.8614, -17.245, -20.577, -21.943, -22.345, -22.115, -21.516, -20.734, -19.855, -18.923, -17.97, -17.017, -16.076, -15.164, -14.288, -13.456, -12.668, -11.924, -11.224, -10.563, -9.9435, -9.3633, -8.821, -8.3146, -7.8422, -7.4016, -6.9908, -6.6079, -6.2508, -5.9177, -5.6069, -5.3169, -5.0461, -4.7929, -4.5562, -4.3348, -4.1274, -3.9332, -3.7511, -3.5802, -3.4198, -3.269, -3.1272, -2.9938, -2.8681, -2.7497, -2.638, -2.5325, -2.4327, -2.3381, -2.2485, -2.1635, -2.0828, -2.0062, -1.9333, -1.8639, -1.7979, -1.735, -1.6747, 6.9013, 16.945, 18.554, 20.108, 20.843, 21.25, 21.704, 22.611, 23.881, 25.146, 26.281, 27.274, 28.115, 28.821, 29.405, 29.89, 30.286, 30.612, 30.877, 31.1, 7.3177, -9.5395, -17.171, -20.488, -21.906, -22.279, -22.049, -21.445, -20.668, -19.785, -18.851, -17.901, -16.947, -16.008, -15.095, -14.221, -13.395, -12.612, -11.87, -11.173, -10.515, -9.8986, -9.3211, -8.7815, -8.2776, -7.8077, -7.3698, -6.9613, -6.5801, -6.2228, -5.8916, -5.5834, -5.2943, -5.025, -4.7734, -4.5383, -4.318, -4.1118, -3.9185, -3.7373, -3.5673, -3.4076, -3.2576, -3.1165, -2.9837, -2.8587, -2.7407, -2.6295, -2.5245, -2.4251, -2.3309, -2.2417, -2.157, -2.0767, -2.0003, -1.9277, -1.8585, -1.7928, -1.7301, -1.6703, 6.9099, 16.938, 18.547, 20.102, 20.836, 21.245, 21.7, 22.605, 23.871, 25.136, 26.27, 27.263, 28.104, 28.811, 29.396, 29.88, 30.277, 30.604, 30.87, 31.093, 7.3374, -9.6585, -17.167, -20.484, -21.876, -22.263, -22.037, -21.432, -20.656, -19.772, -18.84, -17.888, -16.935, -15.995, -15.083, -14.21, -13.383, -12.602, -11.864, -11.165, -10.508, -9.8919, -9.315, -8.7758, -8.2725, -7.8028, -7.3649, -6.9566, -6.5759, -6.221, -5.8899, -5.5809, -5.2926, -5.0234, -4.7717, -4.5364, -4.3162, -4.11, -3.9169, -3.7358, -3.5658, -3.4062, -3.2563, -3.1152, -2.9825, -2.8575, -2.7397, -2.6285, -2.5235, -2.4241, -2.33, -2.2408, -2.1562, -2.0759, -1.9995, -1.9269, -1.8578, -1.7921, -1.7294, -1.6694, 6.9101, 16.937, 18.546, 20.101, 20.836, 21.244, 21.698, 22.603, 23.869, 25.134, 26.269, 27.261, 28.103, 28.81, 29.394, 29.879, 30.276, 30.603, 30.869, 31.092, 7.3385, -9.6223, -17.163, -20.479, -21.888, -22.256, -22.035, -21.432, -20.654, -19.769, -18.837, -17.886, -16.933, -15.993, -15.081, -14.214, -13.386, -12.603, -11.862, -11.163, -10.506, -9.8899, -9.3131, -8.774, -8.2708, -7.8012, -7.3634, -6.9552, -6.5747, -6.2198, -5.8888, -5.5799, -5.2917, -5.0224, -4.7708, -4.5356, -4.3154, -4.1093, -3.9162, -3.7351, -3.5652, -3.4057, -3.2557, -3.1147, -2.9821, -2.8572, -2.7393, -2.6282, -2.5231, -2.4238, -2.3297, -2.2405, -2.1559, -2.0756, -1.9992, -1.9267, -1.8576, -1.7919, -1.7292, -1.6692, 6.91, 16.937, 18.546, 20.101, 20.835, 21.244, 21.698, 22.603, 23.869, 25.134, 26.268, 27.261, 28.102, 28.809, 29.394, 29.879, 30.275, 30.602, 30.868, 31.092, 7.3386, -9.6331, -17.143, -20.474, -21.861, -22.24, -22.03, -21.434, -20.651, -19.768, -18.836, -17.884, -16.932, -15.993, -15.08, -14.21, -13.384, -12.601, -11.859, -11.159, -10.506, -9.8899, -9.3132, -8.7741, -8.2708, -7.8013, -7.3635, -6.9553, -6.5747, -6.2198, -5.8889, -5.58, -5.2918, -5.0224, -4.7708, -4.5357, -4.3155, -4.1094, -3.9163, -3.7352, -3.5653, -3.4057, -3.2558, -3.1148, -2.9821, -2.8571, -2.7393, -2.6281, -2.5231, -2.4238, -2.3297, -2.2405, -2.1559, -2.0756, -1.9993, -1.9267, -1.8576, -1.7919, -1.7292, -1.6693, 6.91, 16.937, 18.546, 20.101, 20.835, 21.244, 21.698, 22.603, 23.869, 25.134, 26.268, 27.261, 28.102, 28.809, 29.394, 29.879, 30.275, 30.602, 30.868, 31.092, 7.3387, -9.5957, -17.145, -20.475, -21.861, -22.24, -22.03, -21.433, -20.651, -19.768, -18.835, -17.885, -16.931, -15.993, -15.08, -14.21, -13.384, -12.6, -11.858, -11.158};
@@ -142,6 +173,7 @@ void loop()
   {
     interpretEPICsCommand();
   }
+  pressureControlCycle();
   writeSerial();
 }
 
@@ -329,6 +361,64 @@ void interpretEPICsCommand()
   
 }
 
+
+
+void pressureControlCycle(){
+  if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
+      switch (cyclePhase) {
+        case inspiration:
+            if (inspirationValveIsOpen) {
+                if (pressure >= peakInspirationPressure){
+                    handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+                    cyclePhase = inspirationHold;
+                    inspirationHoldPhaseStartMillis=currentMillis;
+                }
+                else if (tidalVolume > tidalVolumeUpperLimit){ // Volume Upper Threshold reached?
+                  //inspirationVolumeThresholdAlarm();
+                  handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+                  cyclePhase = inspirationHold;
+                  inspirationHoldPhaseStartMillis=currentMillis;
+                }
+                else if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration Time Upper Limit reached?
+                  //inspirationTimerThresholdAlarm();
+                  handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+                  cyclePhase = inspirationHold;
+                  inspirationHoldPhaseStartMillis=currentMillis;
+                }
+            }
+            else { // just for the first time the function is called
+             handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+              inspirationPhaseStartMillis=currentMillis;
+            }
+            break;
+        case inspirationHold:
+             if (currentMillis - inspirationHoldPhaseStartMillis > inspirationHoldPhaseDuration){ // Inspiration hold duration reached?
+                handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
+                cyclePhase = expiration;
+                expirationPhaseStartMillis=currentMillis;
+             }
+             break;
+        case expiration:
+              if (pressure < positiveEndExpiratoryPressure){
+                  handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+                 handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+                  cyclePhase = inspiration;
+                  inspirationPhaseStartMillis=currentMillis;
+              }
+              else if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
+                  //expirationTimerThresholdAlarm();
+                  handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+                 handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+                  cyclePhase = inspiration;
+                  inspirationPhaseStartMillis=currentMillis;
+              }
+              break;
+      }
+      previousControlCycleMillis = currentMillis;
+}
+
+}
+
 void interpretSlaveMCUReading()
 {
   {
@@ -341,7 +431,7 @@ void interpretSlaveMCUReading()
     previousFlowReadMillis = currentMCUReadMillis;
   }
   stringFromSlaveMCU = "";
-  stringFromSlaveMCUComplete = false;§
+  stringFromSlaveMCUComplete = false;
 }
 
 void serialEvent()
