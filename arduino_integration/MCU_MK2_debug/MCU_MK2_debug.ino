@@ -3,7 +3,6 @@
 //#include <avr/wdt.h>          // AVR Watchdog Timer
 
 //Pressure Sensor includes
-#include <Adafruit_Sensor.h>
 #include <Adafruit_BMP3XX.h>
 
 #define SEALEVELPRESSURE_HPA (1013.25)
@@ -199,8 +198,9 @@ void getPressure(){
     if (i==0){
       delay(5000);
       pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 );
-    Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
-    Serial.println(pressure);
+    //Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
+    //Serial.println(pressure);
+    Serial.println("O2_Percentage pressure flow tidalVolume");
     pressureOffset= pressure;
     i++;                       
   }
@@ -239,35 +239,30 @@ void writeSerial()
 {
   if (currentMillis - previousSerialWriteMillis >= serialUpdateInterval)
   {
-    if (message_id >= 999)
-    {
-      message_id = 0;
-    }
-    else
-    {
-      message_id++;
-    }
 
-    Serial.print(message_id);
-    Serial.print(";");
+
+    //Serial.print(message_id);
+    //Serial.print(";");
     Serial.print(O2Percentage);
-    Serial.print(";");
+    Serial.print(" ");
+    //Serial.print(";");
     Serial.print(pressure);
-    Serial.print(";");
+     Serial.print(" ");
     Serial.print(flow);
-    Serial.print(";");
+     Serial.print(" ");
     Serial.println(tidalVolume);
 
     previousSerialWriteMillis = currentMillis;
   }
 }
 
+
 void interpretEPICsCommand()
 {
   if (stringFromEPICsComplete)
   {
-    Serial.print("SERIAL ECHO: ");
-    Serial.println(stringFromEPICs)
+    //Serial.print("SERIAL ECHO: ");
+    //Serial.println(stringFromEPICs)
     for (int i = 0; i < stringFromEPICs.length(); i++)
     {
       if (stringFromEPICs.substring(i, i + 1) == ";")
