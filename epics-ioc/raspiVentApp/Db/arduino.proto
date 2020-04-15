@@ -79,7 +79,7 @@ SendTargetPressure{
 }
 
 SendTargetVinsp{
-	out "2;%d";
+	out "2;%(A).0f";
 }
 
 SendTargetVexp{
