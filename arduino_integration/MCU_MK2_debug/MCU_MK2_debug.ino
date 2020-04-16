@@ -23,7 +23,7 @@ boolean stringFromSlaveMCUComplete = false;
 int currentState;
 boolean isLedOn = false;
 boolean isInspirationValveOpen = false;
-boolean isExpirationValveOpen = false;
+boolean expirationValveIsOpen = false;
 
 const int expiratoryValvePin = 2;
 const byte O2SensorPin = A0;
@@ -35,9 +35,9 @@ const float MAX_TARGET_INSP_PRESSURE = 300.00; // cmH2O (0.3 Bar)
 const float MIN_TARGET_INSP_VOLUME = 0.00;     //ml
 const float MAX_TARGET_INSP_VOLUME = 1000.00;  //ml
 
-const int INSPIRATION_APERTURE_TARGET = 80;
+const int INSPIRATION_APERTURE_TARGET = 255;
 
-const int MIN_INSP_VALVE_APERTURE = 350; // 0V - Hoerbiger / Bronkhorst
+const int MIN_INSP_VALVE_APERTURE = 0; // 0V - Hoerbiger / Bronkhorst
 //const int MAX_INSP_VALVE_APERTURE = 820; // 1V - Hoerbiger
 const int MAX_INSP_VALVE_APERTURE = 4095; // 5V - Bronkhorst
 
@@ -61,20 +61,22 @@ const int inspirationHold = 3;
 float inspiratoryVolume = 0.00;
 float expiratoryVolume = 0.00;
 float tidalVolume = 0.00;
+float inspiratoryVolume = 0.00;
+float expiratoryVolume = 0.00;
 
-float tidalVolumeUpperLimit = 0.6;
-bool inspirationValveIsOpen;
-bool expirationValveIsOpen;
+float tidalVolumeUpperLimit = 1000.0;
+bool inspirationValveIsOpen = false;
+
 
 int cyclePhase = inspiration;
 
 // Hard-coded Variables
-float peakInspirationPressure = 1200.00; //hPa (PIP)
-float positiveEndExpiratoryPressure = 1100.00; //hpa (PEEP)
+float peakInspirationPressure = 46.00; //cmH2O (PIP)
+float positiveEndExpiratoryPressure = 5.00; //cmH2O (PEEP)
 
-int breathsPerMinute = 12; // 5s breaths
-int inspirationPhaseDuration = 60000 / breathsPerMinute * 0.25; //25% of each Breath Cycle
-int inspirationHoldPhaseDuration = 60000 / breathsPerMinute * 0.05; //5% of each Breath Cycle
+int breathsPerMinute = 14; // 5s breaths
+int inspirationPhaseDuration = 60000 / breathsPerMinute * 0.5; //25% of each Breath Cycle
+int inspirationHoldPhaseDuration = 60000 / breathsPerMinute * 0.00; //5% of each Breath Cycle
 int expirationPhaseDuration = (60000 / breathsPerMinute) - (inspirationHoldPhaseDuration + inspirationPhaseDuration); //remainder of each Breath Cycle
 
 
@@ -91,6 +93,15 @@ float O2average = 0.00;          // the average
 int O2RawPercentage = 0;
 float O2Percentage = 0.00;
 
+
+const int numPressureReadings = 5;   //number of smoothing points for the O2 readout
+float pressureReadings[numPressureReadings]; // the readings from the analog input
+int pressureReadIndex = 0;             // the index of the current reading
+float pressureTotal = 0.00;            // the running total
+float pressureAverage = 0.00;          // the average
+//int pressurePercentage = 0;
+//float pressurePercentage = 0.00;
+
 unsigned long currentMillis = 0;
 unsigned long previousFlowReadMillis = 0;
 unsigned long previousPressureReadMillis = 0;
@@ -103,7 +114,7 @@ unsigned long inspirationHoldPhaseStartMillis = 0;
 unsigned long expirationPhaseStartMillis = 0;
 
 const int O2Offset = 28;
-const float pressureOffsetMultiplier = 2.7;
+const float pressureOffsetMultiplier = 1;
 float pressureOffset = 0.0;
 const float flowOffsetMultiplier = 2.0;
 
@@ -111,7 +122,7 @@ const int serialUpdateInterval = 50;
 const int O2UpdateInterval = 100;
 const int flowUpdateInterval = 50;
 const int volumeUpdateInterval = 50;
-const int pressureUpdateInterval = 50;
+const int pressureUpdateInterval = 10;
 const int controlCycleInterval = 10;
 
 
@@ -150,8 +161,13 @@ void setup()
 
   pinMode(O2SensorPin, INPUT);
 
-  //initialize the O2 sensor smoothing array
-  for (int thisReading = 0; thisReading < numO2readings; thisReading++)
+  //initialize the pressure and O2 sensor smoothing array
+  for (int thisReading = 0; thisReading < numPressureReadings; thisReading++)
+  {
+    pressureReadings[thisReading] = 0.0; // reset O2readings array
+  }
+
+   for (int thisReading = 0; thisReading < numO2readings; thisReading++)
   {
     O2readings[thisReading] = 0; // reset O2readings array
   }
@@ -174,7 +190,7 @@ void loop()
     interpretEPICsCommand();
   }
   pressureControlCycle();
-  writeSerial();
+  //writeSerial();
 }
 
 void switchOnBoardLEDState()
@@ -204,20 +220,25 @@ void handlepressure(float targetpressure)
 
 void handleInspiratoryValveAperture(int targetInspiratoryAperture)
 {
+  if(targetInspiratoryAperture == MIN_TARGET_APERTURE){
+    inspirationValveIsOpen=false;
+  }else {
+    inspirationValveIsOpen=true;
+  }
   dac.setVoltage(map(targetInspiratoryAperture, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE, MIN_INSP_VALVE_APERTURE, MAX_INSP_VALVE_APERTURE), false);
 }
 
 void handleExpiratoryValveAperture(int targetInspiratoryAperture)
 {
-  if (targetInspiratoryAperture == MIN_TARGET_APERTURE && isExpirationValveOpen)
+  if (targetInspiratoryAperture == MIN_TARGET_APERTURE && expirationValveIsOpen)
   {
     digitalWrite(expiratoryValvePin, LOW);
-    isExpirationValveOpen = false;
+    expirationValveIsOpen = false;
   }
-  else if (targetInspiratoryAperture > MIN_TARGET_APERTURE && !isExpirationValveOpen)
+  else if (targetInspiratoryAperture > MIN_TARGET_APERTURE && !expirationValveIsOpen)
   {
     digitalWrite(expiratoryValvePin, HIGH);
-    isExpirationValveOpen = true;
+    expirationValveIsOpen = true;
   }
 }
 
@@ -227,6 +248,22 @@ void getPressure(){
     pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier; 
     //Serial.print("pressure reading is: ");
     //Serial.println(pressure);
+
+    pressureTotal = pressureTotal - pressureReadings[pressureReadIndex];
+    pressureReadings[pressureReadIndex] = pressure;
+    // add the reading to the total:
+    pressureTotal = pressureTotal + pressureReadings[pressureReadIndex];
+    // advance to the next position in the array:
+    pressureReadIndex++;
+
+    // if we're at the end of the array...
+    if (pressureReadIndex >= numPressureReadings)
+    {
+      // ...wrap around to the beginning:
+      pressureReadIndex = 0;
+    }
+    // calculate the average:
+    pressureAverage = pressureTotal / (float)numPressureReadings;
     if (i==0){
       delay(5000);
       pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 );
@@ -367,13 +404,25 @@ void pressureControlCycle(){
   if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
       switch (cyclePhase) {
         case inspiration:
+            Serial.print("Inspiration Phase, pressure = ");
+            Serial.print(pressure);
+            Serial.print(" , flow = ");
+            Serial.print(flow);
+            Serial.print(" , inspiratoryVolume = ");
+            Serial.println(inspiratoryVolume);
+        
+            
             if (inspirationValveIsOpen) {
+                Serial.println("Inspiration Valve is Open");
                 if (pressure >= peakInspirationPressure){
+                   Serial.println("PIP reached");
                     handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
                     cyclePhase = inspirationHold;
                     inspirationHoldPhaseStartMillis=currentMillis;
                 }
                 else if (tidalVolume > tidalVolumeUpperLimit){ // Volume Upper Threshold reached?
+                  Serial.print("Volume upper threshold reached: ");
+                  Serial.println(tidalVolume);
                   //inspirationVolumeThresholdAlarm();
                   handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
                   cyclePhase = inspirationHold;
@@ -381,35 +430,54 @@ void pressureControlCycle(){
                 }
                 else if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration Time Upper Limit reached?
                   //inspirationTimerThresholdAlarm();
+                  Serial.print("Reached Inspiration Timer: ");
+                  Serial.println(inspirationPhaseDuration);
                   handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
                   cyclePhase = inspirationHold;
                   inspirationHoldPhaseStartMillis=currentMillis;
                 }
             }
             else { // just for the first time the function is called
+              Serial.println("First Time Control Cycle is called");
              handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
               inspirationPhaseStartMillis=currentMillis;
             }
             break;
         case inspirationHold:
-             if (currentMillis - inspirationHoldPhaseStartMillis > inspirationHoldPhaseDuration){ // Inspiration hold duration reached?
+            Serial.println("Inspiration Hold");
+             if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration hold duration reached?
+                Serial.print("Inspiration hold phase duration reached");
+                Serial.println(inspirationHoldPhaseDuration);
                 handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
                 cyclePhase = expiration;
                 expirationPhaseStartMillis=currentMillis;
              }
              break;
         case expiration:
-              if (pressure < positiveEndExpiratoryPressure){
+              Serial.print("Expiration Phase, pressure = ");
+              Serial.print(pressure);
+              Serial.print(" , flow = ");
+              Serial.print(flow);
+              Serial.print(" , expiratoryVolume = ");
+              Serial.println(expiratoryVolume);
+              if (pressureAverage < positiveEndExpiratoryPressure){
+                  Serial.print("PEEP Reached: ");
+                  Serial.println(pressureAverage);
                   handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-                 handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-                  cyclePhase = inspiration;
-                  inspirationPhaseStartMillis=currentMillis;
+                 //handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+                  //cyclePhase = inspiration;
+                  //tidalVolume=0.0;
+                  //inspirationPhaseStartMillis=currentMillis;
               }
-              else if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
+              if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
+                  Serial.println("Expiration phase duration reached");
                   //expirationTimerThresholdAlarm();
                   handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
                  handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
                   cyclePhase = inspiration;
+                  tidalVolume=0.0;
+                  inspiratoryVolume=0.0;
+                  expiratoryVolume=0.0;
                   inspirationPhaseStartMillis=currentMillis;
               }
               break;
@@ -421,15 +489,24 @@ void pressureControlCycle(){
 
 void interpretSlaveMCUReading()
 {
-  {
+  
     unsigned long currentMCUReadMillis = millis();
     flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
     tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
-    if (tidalVolume < 0){
-      tidalVolume = 0;
+    if (tidalVolume < 0.0){
+      tidalVolume = 0.0;
     }
+    switch (cyclePhase) {
+      case expiration:
+         expiratoryVolume = expiratoryVolume + abs(flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
+         break;
+      case inspiration:
+         inspiratoryVolume = inspiratoryVolume + abs(flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
+         break;
+    }
+
     previousFlowReadMillis = currentMCUReadMillis;
-  }
+  
   stringFromSlaveMCU = "";
   stringFromSlaveMCUComplete = false;
 }
