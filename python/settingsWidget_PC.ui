@@ -231,7 +231,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_7">
     <item>
-     <widget class="QLabel" name="Vt_label_set">
+     <widget class="QLabel" name="PIP_label_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -250,7 +250,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setVt_units">
+     <widget class="QLabel" name="setPIP_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -269,7 +269,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setVtvar_setting">
+     <widget class="QLabel" name="setPIPvar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -324,7 +324,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QScrollBar" name="setVtScrollBar">
+  <widget class="QScrollBar" name="setPIPScrollBar">
    <property name="geometry">
     <rect>
      <x>40</x>
