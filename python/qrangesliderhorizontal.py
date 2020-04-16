@@ -1,37 +1,30 @@
 import sys, os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-__all__ = ['QRangeSlider']
+__all__ = ['QRangeSliderHorizontal']
 
 DEFAULT_CSS = """
 QRangeSlider * {
     border: 0px;
     padding: 0px;
-    border-radius: 3px;
 }
 QRangeSlider #Head {
-    background: gray;
-    border-radius: 3px;
-    border-top: -20px;
+    background: #222;
 }
 QRangeSlider #Span {
-    background: red;
+    background: #393;
 }
 QRangeSlider #Span:active {
-    background: #285ec9;
+    background: #282;
 }
 QRangeSlider #Tail {
-    background: gray;
-    border-radius: 3px;
+    background: #222;
 }
 QRangeSlider > QSplitter::handle {
-    background: #a8c0ed;
-}
-QRangeSlider > QSplitter::handle {
-    background: #a8c0ed;
+    background: #393;
 }
 QRangeSlider > QSplitter::handle:vertical {
-    height: 40px;
+    height: 4px;
 }
 QRangeSlider > QSplitter::handle:pressed {
     background: #ca5;
@@ -44,8 +37,8 @@ def scale(val, src, dst):
 
 class Ui_Form(object):
     def setupUi(self, Form):
-        Form.setObjectName("QRangeSlider")
-        Form.resize(50, 430)
+        Form.setObjectName("QRangeSliderHorizontal")
+        Form.resize(300, 30)
         Form.setStyleSheet(DEFAULT_CSS)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -54,7 +47,7 @@ class Ui_Form(object):
         self._splitter = QtWidgets.QSplitter(Form)
         self._splitter.setMinimumSize(QtCore.QSize(0, 0))
         self._splitter.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self._splitter.setOrientation(QtCore.Qt.Vertical)
+        self._splitter.setOrientation(QtCore.Qt.Horizontal)
         self._splitter.setObjectName("splitter")
         self._head = QtWidgets.QGroupBox(self._splitter)
         self._head.setTitle("")
@@ -71,7 +64,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("QRangeSlider", "QRangeSlider"))
+        Form.setWindowTitle(_translate("QRangeSliderHorizontal", "QRangeSliderHorizontal"))
 
 
 class Element(QtWidgets.QGroupBox):
@@ -107,7 +100,7 @@ class Head(Element):
     def drawText(self, event, qp):
         qp.setPen(self.textColor())
         qp.setFont(QtGui.QFont('Arial', 10))
-        qp.drawText(event.rect(), QtCore.Qt.AlignTop, str(self.main.min()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignLeft, str(self.main.min()))
 
 
 class Tail(Element):
@@ -117,7 +110,7 @@ class Tail(Element):
     def drawText(self, event, qp):
         qp.setPen(self.textColor())
         qp.setFont(QtGui.QFont('Arial', 10))
-        qp.drawText(event.rect(), QtCore.Qt.AlignBottom, str(self.main.max()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignRight, str(self.main.max()))
 
 
 class Handle(Element):
@@ -127,34 +120,56 @@ class Handle(Element):
     def drawText(self, event, qp):
         qp.setPen(self.textColor())
         qp.setFont(QtGui.QFont('Arial', 10))
-        qp.drawText(event.rect(), QtCore.Qt.AlignTop, str(self.main.start()))
-        qp.drawText(event.rect(), QtCore.Qt.AlignBottom, str(self.main.end()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignLeft, str(self.main.start()))
+        qp.drawText(event.rect(), QtCore.Qt.AlignRight, str(self.main.end()))
 
-class QRangeSlider(QtWidgets.QWidget, Ui_Form):
+    def mouseMoveEvent(self, event):
+        event.accept()
+        mx = event.globalX()
+        _mx = getattr(self, '__mx', None)
+        if not _mx:
+            setattr(self, '__mx', mx)
+            dx = 0
+        else:
+            dx = mx - _mx
+        setattr(self, '__mx', mx)
+        if dx == 0:
+            event.ignore()
+            return
+        elif dx > 0:
+            dx = 1
+        elif dx < 0:
+            dx = -1
+        s = self.main.start() + dx
+        e = self.main.end() + dx
+        if s >= self.main.min() and e <= self.main.max():
+            self.main.setRange(s, e)
+
+
+class QRangeSliderHorizontal(QtWidgets.QWidget, Ui_Form):
     endValueChanged = QtCore.pyqtSignal(int)
     maxValueChanged = QtCore.pyqtSignal(int)
     minValueChanged = QtCore.pyqtSignal(int)
     startValueChanged = QtCore.pyqtSignal(int)
-
+    minValueChanged = QtCore.pyqtSignal(int)
+    maxValueChanged = QtCore.pyqtSignal(int)
+    startValueChanged = QtCore.pyqtSignal(int)
+    endValueChanged = QtCore.pyqtSignal(int)
 
     _SPLIT_START = 1
     _SPLIT_END = 2
 
     def __init__(self, parent=None):
-        super(QRangeSlider, self).__init__(parent)
+        super(QRangeSliderHorizontal, self).__init__(parent)
         self.setupUi(self)
         self.setMouseTracking(False)
-
         self._splitter.splitterMoved.connect(self._handleMoveSplitter)
-
         self._head_layout = QtWidgets.QHBoxLayout()
         self._head_layout.setSpacing(0)
         self._head_layout.setContentsMargins(0, 0, 0, 0)
         self._head.setLayout(self._head_layout)
         self.head = Head(self._head, main=self)
         self._head_layout.addWidget(self.head)
-
-
         self._handle_layout = QtWidgets.QHBoxLayout()
         self._handle_layout.setSpacing(0)
         self._handle_layout.setContentsMargins(0, 0, 0, 0)
@@ -162,16 +177,12 @@ class QRangeSlider(QtWidgets.QWidget, Ui_Form):
         self.handle = Handle(self._handle, main=self)
         self.handle.setTextColor((150, 255, 150))
         self._handle_layout.addWidget(self.handle)
-
-
         self._tail_layout = QtWidgets.QHBoxLayout()
         self._tail_layout.setSpacing(0)
         self._tail_layout.setContentsMargins(0, 0, 0, 0)
         self._tail.setLayout(self._tail_layout)
         self.tail = Tail(self._tail, main=self)
         self._tail_layout.addWidget(self.tail)
-        
-
         self.setMin(0)
         self.setMax(99)
         self.setStart(0)
@@ -203,12 +214,11 @@ class QRangeSlider(QtWidgets.QWidget, Ui_Form):
         self.startValueChanged.emit(value)
 
     def setStart(self, value):
-        print('hehere')
         v = self._valueToPos(value)
         self._splitter.splitterMoved.disconnect()
         self._splitter.moveSplitter(v, self._SPLIT_START)
         self._splitter.splitterMoved.connect(self._handleMoveSplitter)
-        self._setStart(v)
+        self._setStart(value)
 
     def _setEnd(self, value):
         setattr(self, '__end', value)
@@ -219,7 +229,7 @@ class QRangeSlider(QtWidgets.QWidget, Ui_Form):
         self._splitter.splitterMoved.disconnect()
         self._splitter.moveSplitter(v, self._SPLIT_END)
         self._splitter.splitterMoved.connect(self._handleMoveSplitter)
-        self._setEnd(v)
+        self._setEnd(value)
 
     def drawValues(self):
         return getattr(self, '__drawValues', None)
@@ -249,16 +259,20 @@ class QRangeSlider(QtWidgets.QWidget, Ui_Form):
         if s >= self.min() and e <= self.max():
             self.setRange(s, e)
 
+    def setBackgroundStyle(self, style):
+        self._tail.setStyleSheet(style)
+        self._head.setStyleSheet(style)
+
     def setSpanStyle(self, style):
         self._handle.setStyleSheet(style)
 
     def _valueToPos(self, value):
-        return scale(value, (self.min(), self.max()), (0, self.height()))
+        return scale(value, (self.min(), self.max()), (0, self.width()))
 
-    def _posToValue(self, ypos):
-        return scale(ypos, (0, self.height()), (self.min(), self.max()))
+    def _posToValue(self, xpos):
+        return scale(xpos, (0, self.width()), (self.min(), self.max()))
 
-    def _handleMoveSplitter(self, ypos, index):
+    def _handleMoveSplitter(self, xpos, index):
         hw = self._splitter.handleWidth()
         def _lockWidth(widget):
             width = widget.size().width()
@@ -267,23 +281,31 @@ class QRangeSlider(QtWidgets.QWidget, Ui_Form):
         def _unlockWidth(widget):
             widget.setMinimumWidth(0)
             widget.setMaximumWidth(16777215)
-        # if index == 1:
-        v = self._posToValue(ypos)
-        # elif index == 2:
-        #     v = self._posToValue(ypos+hw)
+        v = self._posToValue(xpos)
         if index == self._SPLIT_START:
             _lockWidth(self._tail)
             if v >= self.end():
                 return
+            offset = -20
+            w = xpos + offset
             self._setStart(v)
         elif index == self._SPLIT_END:
             _lockWidth(self._head)
             if v <= self.start():
                 return
-            offset = 40
-            ypos = ypos + offset
-            w = self._posToValue(ypos)
-            self._setEnd(w)
+            offset = -40
+            w = self.width() - xpos + offset
+            self._setEnd(v)
         _unlockWidth(self._tail)
         _unlockWidth(self._head)
         _unlockWidth(self._handle)
+
+if __name__ == '__main__':
+
+    app = QtWidgets.QApplication(sys.argv)
+    rs = QRangeSlider()
+    rs.show()
+    rs.setRange(15, 35)
+    rs.setBackgroundStyle('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #222, stop:1 #333);')
+    rs.handle.setStyleSheet('background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #282, stop:1 #393);')
+    app.exec_()
