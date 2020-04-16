@@ -7,7 +7,7 @@ import numpy as np
 from qrangesliderhorizontal import QRangeSliderHorizontal
 
 import serial
-
+import sys
 
 VT_MIN = 100
 VT_MAX = 1300
@@ -69,7 +69,11 @@ class serialReceiver(QtCore.QThread):
         self.ser = serial.Serial()
 
         self.ser.baudrate = 115200
-        self.ser.port = '/dev/cu.usbmodem14201'
+        try:
+            self.ser.port = str(sys.argv[1])
+        except:
+            print('ERROR, NO PORT SELECTED, going to default port')
+            self.ser.port = '/dev/cu.usbmodem14201'
         self.ser.open()
 
     def run(self):
@@ -84,7 +88,7 @@ class serialReceiver(QtCore.QThread):
                 self.vt = float(data[4])
                 self.newSample.emit(self.mId, self.fio2, self.pressure, self.flow, self.vt)
             except:
-                print('error in received data: {}\n'.format(data))
+                print('error in received data: {}'.format(data))
             
     def setRead(self):
         self.loopRun = 1
