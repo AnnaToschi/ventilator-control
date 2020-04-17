@@ -1,9 +1,5 @@
 # Example substitutions file
 
-file "db/circle.db" {
-    { user = "pi" }
-}
-
 file "db/dbExample1.db" {
     { user = "pi" }
 }

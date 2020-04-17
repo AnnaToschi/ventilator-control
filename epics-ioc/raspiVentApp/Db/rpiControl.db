@@ -27,24 +27,24 @@ record(bo, "$(P)$(R)PID-mode" ) {
     field( OUT, "$(P)$(R)Pid-Pins.SMSL") #check docs
 }
 
-record(epid, "$(P)$(R)Pid-Pinsp") {
-    field(INP, "$(P)$(R)Sensor-Pinsp")
-    field(OUTL, "$(P)$(R)Set-Vinsp PP NMS")
-    field(FBON, "1")
-    field(KP, "0.5") #change to var.
-    field(KI, "0.0") #change to var.
-    field(KD, "0.0") #change to var.
-    field(LOPR, "0")
-    field(HOPR, "255")
-    field(DRVL, "0") #!important for saturation of pid
-    field(DRVH, "255")
-    field(PREC, "2")
-    #Setpoint Location
-    field(STPL, "$(P)$(R)Set-Ppeak") #Reference value -> add value Ppeak
-    #  field(STPL, "$(P)$(R)Ppeak")
-    field(VAL, "100")
-    field(SMSL, "supervisory") #or closed-loop, check docs
-}
+#record(epid, "$(P)$(R)Pid-Pinsp") {
+#    field(INP, "$(P)$(R)Sensor-Pinsp")
+#    field(OUTL, "$(P)$(R)Set-Vinsp PP NMS")
+#    field(FBON, "1")
+#    field(KP, "0.5") #change to var.
+#    field(KI, "0.0") #change to var.
+#    field(KD, "0.0") #change to var.
+#    field(LOPR, "0")
+#    field(HOPR, "255")
+#    field(DRVL, "0") #!important for saturation of pid
+#    field(DRVH, "255")
+#    field(PREC, "2")
+#    #Setpoint Location
+#    field(STPL, "$(P)$(R)Set-Ppeak") #Reference value -> add value Ppeak
+#    #  field(STPL, "$(P)$(R)Ppeak")
+#    field(VAL, "100")
+#    field(SMSL, "supervisory") #or closed-loop, check docs
+#}
 record(mbbo, "$(P)$(R)OPMODE") {
     field(DESC, "Ventilation Operator Mode")
     field(DTYP, "Raw Soft Channel")

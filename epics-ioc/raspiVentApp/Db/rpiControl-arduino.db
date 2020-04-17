@@ -23,10 +23,11 @@ record(ao,"$(P)$(R)ArdOut-Pinsp"){
 #    field(FLNK, "$(P)$(R)MessageOut")
 # OROC	Maximum Output Rate of Change
 }
-record(ao,"$(P)$(R)Set-Vinsp"){
+record(longout,"$(P)$(R)Set-Vinsp"){
     field(DESC,"Set Inspiratory Valve")
     field(EGU,"")
     field(VAL,"0")
+    field(PINI,"YES")
     field(DRVH,"255")
     field(DRVL,"0")
     field(HOPR,"255")
@@ -35,10 +36,11 @@ record(ao,"$(P)$(R)Set-Vinsp"){
     field (OUT, "@arduino.proto SendTargetVinsp $(PORT)")
     # field(FLNK, "$(P)$(R)MessageOut")
 }
-record(ao,"$(P)$(R)Set-Vexp"){
+record(longout,"$(P)$(R)Set-Vexp"){
     field(DESC,"Set Expiratory Valve")
     field(EGU,"")
     field(VAL,"0")
+    field(PINI,"YES")
     field(DRVH,"1")
     field(DRVL,"0")
     field(HOPR,"1")
@@ -52,6 +54,7 @@ record(longout,"$(P)$(R)Set-InspExpState"){
     field(DESC,"Set Inspiration/Experiation") #0,1,2 -> idle, Insp, Exp
     field(EGU,"")
     field(VAL,"0")
+    field(PINI,"YES")
     field(DRVH,"2")
     field(DRVL,"0")
     field(HOPR,"2")

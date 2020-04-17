@@ -1,0 +1,103 @@
+### id;FiO2;Pinsp;Finsp;Pexp;Fexp;Vt;TotalFlow;resv1\n
+#Vinsp(0-255);Vexp(0-255);buzzer_pitch(0-255);buzzer_vol(0-255);status(0-7);resv1(0-255);resv2(0-255)\n
+
+Terminator = LF;
+
+#Terminator=CR LF;
+ExtraInput = Ignore;
+#MaxInput = 20;
+
+# in millisecond
+#ReadTimeout = 2000;
+ReplyTimeout = 20;
+
+WriteTimeout = 200;
+#If we have access to the device but output cannot be written immediately, how many milliseconds to wait before giving up?
+
+# Values are float
+# use ai and ao records
+
+# Using redirection to write time x.y and read records, First get Flow
+getId {
+  in  "%d;%*f;%*f;%*f;%*f";
+}
+getFio2 {
+	in  "%*d;%f;%*f;%*f;%*f";
+}
+getPinsp {
+	in  "%*d;%*f;%f;%*f;%*f";
+}
+getFinsp {
+	in  "%*d;%*f;%*f;%f;%*f";
+}
+getTidalVolume {
+	in  "%*d;%*f;%*f;%*f;%f";
+}
+#getPexp {
+#	in  "%*d;%*f;%*f;%*f;%f;%*f;%*f";
+#}
+#getFexp {
+#	in  "%*d;%*f;%*f;%*f;%*f;%f;%*f";
+#}
+#getTotalFlow {
+#	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%f;%*f";
+#}
+#getResv1 {
+#	in  "%*d;%*f;%*f;%*f;%*f;%*f;%*f;%*f;%f";
+#}
+
+# Using redirection to write time x.y and read records, First get Flow
+getValues {
+   out  "%(\$1).2f";
+    in  "%f %*f %*f ";
+}
+# Ignore 1rst and third value
+getPressure {
+  ExtraInput = Ignore;
+  in  "%*f %f %*f";
+}
+
+getVolume {
+    in  "%*f %*f %f ";
+}
+
+
+# Connect a stringout record to this to get
+# a generic command interface.
+# After processing finishes, the record contains the reply.
+
+
+WriteMsg {
+	#out "%(A).0f;%(B).0f;%(C).0f;%(D).0f;%(E).0f;%(F).0f;%(G).0f\n";	
+	out "%(A).0f;%(B).0f";	
+}
+
+
+SendTargetFlow{
+	out "0;%.2f";
+}
+
+SendTargetPressure{
+	out "1;%.2f";
+}
+
+SendTargetVinsp {
+	out "2;%d";
+}
+
+SendTargetVexp {
+	out "3;%d";
+}
+
+SendInspExpState{
+	out "4;%.0f";
+}
+
+
+
+
+
+debug {
+    ExtraInput = Ignore;
+    out "%s"; in "%39c"
+}

@@ -1,1 +1,1 @@
-#include "../sncVentilator.stt"
+#include "../sncExample.stt"

@@ -4,20 +4,15 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS BELOW HERE
 
 # Install databases, templates & substitutions like this
-#DB += circle.db
-DB += rpiControl.db
-#DB += rpiSensors-simul.db
-DB += raspiVentVersion.db
-
-#DB += rpiSensors-simul-arduino.db
-DB += rpiSensors-arduino.db
-DB += rpiControl-arduino.db
-DB += arduino.proto
-
+DB += dbExample1.db
+#DB += dbExample2.db
 #DB += dbSubExample.db
 #DB += user.substitutions
-#DB += dbExample1.db
-#DB += dbExample2.db
+#DB += userHost.substitutions
+DB += rpiControl.db
+DB += rpiSensors-arduino.db
+DB += rpiControl-arduino.db
+#DB += arduino.proto
 
 # If <anyname>.db template is not named <anyname>*.template add
 # <anyname>_TEMPLATE = <templatename>

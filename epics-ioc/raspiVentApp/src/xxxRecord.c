@@ -25,21 +25,21 @@
 /* Create RSET - Record Support Entry Table */
 #define report NULL
 #define initialize NULL
-static long init_record(struct dbCommon *, int);
-static long process(struct dbCommon *);
+static long init_record();
+static long process();
 #define special NULL
 #define get_value NULL
 #define cvt_dbaddr NULL
 #define get_array_info NULL
 #define put_array_info NULL
-static long get_units(DBADDR *, char *);
-static long get_precision(const DBADDR *, long *);
+static long get_units();
+static long get_precision();
 #define get_enum_str NULL
 #define get_enum_strs NULL
 #define put_enum_str NULL
-static long get_graphic_double(DBADDR *, struct dbr_grDouble *);
-static long get_control_double(DBADDR *, struct dbr_ctrlDouble *);
-static long get_alarm_double(DBADDR *, struct dbr_alDouble *);
+static long get_graphic_double();
+static long get_control_double();
+static long get_alarm_double();
  
 rset xxxRSET={
 	RSETNUMBER,
@@ -75,9 +75,9 @@ typedef struct xxxset { /* xxx input dset */
 static void checkAlarms(xxxRecord *prec);
 static void monitor(xxxRecord *prec);
 
-static long init_record(struct dbCommon *pcommon, int pass)
+static long init_record(void *precord,int pass)
 {
-    xxxRecord *prec = (xxxRecord *)pcommon;
+    xxxRecord	*prec = (xxxRecord *)precord;
     xxxdset	*pdset;
     long	status;
 
@@ -99,9 +99,9 @@ static long init_record(struct dbCommon *pcommon, int pass)
     return(0);
 }
 
-static long process(struct dbCommon *pcommon)
+static long process(void *precord)
 {
-    xxxRecord	*prec = (xxxRecord *)pcommon;
+	xxxRecord	*prec = (xxxRecord *)precord;
 	xxxdset		*pdset = (xxxdset *)(prec->dset);
 	long		 status;
 	unsigned char    pact=prec->pact;
@@ -138,7 +138,7 @@ static long get_units(DBADDR *paddr, char *units)
     return(0);
 }
 
-static long get_precision(const DBADDR *paddr, long *precision)
+static long get_precision(DBADDR *paddr, long *precision)
 {
     xxxRecord	*prec=(xxxRecord *)paddr->precord;
 
@@ -203,7 +203,7 @@ static void checkAlarms(xxxRecord *prec)
 	unsigned short	hhsv, llsv, hsv, lsv;
 
 	if(prec->udf == TRUE ){
-		recGblSetSevr(prec,UDF_ALARM,prec->udfs);
+		recGblSetSevr(prec,UDF_ALARM,INVALID_ALARM);
 		return;
 	}
 	hihi = prec->hihi; lolo = prec->lolo; high = prec->high; low = prec->low;
