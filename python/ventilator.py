@@ -120,7 +120,7 @@ class serialReceiver(QtCore.QThread):
                     self.measuredInspirationVolume = float(dataList[3])
                     self.measuredPIF = float(dataList[4])
                     self.measuredFiO2 = float(dataList[5])
-                    self.measuredRR = float(dataList[6])
+                    self.measuredRR = 0 #TODO: remove this field
                     self.afterInspSample.emit(self.measuredInspirationRiseTimeInSecs, \
                         self.measuredPIP, self.measuredInspirationVolume, self.measuredPIF, \
                         self.measuredFiO2, self.measuredRR)
@@ -411,13 +411,13 @@ class VentilatorWindow(QDialog):
             self.sensorVtinsp_max = argv[2]
             self.sensorPIF = argv[3]
             self.sensorFio2 = argv[4]
-            self.sensorRR = argv[5]
+            # self.sensorRR = argv[5]
             self.sensorRiseTimevar.setText("{:.1f}".format(self.sensorInspRiseTime))
             self.sensorVtInspvar.setText("{:.1f}".format(self.sensorVtinsp_max))
             self.sensorFiO2var.setText("{:.1f}".format(self.sensorFio2))
             self.sensorPIPvar.setText("{:.1f}".format(self.sensorPIP))
             self.sensorPIFvar.setText("{:.1f}".format(self.sensorPIF))
-            self.sensorRRvar.setText("{:.1f}".format(self.sensorRR))
+            # self.sensorRRvar.setText("{:.1f}".format(self.sensorRR))
         elif(len(argv) == 5):
             self.sensorPEEP = argv[0]
             self.sensorVtexp_max = argv[1]
