@@ -552,7 +552,7 @@ ALARMS</string>
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="sensorIEvar">
+  <widget class="QLabel" name="sensorIERatiovar">
    <property name="geometry">
     <rect>
      <x>188</x>
@@ -665,7 +665,7 @@ color: rgb(3, 43, 91);</string>
     <layout class="QVBoxLayout" name="verticalLayout_11"/>
    </widget>
   </widget>
-  <widget class="QLabel" name="IE_label">
+  <widget class="QLabel" name="IERatio_label">
    <property name="geometry">
     <rect>
      <x>120</x>
