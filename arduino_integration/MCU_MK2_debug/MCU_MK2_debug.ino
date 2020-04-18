@@ -1,9 +1,10 @@
 #include <Adafruit_MCP4725.h> // https://github.com/adafruit/Adafruit_MCP4725 Adafruit MCP4725 12-bit DAC Driver Library
-//#include <PID_v1.h>           // https://github.com/br3ttb/Arduino-PID-Library/ Arduino PID Library v1.2.1 by Brett Beauregard
-//#include <avr/wdt.h>          // AVR Watchdog Timer
+#include <PID_v1.h>			  // https://github.com/br3ttb/Arduino-PID-Library/ Arduino PID Library v1.2.1 by Brett Beauregard
+//#include <avr/wdt.h>			 // AVR Watchdog Timer
 
 //Pressure Sensor includes
 #include <Adafruit_BMP3XX.h>
+#include <Regexp.h>
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
@@ -11,29 +12,38 @@ Adafruit_BMP3XX pressureSensor;
 
 Adafruit_MCP4725 dac;
 
+//PID - Define the aggressive and conservative Tuning Parameters
+double aggKp=4, aggKi=0.2, aggKd=1;
+double consKp=1, consKi=0.05, consKd=0.25;
+
 //initialize the two strings being received from the controller
 String intendedChangeValue;
 int intendedChange;
 
 // a string to hold incoming data
-String stringFromEPICs = "";
+String stringFromUILayer = "";
 String stringFromSlaveMCU = "";
-boolean stringFromEPICsComplete = false;
+boolean stringFromUILayerComplete = false;
 boolean stringFromSlaveMCUComplete = false;
 int currentState;
 boolean isLedOn = false;
 boolean isInspirationValveOpen = false;
 boolean expirationValveIsOpen = false;
 
+double pidControlledInspiratoryAperture;
+double targetInspPressure = 0.00; 
+double targetInspTidalVolume = 0.00;
+
+
 const int expiratoryValvePin = 2;
 const byte O2SensorPin = A0;
 
-const float MIN_TARGET_INSP_FLOW = 0.00;       //Litres per minute
-const float MAX_TARGET_INSP_FLOW = 200.00;     //Litres per minute
-const float MIN_TARGET_INSP_PRESSURE = 0.00;   //cmH2O
-const float MAX_TARGET_INSP_PRESSURE = 300.00; // cmH2O (0.3 Bar)
-const float MIN_TARGET_INSP_VOLUME = 0.00;     //ml
-const float MAX_TARGET_INSP_VOLUME = 1000.00;  //ml
+const float MIN_TARGET_INSP_FLOW = 0.00;		 //Litres per minute
+const float MAX_TARGET_INSP_FLOW = 200.00;	  //Litres per minute
+const float MIN_TARGET_INSP_PRESSURE = 0.00;	//cmH2O
+const float MAX_TARGET_INSP_PRESSURE = 100.00; // cmH2O (0.1 Bar)
+const float MIN_TARGET_INSP_VOLUME = 0.00;	  //ml
+const float MAX_TARGET_INSP_VOLUME = 1500.00;  //ml
 
 const int INSPIRATION_APERTURE_TARGET = 255;
 
@@ -44,61 +54,73 @@ const int MAX_INSP_VALVE_APERTURE = 4095; // 5V - Bronkhorst
 const int MIN_TARGET_APERTURE = 0;
 const int MAX_TARGET_APERTURE = 255;
 
-// target command byte, as delivered by EPICs controller
-const int targetInspFlow = 0;
-const int targetInspPressure = 1;
-const int targetInspValveAperture = 2;
-const int targetExpValveAperture = 3;
-const int targetState = 4;
 
-// target state byte, as delivered by EPICs controller
+// target state byte, as delivered by UILayer controller
 const int expirationHold = 0;
 const int inspiration = 1;
 const int expiration = 2;
 const int inspirationHold = 3;
 
+// message type
+const int sensorReadings = 1;
+const int inspiratorySummary = 2;
+const int expiratorySummary = 3;
+const int PCSettings = 4;
+const int VCSettings = 5;
+const int alarmThresholds = 6;
+const int alarmMessage = 7;
+const int debugMessage = 99;
 
-float inspiratoryVolume = 0.00;
-float expiratoryVolume = 0.00;
-float tidalVolume = 0.00;
-float inspiratoryVolume = 0.00;
-float expiratoryVolume = 0.00;
+// ventilator supported modes
+const int pressureControl = 0;
+const int volumeControl = 1;
+
+int currentVentilatorMode = pressureControl;
+
+const String messageSeparator = ";";
+
+double tidalVolume = 0.00;
+float measuredInspirationVolume = 0.00;
+float measuredExpirationVolume = 0.00;
 
 float tidalVolumeUpperLimit = 1000.0;
 bool inspirationValveIsOpen = false;
 
-
+const boolean isDebugEnabled = true;
 int cyclePhase = inspiration;
 
+String debugString = "";
+String alarmString = "";
+
 // Hard-coded Variables
-float peakInspirationPressure = 46.00; //cmH2O (PIP)
-float positiveEndExpiratoryPressure = 5.00; //cmH2O (PEEP)
+float targetPIP = 46.00; //cmH2O (PIP)
+float targetPEEP = 5.00; //cmH2O (PEEP)
 
-int breathsPerMinute = 14; // 5s breaths
-int inspirationPhaseDuration = 60000 / breathsPerMinute * 0.5; //25% of each Breath Cycle
-int inspirationHoldPhaseDuration = 60000 / breathsPerMinute * 0.00; //5% of each Breath Cycle
-int expirationPhaseDuration = (60000 / breathsPerMinute) - (inspirationHoldPhaseDuration + inspirationPhaseDuration); //remainder of each Breath Cycle
-
+int targetRR = 14; // 5s breaths
+int inspirationPhaseDuration = 60000 / targetRR * 0.5; //25% of each Breath Cycle
+int inspirationHoldPhaseDuration = 60000 / targetRR * 0.00; //5% of each Breath Cycle
+int expirationPhaseDuration = (60000 / targetRR) - (inspirationHoldPhaseDuration + inspirationPhaseDuration); //remainder of each Breath Cycle
+int inspirationPhaseMinusHoldDuration = 0;
 
 int message_id = 0;
 
-float pressure = 0.00;
+double pressure = 0.00;
 float flow;
 
-const int numO2readings = 100;   //number of smoothing points for the O2 readout
+const int numO2readings = 100;	//number of smoothing points for the O2 readout
 float O2readings[numO2readings]; // the readings from the analog input
-int O2readIndex = 0;             // the index of the current reading
-float O2total = 0.00;            // the running total
-float O2average = 0.00;          // the average
+int O2readIndex = 0;				 // the index of the current reading
+float O2total = 0.00;				// the running total
+float O2average = 0.00;			 // the average
 int O2RawPercentage = 0;
 float O2Percentage = 0.00;
 
 
-const int numPressureReadings = 5;   //number of smoothing points for the O2 readout
+const int numPressureReadings = 5;	//number of smoothing points for the O2 readout
 float pressureReadings[numPressureReadings]; // the readings from the analog input
-int pressureReadIndex = 0;             // the index of the current reading
-float pressureTotal = 0.00;            // the running total
-float pressureAverage = 0.00;          // the average
+int pressureReadIndex = 0;				 // the index of the current reading
+float pressureTotal = 0.00;				// the running total
+float pressureAverage = 0.00;			 // the average
 //int pressurePercentage = 0;
 //float pressurePercentage = 0.00;
 
@@ -106,26 +128,42 @@ unsigned long currentMillis = 0;
 unsigned long previousFlowReadMillis = 0;
 unsigned long previousPressureReadMillis = 0;
 unsigned long previousO2ReadMillis = 0;
-unsigned long previousSerialWriteMillis = 0;
+unsigned long previousImmediateSensorOutputMillis = 0;
 unsigned long previousControlCycleMillis = 0;
 unsigned long inspirationPhaseStartMillis = 0;
 
 unsigned long inspirationHoldPhaseStartMillis = 0;
 unsigned long expirationPhaseStartMillis = 0;
+float measuredInspirationRiseTimeInSecs = 0.0;
 
 const int O2Offset = 28;
 const float pressureOffsetMultiplier = 1;
 float pressureOffset = 0.0;
-const float flowOffsetMultiplier = 2.0;
+const float flowOffsetMultiplier = 1.0;
 
-const int serialUpdateInterval = 50;
+const int immediateSensorOutputInterval = 50;
 const int O2UpdateInterval = 100;
 const int flowUpdateInterval = 50;
 const int volumeUpdateInterval = 50;
 const int pressureUpdateInterval = 10;
 const int controlCycleInterval = 10;
 
+float measuredPIP = 0.0;
+float measuredPEEP = 0.0;
+float measuredPIF = 0.0;
+float measuredPEF = 0.0;
+float targetIERatio = 2.0;
+float targetInspirationRiseTime = 0.8;
+float targetVt = 800.0;
+float targetInspPausePerc = 30.0;
+float lowerInspirationVolumeThreshold = 0.0;
+float upperInspirationVolumeThreshold = 1500.0;
+float lowerInspirationPressureThreshold = 3.0;
+float upperInspirationPressureThreshold = 100.0;
 
+bool PIPReached = false;
+bool targetVtReached = false;
+MatchState ms;
 //float tidalVolume = 0.00;
 
 // realistic mockup data for graphs
@@ -133,30 +171,38 @@ const int controlCycleInterval = 10;
 //float pressure[] = {0, 0.40961, 1.0912, 1.4903, 1.9085, 2.281, 2.626, 2.9543, 3.272, 3.5822, 3.8872, 4.1884, 4.4864, 4.7818, 5.0751, 5.412, 5.7117, 6.0009, 6.2898, 6.5774, 6.8634, 6.2285, 5.4722, 5.0297, 4.7197, 4.4669, 4.2461, 4.0459, 3.8637, 3.693, 3.5311, 3.3794, 3.236, 3.0998, 2.9708, 2.8511, 2.7376, 2.6322, 2.5331, 2.4405, 2.3539, 2.272, 2.1951, 2.1227, 2.0546, 1.9904, 1.9299, 1.8728, 1.8188, 1.7678, 1.7194, 1.6736, 1.6302, 1.589, 1.5498, 1.5125, 1.4771, 1.4433, 1.4111, 1.3803, 1.351, 1.3229, 1.2961, 1.2704, 1.2459, 1.2223, 1.1997, 1.178, 1.1572, 1.1371, 1.1179, 1.0993, 1.0815, 1.0643, 1.0477, 1.0317, 1.0163, 1.0014, 0.98706, 0.97318, 0.95972, 1.2139, 1.703, 1.9059, 2.1214, 2.3195, 2.5085, 2.7025, 2.9217, 3.1599, 3.4103, 3.6659, 3.925, 4.1864, 4.4493, 4.7132, 4.9777, 5.2425, 5.5076, 5.7728, 6.0381, 5.469, 4.8258, 4.4373, 4.1583, 3.9295, 3.7302, 3.5517, 3.3897, 3.2391, 3.1002, 2.9683, 2.846, 2.7322, 2.625, 2.5252, 2.4323, 2.344, 2.2615, 2.1842, 2.1113, 2.0429, 1.9783, 1.9173, 1.8598, 1.8055, 1.7542, 1.7055, 1.6595, 1.6158, 1.5743, 1.5349, 1.4975, 1.4618, 1.4279, 1.3955, 1.3647, 1.3352, 1.307, 1.2801, 1.2543, 1.2297, 1.206, 1.1834, 1.1616, 1.1407, 1.1206, 1.1013, 1.0828, 1.0649, 1.0477, 1.0311, 1.0151, 0.99968, 0.98481, 0.97045, 0.95659, 0.9432, 0.93026, 0.91775, 0.90561, 1.152, 1.6408, 1.841, 2.0547, 2.2497, 2.437, 2.6286, 2.8401, 3.074, 3.319, 3.5704, 3.8255, 4.083, 4.3423, 4.6028, 4.8641, 5.126, 5.3883, 5.6509, 5.9138, 5.3568, 4.7254, 4.3451, 4.0701, 3.8464, 3.6502, 3.4752, 3.3166, 3.1702, 3.0338, 2.9069, 2.7883, 2.6776, 2.5742, 2.4779, 2.3872, 2.302, 2.2218, 2.1466, 2.076, 2.0093, 1.9465, 1.8873, 1.8313, 1.7785, 1.7284, 1.6811, 1.6362, 1.5936, 1.5531, 1.5147, 1.4782, 1.4433, 1.4102, 1.3785, 1.3484, 1.3195, 1.292, 1.2656, 1.2404, 1.2162, 1.1931, 1.1709, 1.1495, 1.129, 1.1093, 1.0904, 1.0722, 1.0546, 1.0377, 1.0214, 1.0057, 0.99058, 0.97597, 0.96186, 0.94824, 0.93507, 0.92235, 0.91005, 0.8981, 1.1428, 1.6316, 1.8312, 2.0442, 2.2391, 2.4261, 2.6171, 2.8271, 3.0607, 3.3051, 3.5556, 3.8099, 4.0668, 4.3254, 4.5853, 4.8461, 5.1074, 5.3692, 5.6314, 5.8938, 5.3385, 4.7184, 4.3312, 4.0571, 3.8325, 3.6376, 3.4633, 3.3055, 3.1592, 3.0237, 2.8981, 2.7794, 2.6692, 2.5662, 2.4701, 2.3798, 2.2951, 2.2158, 2.1406, 2.0704, 2.004, 1.9415, 1.8825, 1.8268, 1.7742, 1.7244, 1.6772, 1.6325, 1.5901, 1.5496, 1.5113, 1.475, 1.4402, 1.4072, 1.3757, 1.3457, 1.317, 1.2895, 1.2633, 1.2381, 1.214, 1.1909, 1.1688, 1.1475, 1.1271, 1.1075, 1.0886, 1.0704, 1.0529, 1.0361, 1.0198, 1.0042, 0.98906, 0.97449, 0.96042, 0.94683, 0.9337, 0.92101, 0.90874, 0.89687, 1.1416, 1.63, 1.8294, 2.0424, 2.2371, 2.4242, 2.615, 2.8249, 3.0582, 3.3025, 3.5529, 3.807, 4.0638, 4.3223, 4.582, 4.8427, 5.104, 5.3657, 5.6277, 5.8901, 5.3352, 4.7126, 4.3285, 4.0545, 3.8307, 3.6356, 3.4612, 3.3036, 3.1573, 3.022, 2.8959, 2.7782, 2.6676, 2.5648, 2.4687, 2.3786, 2.2939, 2.2146, 2.14, 2.0695, 2.0032, 1.9407, 1.8818, 1.8261, 1.7735, 1.7237, 1.6766, 1.6319, 1.5895, 1.5492, 1.5109, 1.4745, 1.4399, 1.4068, 1.3753, 1.3453, 1.3166, 1.2891, 1.2629, 1.2377, 1.2137, 1.1906, 1.1684, 1.1472, 1.1268, 1.1072, 1.0883, 1.0701, 1.0526, 1.0358, 1.0195, 1.0039, 0.98879, 0.97422, 0.96016, 0.94657, 0.93345, 0.92077, 0.9085, 0.89659, 1.1413, 1.6296, 1.8291, 2.042, 2.2368, 2.4238, 2.6146, 2.8244, 3.0577, 3.3019, 3.5523, 3.8065, 4.0632, 4.3217, 4.5814, 4.842, 5.1033, 5.365, 5.627, 5.8893, 5.3346, 4.713, 4.328, 4.0541, 3.8298, 3.6353, 3.4608, 3.303, 3.1569, 3.0217, 2.8957, 2.7778, 2.6677, 2.5645, 2.4685, 2.379, 2.2942, 2.2146, 2.1397, 2.0693, 2.003, 1.9405, 1.8815, 1.8259, 1.7733, 1.7235, 1.6764, 1.6317, 1.5893, 1.5491, 1.5108, 1.4744, 1.4397, 1.4067, 1.3752, 1.3452, 1.3165, 1.289, 1.2628, 1.2376, 1.2136, 1.1905, 1.1684, 1.1471, 1.1267, 1.1071, 1.0882, 1.07, 1.0525, 1.0357, 1.0195, 1.0038, 0.98872, 0.97415, 0.96009, 0.94651, 0.93339, 0.92071, 0.90845, 0.89654, 1.1413, 1.6296, 1.829, 2.042, 2.2367, 2.4237, 2.6145, 2.8244, 3.0576, 3.3018, 3.5522, 3.8063, 4.0631, 4.3216, 4.5813, 4.8419, 5.1031, 5.3648, 5.6269, 5.8892, 5.3345, 4.7126, 4.3284, 4.0541, 3.8305, 3.6357, 3.4608, 3.3027, 3.1569, 3.0215, 2.8953, 2.7782, 2.6673, 2.5646, 2.4685, 2.3785, 2.294, 2.2144, 2.1395, 2.0689, 2.003, 1.9405, 1.8816, 1.8259, 1.7733, 1.7235, 1.6764, 1.6317, 1.5893, 1.5491, 1.5108, 1.4744, 1.4397, 1.4067, 1.3752, 1.3452, 1.3165, 1.289, 1.2628, 1.2376, 1.2136, 1.1905, 1.1684, 1.1471, 1.1267, 1.1071, 1.0882, 1.07, 1.0525, 1.0357, 1.0195, 1.0038, 0.98872, 0.97415, 0.96009, 0.94651, 0.93339, 0.92071, 0.90845, 0.89654, 1.1413, 1.6296, 1.829, 2.0419, 2.2367, 2.4237, 2.6145, 2.8244, 3.0576, 3.3018, 3.5522, 3.8063, 4.063, 4.3216, 4.5813, 4.8419, 5.1031, 5.3648, 5.6269, 5.8892, 5.3345, 4.7136, 4.3283, 4.054, 3.8305, 3.6357, 3.4608, 3.3026, 3.1569, 3.0215, 2.8961, 2.7773, 2.6673, 2.5647, 2.4684, 2.3786, 2.294, 2.2142, 2.1393, 2.0688};
 //float volume[] = {800, 801.2, 808.08, 817.36, 828.24, 840.08, 852.44, 865, 877.64, 890.24, 902.8, 915.28, 927.64, 939.88, 952.08, 964.28, 976.64, 988.84, 1000.96, 1012.92, 1024.8, 1033.28, 1033.08, 1028, 1020.84, 1012.88, 1004.6, 996.28, 988.12, 980.2, 972.56, 965.2, 958.2, 951.44, 945, 938.92, 933.08, 927.6, 922.4, 917.48, 912.88, 908.52, 904.4, 900.56, 896.92, 893.48, 890.24, 887.2, 884.36, 881.64, 879.08, 876.68, 874.4, 872.28, 870.24, 868.32, 866.48, 864.76, 863.12, 861.56, 860.08, 858.64, 857.32, 856.04, 854.8, 853.64, 852.52, 851.48, 850.44, 849.48, 848.52, 847.64, 846.76, 845.96, 845.16, 844.4, 843.64, 842.96, 842.28, 841.6, 840.96, 841, 845.2, 850.96, 857.32, 864.08, 871.04, 878.12, 885.48, 893.2, 901.4, 910, 918.96, 928.2, 937.72, 947.44, 957.36, 967.4, 977.56, 987.8, 998.12, 1005.44, 1005.16, 1000.8, 994.56, 987.52, 980.16, 972.76, 965.48, 958.44, 951.68, 945.16, 939, 933.12, 927.56, 922.28, 917.36, 912.68, 908.28, 904.12, 900.24, 896.56, 893.12, 889.84, 886.8, 883.92, 881.2, 878.6, 876.2, 873.92, 871.76, 869.68, 867.76, 865.92, 864.2, 862.52, 860.96, 859.48, 858.04, 856.72, 855.4, 854.2, 853, 851.88, 850.84, 849.8, 848.84, 847.88, 847, 846.12, 845.28, 844.48, 843.72, 843, 842.28, 841.6, 840.96, 840.32, 839.72, 839.12, 838.56, 838.6, 842.8, 848.52, 854.84, 861.56, 868.44, 875.48, 882.72, 890.32, 898.36, 906.8, 915.6, 924.72, 934.08, 943.64, 953.4, 963.32, 973.32, 983.44, 993.64, 1000.88, 1000.76, 996.48, 990.4, 983.48, 976.28, 969.04, 961.92, 955.04, 948.4, 942.08, 936.04, 930.32, 924.92, 919.8, 915, 910.44, 906.16, 902.16, 898.36, 894.8, 891.44, 888.28, 885.32, 882.48, 879.84, 877.36, 875, 872.76, 870.68, 868.68, 866.8, 865, 863.28, 861.68, 860.16, 858.72, 857.32, 856, 854.72, 853.52, 852.4, 851.28, 850.24, 849.24, 848.28, 847.36, 846.48, 845.64, 844.84, 844.04, 843.28, 842.56, 841.88, 841.2, 840.56, 839.96, 839.36, 838.76, 838.2, 838.28, 842.44, 848.2, 854.48, 861.16, 868.04, 875.08, 882.28, 889.88, 897.92, 906.32, 915.12, 924.16, 933.52, 943.04, 952.8, 962.68, 972.68, 982.76, 992.96, 1000.16, 1000, 995.8, 989.76, 982.88, 975.72, 968.48, 961.4, 954.52, 947.92, 941.64, 935.6, 929.88, 924.48, 919.4, 914.6, 910.08, 905.84, 901.84, 898.08, 894.52, 891.2, 888.04, 885.08, 882.28, 879.64, 877.16, 874.8, 872.6, 870.48, 868.52, 866.64, 864.84, 863.16, 861.56, 860.04, 858.56, 857.2, 855.88, 854.64, 853.44, 852.28, 851.2, 850.16, 849.16, 848.2, 847.28, 846.4, 845.56, 844.76, 843.96, 843.24, 842.52, 841.8, 841.16, 840.52, 839.88, 839.28, 838.72, 838.16, 838.2, 842.4, 848.12, 854.4, 861.12, 868, 875, 882.24, 889.8, 897.84, 906.24, 915, 924.08, 933.4, 942.96, 952.68, 962.56, 972.56, 982.64, 992.8, 1000, 999.96, 995.72, 989.64, 982.76, 975.6, 968.4, 961.32, 954.44, 947.84, 941.52, 935.52, 929.8, 924.44, 919.32, 914.56, 910.04, 905.8, 901.8, 898.04, 894.48, 891.16, 888, 885.04, 882.24, 879.6, 877.12, 874.76, 872.56, 870.48, 868.48, 866.6, 864.84, 863.12, 861.52, 860, 858.56, 857.16, 855.88, 854.6, 853.4, 852.28, 851.2, 850.16, 849.16, 848.2, 847.28, 846.4, 845.56, 844.72, 843.96, 843.2, 842.48, 841.8, 841.12, 840.48, 839.88, 839.28, 838.72, 838.16, 838.2, 842.4, 848.12, 854.4, 861.08, 867.96, 875, 882.2, 889.8, 897.8, 906.24, 915, 924.04, 933.4, 942.92, 952.64, 962.52, 972.52, 982.6, 992.8, 1000, 999.92, 995.68, 989.6, 982.76, 975.6, 968.36, 961.28, 954.4, 947.8, 941.52, 935.52, 929.8, 924.4, 919.32, 914.56, 910.04, 905.8, 901.8, 898, 894.48, 891.12, 888, 885.04, 882.24, 879.6, 877.12, 874.76, 872.56, 870.44, 868.48, 866.6, 864.8, 863.12, 861.52, 860, 858.56, 857.16, 855.84, 854.6, 853.4, 852.28, 851.16, 850.12, 849.12, 848.2, 847.28, 846.4, 845.56, 844.72, 843.96, 843.2, 842.48, 841.8, 841.12, 840.48, 839.88, 839.28, 838.68, 838.12, 838.2, 842.4, 848.12, 854.4, 861.08, 867.96, 875, 882.2, 889.8, 897.8, 906.24, 915, 924.04, 933.4, 942.92, 952.64, 962.52, 972.52, 982.6, 992.8, 1000, 999.92, 995.68, 989.6, 982.76, 975.56, 968.36, 961.28, 954.4, 947.8, 941.48, 935.52, 929.8, 924.4, 919.32, 914.56, 910.04, 905.8, 901.76, 898, 894.48, 891.12, 888, 885.04, 882.24, 879.6, 877.12, 874.76, 872.56, 870.44, 868.48, 866.6, 864.8, 863.12, 861.52, 860, 858.56, 857.16, 855.84, 854.6, 853.4, 852.28, 851.16, 850.12, 849.12, 848.2, 847.28, 846.4, 845.56, 844.72, 843.96, 843.2, 842.48, 841.8, 841.12, 840.48, 839.88, 839.28, 838.68, 838.12, 838.2, 842.4, 848.12, 854.4, 861.08, 867.96, 875, 882.2, 889.8, 897.8, 906.24, 915, 924.04, 933.36, 942.92, 952.64, 962.52, 972.52, 982.6, 992.76, 1000, 999.88, 995.68, 989.6, 982.76, 975.56, 968.36, 961.28, 954.4, 947.8, 941.52, 935.48, 929.8, 924.4, 919.32, 914.56, 910.04, 905.76, 901.76, 898};
 
-int icycle = 0;
-int i = 0;
+bool pressureCalibrationDone = false;
+
+char copy[200];
+
+//Specify the links and initial tuning parameters for the pressure PID
+PID pressurePID( &pressure,  &pidControlledInspiratoryAperture, &targetInspPressure, consKp, consKi, consKd, DIRECT);
+PID volumePID(&tidalVolume, &pidControlledInspiratoryAperture, &targetInspTidalVolume, consKp, consKi, consKd, DIRECT);
 
 void setup()
 {
- 
-  Serial.begin(115200); // Initialize Serial interface towards EPICs controller
+
+  Serial.begin(115200); // Initialize Serial interface towards UILayer controller
   Serial1.begin(115200);  // Initialize Serial interface towards Slave MCU reading Flow Sensor
-
-  stringFromEPICs.reserve(200);
-  stringFromSlaveMCU.reserve(200);
   
-  pinMode(expiratoryValvePin, OUTPUT);
-  pinMode(LED_BUILTIN, OUTPUT); // For Debug purpose, initialize onboard led for physical feedback
+  pressurePID.SetMode(AUTOMATIC);
+  volumePID.SetMode(AUTOMATIC);
 
+  stringFromUILayer.reserve(200);
+  stringFromSlaveMCU.reserve(200);
+  debugString.reserve(200);
+  alarmString.reserve(200);
+
+  pinMode(expiratoryValvePin, OUTPUT);
   dac.begin(0x60);
 
  // wdt_enable(WDTO_500MS); //watchdog timer with 500ms time out
-
+  
   unsigned status;
   status = pressureSensor.begin(0x76);
   if (!status)
   {
-    Serial.println("Could not find a valid BMP388 (inspiration) sensor, check wiring, address, sensor ID!");
+  	Serial.println("Could not find a valid BMP388 (inspiration) sensor, check wiring, address, sensor ID!");
   }
 
   pinMode(O2SensorPin, INPUT);
@@ -164,13 +210,13 @@ void setup()
   //initialize the pressure and O2 sensor smoothing array
   for (int thisReading = 0; thisReading < numPressureReadings; thisReading++)
   {
-    pressureReadings[thisReading] = 0.0; // reset O2readings array
-  }
+	 pressureReadings[thisReading] = 0.0; // reset O2readings array
+	}
 
-   for (int thisReading = 0; thisReading < numO2readings; thisReading++)
-  {
-    O2readings[thisReading] = 0; // reset O2readings array
-  }
+	for (int thisReading = 0; thisReading < numO2readings; thisReading++)
+	{
+	 O2readings[thisReading] = 0; // reset O2readings array
+	}
 }
 
 void loop()
@@ -183,366 +229,693 @@ void loop()
   getPressure();
   if (stringFromSlaveMCUComplete)
   {
-    interpretSlaveMCUReading();
+  	interpretSlaveMCUReading();
   }
-  if (stringFromEPICsComplete)
+  if (stringFromUILayerComplete)
   {
-    interpretEPICsCommand();
+  	interpretUILayerCommand();
   }
-  pressureControlCycle();
-  //writeSerial();
-}
-
-void switchOnBoardLEDState()
-{
-  if (isLedOn)
-  {
-    digitalWrite(LED_BUILTIN, LOW);
-    isLedOn = false;
-    return;
+  switch(currentVentilatorMode){
+  	case pressureControl:
+  	pressureControlCycle();
+  	break;
+  	case volumeControl:
+  	volumeControlCycle();
+  	break;
   }
-  else
-  {
-    digitalWrite(LED_BUILTIN, HIGH);
-    isLedOn = true;
-  }
-}
-
-void handleflow(float targetflow)
-{
-  switchOnBoardLEDState();
-}
-
-void handlepressure(float targetpressure)
-{
-  switchOnBoardLEDState();
+  
+  outputMessage(sensorReadings);
 }
 
 void handleInspiratoryValveAperture(int targetInspiratoryAperture)
 {
-  if(targetInspiratoryAperture == MIN_TARGET_APERTURE){
-    inspirationValveIsOpen=false;
-  }else {
-    inspirationValveIsOpen=true;
-  }
-  dac.setVoltage(map(targetInspiratoryAperture, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE, MIN_INSP_VALVE_APERTURE, MAX_INSP_VALVE_APERTURE), false);
+	if(targetInspiratoryAperture == MIN_TARGET_APERTURE){
+		inspirationValveIsOpen=false;
+	}else {
+		inspirationValveIsOpen=true;
+	}
+	dac.setVoltage(map(targetInspiratoryAperture, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE, MIN_INSP_VALVE_APERTURE, MAX_INSP_VALVE_APERTURE), false);
 }
 
 void handleExpiratoryValveAperture(int targetInspiratoryAperture)
 {
-  if (targetInspiratoryAperture == MIN_TARGET_APERTURE && expirationValveIsOpen)
-  {
-    digitalWrite(expiratoryValvePin, LOW);
-    expirationValveIsOpen = false;
-  }
-  else if (targetInspiratoryAperture > MIN_TARGET_APERTURE && !expirationValveIsOpen)
-  {
-    digitalWrite(expiratoryValvePin, HIGH);
-    expirationValveIsOpen = true;
-  }
+	if (targetInspiratoryAperture == MIN_TARGET_APERTURE && expirationValveIsOpen)
+	{
+		digitalWrite(expiratoryValvePin, LOW);
+		expirationValveIsOpen = false;
+	}
+	else if (targetInspiratoryAperture > MIN_TARGET_APERTURE && !expirationValveIsOpen)
+	{
+		digitalWrite(expiratoryValvePin, HIGH);
+		expirationValveIsOpen = true;
+	}
+}
+
+void sendAlarm(String alarmStringAux){
+	alarmString=alarmStringAux;
+	outputMessage(alarmMessage);
+
 }
 
 void getPressure(){
-  if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval) {
-    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier;  //CmH2O, two readings for weird stability issues
-    pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier; 
-    //Serial.print("pressure reading is: ");
-    //Serial.println(pressure);
+	if (currentMillis - previousPressureReadMillis >= pressureUpdateInterval) {
+	 pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier;  //CmH2O, two readings for weird stability issues
+	 pressure = ((pressureSensor.readPressure() / 100.0 * 1.019744288922 ) - pressureOffset) / pressureOffsetMultiplier; 
+	 //Serial.print("pressure reading is: ");
+	 //Serial.println(pressure);
 
-    pressureTotal = pressureTotal - pressureReadings[pressureReadIndex];
-    pressureReadings[pressureReadIndex] = pressure;
-    // add the reading to the total:
-    pressureTotal = pressureTotal + pressureReadings[pressureReadIndex];
-    // advance to the next position in the array:
-    pressureReadIndex++;
+	 pressureTotal = pressureTotal - pressureReadings[pressureReadIndex];
+	 pressureReadings[pressureReadIndex] = pressure;
+	 // add the reading to the total:
+	 pressureTotal = pressureTotal + pressureReadings[pressureReadIndex];
+	 // advance to the next position in the array:
+	 pressureReadIndex++;
 
-    // if we're at the end of the array...
-    if (pressureReadIndex >= numPressureReadings)
-    {
-      // ...wrap around to the beginning:
-      pressureReadIndex = 0;
-    }
-    // calculate the average:
-    pressureAverage = pressureTotal / (float)numPressureReadings;
-    if (i==0){
-      delay(5000);
-      pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 );
-    //Serial.print("Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressure = ");
-    //Serial.println(pressure);
-    Serial.println("O2_Percentage pressure flow tidalVolume");
-    pressureOffset= pressure;
-    i++;                       
-  }
-    previousPressureReadMillis = currentMillis;
-  }
+	 // if we're at the end of the array...
+	 if (pressureReadIndex >= numPressureReadings)
+	 {
+		// ...wrap around to the beginning:
+	 	pressureReadIndex = 0;
+	 }
+	 // calculate the average:
+	 pressureAverage = pressureTotal / (float)numPressureReadings;
+
+	 switch (cyclePhase){
+	 	case inspiration:
+	 		if (pressureAverage > measuredPIP){
+	 			measuredPIP = pressureAverage;
+	 		}
+	 		break;
+	 	case expiration:
+	 		if (pressureAverage < measuredPEEP){
+	 			measuredPEEP = pressureAverage;
+	 		}
+	 }
+	 if (!pressureCalibrationDone){
+	 	delay(2000);
+	 	pressure = (pressureSensor.readPressure() / 100.0 * 1.019744288922 );
+	    debugString = "Setting baseline pressure offset (this means that the circuit should be at room pressure at this point), pressureOffset being set to ";
+	    debugString += pressure;
+	    outputMessage(debugMessage);
+
+	 	pressureOffset= pressure;
+	 	pressureCalibrationDone = true;							  
+	 }
+	 previousPressureReadMillis = currentMillis;
+	}
 }
 
 void getO2perc()
 {
-  if (currentMillis - previousO2ReadMillis >= O2UpdateInterval)
-  {
-    O2total = O2total - O2readings[O2readIndex];
-    // read from the sensor:
-    O2RawPercentage = analogRead(O2SensorPin);
-    O2Percentage = map(O2RawPercentage, 806, 740, 0, 10000) / 100.00;
-    O2readings[O2readIndex] = O2Percentage;
-    // add the reading to the total:
-    O2total = O2total + O2readings[O2readIndex];
-    // advance to the next position in the array:
-    O2readIndex++;
+	if (currentMillis - previousO2ReadMillis >= O2UpdateInterval)
+	{
+		O2total = O2total - O2readings[O2readIndex];
+	 // read from the sensor:
+		O2RawPercentage = analogRead(O2SensorPin);
+		O2Percentage = map(O2RawPercentage, 806, 740, 0, 10000) / 100.00;
+		O2readings[O2readIndex] = O2Percentage;
+	 // add the reading to the total:
+		O2total = O2total + O2readings[O2readIndex];
+	 // advance to the next position in the array:
+		O2readIndex++;
 
-    // if we're at the end of the array...
-    if (O2readIndex >= numO2readings)
-    {
-      // ...wrap around to the beginning:
-      O2readIndex = 0;
-    }
-    // calculate the average:
-    O2Percentage = O2total / (float)numO2readings + O2Offset;
-    // send it to the computer as ASCII digits
-    previousO2ReadMillis = currentMillis;
-  }
+	 // if we're at the end of the array...
+		if (O2readIndex >= numO2readings)
+		{
+		// ...wrap around to the beginning:
+			O2readIndex = 0;
+		}
+	 // calculate the average:
+		O2Percentage = O2total / (float)numO2readings + O2Offset;
+	 // send it to the computer as ASCII digits
+		previousO2ReadMillis = currentMillis;
+	}
 }
 
-void writeSerial()
-{
-  if (currentMillis - previousSerialWriteMillis >= serialUpdateInterval)
-  {
-
-
-    //Serial.print(message_id);
-    //Serial.print(";");
-    Serial.print(O2Percentage);
-    Serial.print(" ");
-    //Serial.print(";");
-    Serial.print(pressure);
-     Serial.print(" ");
-    Serial.print(flow);
-     Serial.print(" ");
-    Serial.println(tidalVolume);
-
-    previousSerialWriteMillis = currentMillis;
-  }
+void iterateMessageId(){
+	if (message_id >= 999)
+	{
+		message_id = 0;
+	}
+	else
+	{
+		message_id++;
+	}
 }
 
+void outputMessage(int messageType){
 
-void interpretEPICsCommand()
-{
-  if (stringFromEPICsComplete)
-  {
-    //Serial.print("SERIAL ECHO: ");
-    //Serial.println(stringFromEPICs)
-    for (int i = 0; i < stringFromEPICs.length(); i++)
-    {
-      if (stringFromEPICs.substring(i, i + 1) == ";")
-      {
-        intendedChange = stringFromEPICs.substring(0, i).toInt();
-        intendedChangeValue = stringFromEPICs.substring(i + 1);
-        break;
-      }
-    }
+	
 
-    switch (intendedChange)
-    {
-      float intendedChangeValueAuxFloat;
-      int intendedChangeValueAuxInt;
-    case targetInspFlow: // define target Inspiration Flow in lpm, to be handled through the microcontroller/arduino PID controller.
-      intendedChangeValueAuxFloat = intendedChangeValue.toFloat();
-      constrain(intendedChangeValueAuxFloat, MIN_TARGET_INSP_FLOW, MAX_TARGET_INSP_FLOW); //sanitize/limit target inspiratory flow.
-      handleflow(intendedChangeValueAuxFloat);
-      break;
+	switch (messageType){
 
-    case targetInspPressure: // define target Inspiration Pressure in cmH2O, to be handled through the microcontroller/arduino PID controller.
-      intendedChangeValueAuxFloat = intendedChangeValue.toFloat();
-      constrain(intendedChangeValueAuxFloat, MIN_TARGET_INSP_PRESSURE, MAX_TARGET_INSP_PRESSURE); //sanitize/limit target inspiratory pressure.
-      handlepressure(intendedChangeValueAuxFloat);
-      break;
+		case sensorReadings:
+			if (currentMillis - previousImmediateSensorOutputMillis >= immediateSensorOutputInterval)
+			{
+				Serial.print(sensorReadings);
+				Serial.print(messageSeparator);
+				Serial.print(message_id); //messageId
+				Serial.print(messageSeparator);
+				Serial.print(pressure); //immediatePressure
+				Serial.print(messageSeparator);
+				Serial.print(flow); //immediateFlow
+				Serial.print(messageSeparator);
+				Serial.println(tidalVolume); //immediateTidalVolume
+				previousImmediateSensorOutputMillis = currentMillis;
+				iterateMessageId();
+			}
+			break;
 
-    case targetInspValveAperture: // define target Inspiration Valve Aperture, in this mode the PID is controlled through EPICs.
-      intendedChangeValueAuxInt = intendedChangeValue.toInt();
-      constrain(intendedChangeValueAuxInt, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE); //sanitize/limit target inspiratory pressure.
-      handleInspiratoryValveAperture(intendedChangeValueAuxInt);
-      break;
+		case inspiratorySummary:
+		 		//2;messageId;measuredInspirationRiseTimeInSecs;measuredPIP;measuredInspirationVolume;measuredPIF;O2Percentage //inspiratory summary, sent at the end of the inspiratory phase
+			Serial.print(inspiratorySummary);
+			Serial.print(messageSeparator);
+			Serial.print(message_id); //messageId
+			Serial.print(messageSeparator);
+			Serial.print(measuredInspirationRiseTimeInSecs); //measuredInspirationRiseTimeInSecs
+			Serial.print(messageSeparator);
+			Serial.print(measuredPIP); //measuredPIP
+			Serial.print(messageSeparator);
+			Serial.print(measuredInspirationVolume); //measuredInspirationVolume
+			Serial.print(messageSeparator);
+			Serial.print(measuredPIF); //measuredPIF
+			Serial.print(messageSeparator);
+			Serial.println(O2Percentage); //O2Percentage
+			iterateMessageId();
+			break;
 
-    case targetExpValveAperture: // define target Expiration Valve Aperture, in this mode the PID is controlled through EPICs.
-      intendedChangeValueAuxInt = intendedChangeValue.toInt();
-      constrain(intendedChangeValueAuxInt, MIN_TARGET_APERTURE, MAX_TARGET_APERTURE); //sanitize/limit target inspiratory pressure.
-      handleExpiratoryValveAperture(intendedChangeValueAuxInt);
-      break;
+		case expiratorySummary:
+		 		//3;messageId;measuredPEEP;measuredExpirationVolume;measuredPEF;O2% //expiratory summary, sent at the end of the expiratory phase
+			Serial.print(expiratorySummary);
+			Serial.print(messageSeparator);
+			Serial.print(message_id); //messageId
+			Serial.print(messageSeparator);
+			Serial.print(measuredPEEP); //measuredPEEP
+			Serial.print(messageSeparator);
+			Serial.print(measuredExpirationVolume); //measuredExpirationVolume
+			Serial.print(messageSeparator);
+			Serial.print(measuredPEF); //measuredPEF
+			Serial.print(messageSeparator);
+			Serial.println(O2Percentage); //O2Percentage
+			iterateMessageId();
+			break;
 
-    case targetState: // current state, as defined by EPICs controller
-      //switchOnBoardLEDState(); // for debug purposes only, switchOnBoardLEDState
-      intendedChangeValueAuxInt = intendedChangeValue.toInt();
-      if (intendedChangeValueAuxInt != currentState)
-      {
-        switch (intendedChangeValueAuxInt)
-        {
-        case inspiration: // close expiration valve. Opening of the inspiration valve will be handled by a direct command through EPICs, reset tidalVolume
-          tidalVolume = 0.00;
-          //handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-          break;
-        case expiration: // close inspiration valve, open expiration valve
-          //handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-          //handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
-          break;
-        case expirationHold: // close both valves
-          //handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-          //handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-          break;
-        }
-      }
-    }
-  stringFromEPICs = "";
-  stringFromEPICsComplete = false;
-  }
-  
-}
+		case PCSettings:
+		 		//4;messageId;targetPEEP;targetPIP;targetRR;targetI/ERatio;targetInspirationRiseTime //current PC settings, sent once every X (default 10) seconds, and immediately after a settings change
+			Serial.print(PCSettings);
+			Serial.print(messageSeparator);
+			Serial.print(message_id); //messageId
+			Serial.print(messageSeparator);
+			Serial.print(targetPEEP); //targetPEEP
+			Serial.print(messageSeparator);
+			Serial.print(targetPIP); //targetPIP
+			Serial.print(messageSeparator);
+			Serial.print(targetRR); //targetRR
+			Serial.print(messageSeparator);
+			Serial.print(targetIERatio); //targetIERatio
+			Serial.print(messageSeparator);
+			Serial.println(targetInspirationRiseTime); //targetInspirationRiseTime
+			iterateMessageId();
+			break;
 
+		case VCSettings:
+		 		//5;messageId;targetPEEP;targetVt;targetRR;targetI/ERatio;targetInspPausePerc //current VC settings, sent once every X (default 10) seconds, and immediately after a settings change
+			Serial.print(VCSettings);
+			Serial.print(messageSeparator);
+			Serial.print(message_id); //messageId
+			Serial.print(messageSeparator);
+			Serial.print(targetPEEP); //targetPEEP
+			Serial.print(messageSeparator);
+			Serial.print(targetVt); //targetPIP
+			Serial.print(messageSeparator);
+			Serial.print(targetRR); //targetRR
+			Serial.print(messageSeparator);
+			Serial.print(targetIERatio); //targetIERatio
+			Serial.print(messageSeparator);
+			Serial.println(targetInspPausePerc); //targetInspPausePerc
+			iterateMessageId();
+			break;
 
+		case alarmThresholds:
+		 		//6;messageId;lowerInspirationVolumeThreshold;upperInspirationVolumeThreshold;lowerInspirationPressureThreshold;upperInspirationPressureThreshold //current alarm settings, sent once every X (default 10) seconds, and immediately after a alarm threshold settings change
+			Serial.print(alarmThresholds);
+			Serial.print(messageSeparator);
+			Serial.print(message_id); //messageId
+			Serial.print(messageSeparator);
+			Serial.print(lowerInspirationVolumeThreshold); //lowerInspirationVolumeThreshold
+			Serial.print(messageSeparator);
+			Serial.print(upperInspirationVolumeThreshold); //upperInspirationVolumeThreshold
+			Serial.print(messageSeparator);
+			Serial.print(lowerInspirationPressureThreshold); //lowerInspirationPressureThreshold
+			Serial.print(messageSeparator);
+			Serial.println(upperInspirationPressureThreshold); //upperInspirationPressureThreshold
+			iterateMessageId();
+			break;
+
+		case alarmMessage:
+			
+				//7;messageId;alarmString //alarm message
+				Serial.print(alarmMessage);
+				Serial.print(messageSeparator);
+				Serial.print(message_id);
+				Serial.print(messageSeparator);
+				Serial.println(alarmString);
+				iterateMessageId();
+				break;
+
+		case debugMessage:
+			if (isDebugEnabled){
+				//99;messageId;debugString //to be used for debug purposes only, either displayed in the python console or some text box in the QT dashboard
+				Serial.print(debugMessage);
+				Serial.print(messageSeparator);
+				Serial.print(message_id);
+				Serial.print(messageSeparator);
+				Serial.println(debugString);
+				iterateMessageId();
+				break;
+				}
+			}
+
+	}
 
 void pressureControlCycle(){
-  if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
-      switch (cyclePhase) {
-        case inspiration:
-            Serial.print("Inspiration Phase, pressure = ");
-            Serial.print(pressure);
-            Serial.print(" , flow = ");
-            Serial.print(flow);
-            Serial.print(" , inspiratoryVolume = ");
-            Serial.println(inspiratoryVolume);
-        
-            
-            if (inspirationValveIsOpen) {
-                Serial.println("Inspiration Valve is Open");
-                if (pressure >= peakInspirationPressure){
-                   Serial.println("PIP reached");
-                    handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-                    cyclePhase = inspirationHold;
-                    inspirationHoldPhaseStartMillis=currentMillis;
-                }
-                else if (tidalVolume > tidalVolumeUpperLimit){ // Volume Upper Threshold reached?
-                  Serial.print("Volume upper threshold reached: ");
-                  Serial.println(tidalVolume);
-                  //inspirationVolumeThresholdAlarm();
-                  handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-                  cyclePhase = inspirationHold;
-                  inspirationHoldPhaseStartMillis=currentMillis;
-                }
-                else if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration Time Upper Limit reached?
-                  //inspirationTimerThresholdAlarm();
-                  Serial.print("Reached Inspiration Timer: ");
-                  Serial.println(inspirationPhaseDuration);
-                  handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
-                  cyclePhase = inspirationHold;
-                  inspirationHoldPhaseStartMillis=currentMillis;
-                }
-            }
-            else { // just for the first time the function is called
-              Serial.println("First Time Control Cycle is called");
-             handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-              inspirationPhaseStartMillis=currentMillis;
-            }
-            break;
-        case inspirationHold:
-            Serial.println("Inspiration Hold");
-             if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration hold duration reached?
-                Serial.print("Inspiration hold phase duration reached");
-                Serial.println(inspirationHoldPhaseDuration);
-                handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
-                cyclePhase = expiration;
-                expirationPhaseStartMillis=currentMillis;
-             }
-             break;
-        case expiration:
-              Serial.print("Expiration Phase, pressure = ");
-              Serial.print(pressure);
-              Serial.print(" , flow = ");
-              Serial.print(flow);
-              Serial.print(" , expiratoryVolume = ");
-              Serial.println(expiratoryVolume);
-              if (pressureAverage < positiveEndExpiratoryPressure){
-                  Serial.print("PEEP Reached: ");
-                  Serial.println(pressureAverage);
-                  handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-                 //handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-                  //cyclePhase = inspiration;
-                  //tidalVolume=0.0;
-                  //inspirationPhaseStartMillis=currentMillis;
-              }
-              if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
-                  Serial.println("Expiration phase duration reached");
-                  //expirationTimerThresholdAlarm();
-                  handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-                 handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-                  cyclePhase = inspiration;
-                  tidalVolume=0.0;
-                  inspiratoryVolume=0.0;
-                  expiratoryVolume=0.0;
-                  inspirationPhaseStartMillis=currentMillis;
-              }
-              break;
-      }
-      previousControlCycleMillis = currentMillis;
-}
+	if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
+		switch (cyclePhase) {
+			case inspiration:
+				debugString = "Inspiration Phase, pressure = ";
+				debugString += pressure;
+				debugString += " , flow = ";
+				debugString += flow;
+				debugString += " , measuredInspirationVolume = ";
+				debugString += measuredInspirationVolume;
+				debugString += " , pidControlledInspiratoryAperture = ";
+				debugString += pidControlledInspiratoryAperture;
+				outputMessage(debugMessage);
 
-}
 
-void interpretSlaveMCUReading()
+				if (inspirationValveIsOpen) {
+					debugString = "Inspiration Valve is Open";
+					outputMessage(debugMessage);
+
+					if (measuredPIP >=targetPIP && !PIPReached){
+						measuredInspirationRiseTimeInSecs = (millis() - inspirationPhaseStartMillis) / 1000.0;
+						PIPReached=true;
+					}
+
+					if (tidalVolume > tidalVolumeUpperLimit){ // Volume Upper Threshold reached?
+
+
+						debugString = "Volume upper threshold reached: ";
+						debugString += tidalVolume;
+						debugString += " switching to expiration phase";
+						outputMessage(debugMessage);
+
+						//inspirationVolumeThresholdAlarm();
+						handleInspiratoryValveAperture(MIN_TARGET_APERTURE); // close inspiration valve
+						cyclePhase = expiration; // switch to expiration
+						outputMessage(inspiratorySummary);
+						expirationPhaseStartMillis=millis();
+						return;
+						}
+					else if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration Time Upper Limit reached?
+							//inspirationTimerThresholdAlarm();
+						debugString = "Reached Inspiration Timer: ";
+						debugString += inspirationPhaseDuration;
+						debugString += " switching to expiration phase";
+						outputMessage(debugMessage);
+
+						handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+						cyclePhase = expiration;
+						outputMessage(inspiratorySummary);
+						expirationPhaseStartMillis=millis();
+						return;
+					}
+
+				 	// if none of the exit conditions apply, lets continue applying pressure PID
+
+					double pressureGap = abs(targetPIP-pressure); //distance away from setpoint
+					if (pressureGap < 10.0)
+						{  //we're close to setpoint, use conservative tuning parameters
+							pressurePID.SetTunings(consKp, consKi, consKd);
+						}
+					else   //we're far from setpoint, use aggressive tuning parameters
+						{
+							pressurePID.SetTunings(aggKp, aggKi, aggKd);
+						}
+
+					pressurePID.Compute();
+					handleInspiratoryValveAperture((int) pidControlledInspiratoryAperture);
+				    }
+
+				else { // just for the first time the function is called
+
+					handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+					pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
+					inspirationPhaseStartMillis=currentMillis;
+					}
+
+					break;
+
+			case inspirationHold: // this state is not part of pressure control, staying here just for the good memories of when we thought it would make sense :)
+
+				 if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseDuration){ // Inspiration hold duration reached?
+				 	debugString = "Inspiration hold phase duration reached";
+				 	outputMessage(debugMessage);
+
+				 	handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
+				 	cyclePhase = expiration;
+				 	expirationPhaseStartMillis=currentMillis;
+				 }
+				 break;
+			
+			case expiration:
+				 debugString = "Expiration Phase, pressure = ";
+				 debugString += pressure;
+				 debugString += " , flow = ";
+				 debugString += flow;
+				 debugString += " , measuredExpirationVolume = ";
+				 debugString += measuredExpirationVolume;
+				 outputMessage(debugMessage);
+
+				 if (pressureAverage < targetPEEP){
+				 	debugString = "PEEP Reached: ";
+				 	debugString += pressureAverage;
+				 	outputMessage(debugMessage);
+
+				 	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+						//handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+						//cyclePhase = inspiration;
+						//tidalVolume=0.0;
+						//inspirationPhaseStartMillis=currentMillis;
+				 }
+				  if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
+				  	debugString = "Expiration phase duration reached";
+				  	outputMessage(debugMessage);
+					//expirationTimerThresholdAlarm();
+				  	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+				  	handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+				  	pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
+				  	cyclePhase = inspiration;
+				  	outputMessage(expiratorySummary);
+				  	tidalVolume=0.0;
+
+				  	measuredPIP=0.0;
+
+				  	measuredInspirationVolume=0.0;
+				  	measuredExpirationVolume=0.0;
+				  	measuredPIF=0.0;
+				  	measuredPEF=0.0;
+				  	measuredInspirationRiseTimeInSecs=0;
+				  	measuredPEEP=999.0; //insanely high value
+				  	PIPReached=false;
+
+				  	inspirationPhaseStartMillis=currentMillis;
+				  }
+				  break;
+				}
+				previousControlCycleMillis = currentMillis;
+			}
+
+		}
+
+
+
+	void volumeControlCycle(){
+		if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
+			switch (cyclePhase) {
+				case inspiration:
+					debugString = "Inspiration Phase, pressure = ";
+					debugString += pressure;
+					debugString += " , flow = ";
+					debugString += flow;
+					debugString += " , measuredInspirationVolume = ";
+					debugString += measuredInspirationVolume;
+					debugString += " , pidControlledInspiratoryAperture = ";
+					debugString += pidControlledInspiratoryAperture;
+					outputMessage(debugMessage);
+
+
+					if (inspirationValveIsOpen) {
+						debugString = "Inspiration Valve is Open";
+						outputMessage(debugMessage);
+
+						if (measuredInspirationVolume >=targetVt && !targetVtReached){
+							measuredInspirationRiseTimeInSecs = (millis() - inspirationPhaseStartMillis) / 1000.0;
+							targetVtReached=true;
+
+							handleInspiratoryValveAperture(MIN_TARGET_APERTURE); // close inspiration valve
+							cyclePhase = inspirationHold; // switch to expiration
+							inspirationHoldPhaseStartMillis=millis();
+							break;
+						}
+
+						if (measuredPIP > upperInspirationPressureThreshold){ // Pressure Upper Threshold reached?
+
+							debugString = "Pressure upper threshold reached: ";
+							debugString += measuredPIP;
+							outputMessage(debugMessage);
+
+							sendAlarm(debugString);
+							return;
+							}
+						else if (currentMillis - inspirationPhaseStartMillis > inspirationPhaseMinusHoldDuration){ // Inspiration Time minus Hold Upper Limit reached?
+								//inspirationTimerThresholdAlarm();
+							debugString = "Vt not reached within inspiration time";
+				
+							outputMessage(debugMessage);
+
+							sendAlarm(debugString);
+
+							handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+							cyclePhase = inspirationHold;
+							//outputMessage(inspiratorySummary);
+							inspirationHoldPhaseStartMillis=millis();
+							return;
+						}
+
+					 	// if none of the exit conditions apply, lets continue applying volume PID
+
+						double volumeGap = abs(targetVt-tidalVolume); //distance away from setpoint
+						if (volumeGap < 100.0)
+							{  //we're close to setpoint, use conservative tuning parameters
+								volumePID.SetTunings(consKp, consKi, consKd);
+							}
+						else   //we're far from setpoint, use aggressive tuning parameters
+							{
+								volumePID.SetTunings(aggKp, aggKi, aggKd);
+							}
+
+						volumePID.Compute();
+						handleInspiratoryValveAperture((int) pidControlledInspiratoryAperture);
+					    }
+
+					else { // just for the first time the function is called
+
+						handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+						pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
+						inspirationPhaseStartMillis=currentMillis;
+						}
+
+						break;
+
+				case inspirationHold: 
+
+					if (measuredInspirationVolume < lowerInspirationVolumeThreshold){
+						debugString = "Inspiration Volume lower than threshold";
+						outputMessage(debugMessage);
+						sendAlarm(debugString);
+
+					}
+
+					 if (currentMillis - inspirationHoldPhaseStartMillis > inspirationHoldPhaseDuration){ // Inspiration hold duration reached?
+					 	debugString = "Inspiration hold phase duration reached";
+					 	outputMessage(debugMessage);
+
+					 	if (measuredPIP < lowerInspirationPressureThreshold){
+					 		debugString = "Inspiration low pressure alarm (possible leak)";
+					 		outputMessage(debugMessage);
+					 		sendAlarm(debugString);
+					 	}
+					 	handleExpiratoryValveAperture(MAX_TARGET_APERTURE);
+					 	cyclePhase = expiration;
+					 	expirationPhaseStartMillis=currentMillis;
+					 }
+					 break;
+				
+				case expiration:
+					 debugString = "Expiration Phase, pressure = ";
+					 debugString += pressure;
+					 debugString += " , flow = ";
+					 debugString += flow;
+					 debugString += " , measuredExpirationVolume = ";
+					 debugString += measuredExpirationVolume;
+					 outputMessage(debugMessage);
+
+					 if (pressureAverage < targetPEEP){
+					 	debugString = "PEEP Reached: ";
+					 	debugString += pressureAverage;
+					 	outputMessage(debugMessage);
+
+					 	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+							//handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+							//cyclePhase = inspiration;
+							//tidalVolume=0.0;
+							//inspirationPhaseStartMillis=currentMillis;
+					 }
+					  if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
+					  	debugString = "Expiration phase duration reached";
+					  	outputMessage(debugMessage);
+						sendAlarm(debugString);
+					  	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+					  	handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+					  	pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
+					  	cyclePhase = inspiration;
+					  	outputMessage(expiratorySummary);
+					  	tidalVolume=0.0;
+
+					  	measuredPIP=0.0;
+
+					  	measuredInspirationVolume=0.0;
+					  	measuredExpirationVolume=0.0;
+					  	measuredPIF=0.0;
+					  	measuredPEF=0.0;
+					  	measuredInspirationRiseTimeInSecs=0;
+					  	measuredPEEP=999.0; //insanely high value
+					  	targetVtReached=false;
+
+					  	inspirationPhaseStartMillis=currentMillis;
+					  }
+					  break;
+					}
+					previousControlCycleMillis = currentMillis;
+				}
+
+			}
+
+		void interpretSlaveMCUReading()
+		{
+
+			unsigned long currentMCUReadMillis = millis();
+			flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
+			tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
+			if (tidalVolume < 0.0){
+				tidalVolume = 0.0;
+			}
+			switch (cyclePhase) {
+				case expiration:
+					measuredExpirationVolume = measuredExpirationVolume + abs(flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
+					if (abs(flow) > measuredPEF  ){
+						measuredPEF = abs(flow);
+					}
+					break;
+
+				case inspiration:
+					measuredInspirationVolume = abs(measuredInspirationVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis) / 60));
+					if (flow > measuredPIF  ){
+						measuredPIF = flow;
+					}
+					break;
+			}
+
+			previousFlowReadMillis = currentMCUReadMillis;
+
+			stringFromSlaveMCU = "";
+			stringFromSlaveMCUComplete = false;
+		}
+
+void interpretUILayerCommand()
 {
-  
-    unsigned long currentMCUReadMillis = millis();
-    flow = stringFromSlaveMCU.toFloat() / flowOffsetMultiplier;
-    tidalVolume = tidalVolume + (flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
-    if (tidalVolume < 0.0){
-      tidalVolume = 0.0;
-    }
-    switch (cyclePhase) {
-      case expiration:
-         expiratoryVolume = expiratoryVolume + abs(flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
-         break;
-      case inspiration:
-         inspiratoryVolume = inspiratoryVolume + abs(flow * (currentMCUReadMillis - previousFlowReadMillis) / 60);
-         break;
-    }
+	if (stringFromUILayerComplete)
+	{
+    stringFromUILayer.toCharArray(copy,200);
+		ms.Target(copy);
+		char match_result = ms.Match("(.*);.*");
+		int intendedMessageType=(int)  ms.GetCapture(copy, 0);
+		switch (intendedMessageType){
+			case PCSettings:
+				//4;messageId;targetPEEP;targetPIP;targetRR;targetIERatio;targetInspirationRiseTime //current PC settings, sent once every X (default 10) seconds, and immediately after a settings change
+				match_result = ms.Match("(.*);(.*);(.*);(.*);(.*);(.*);(.*)");
+				targetPEEP = atof(ms.GetCapture(copy, 2));
+				targetPIP = atof(ms.GetCapture(copy, 3));
+				targetRR = (int) ms.GetCapture(copy, 4);
+				targetIERatio = atof(ms.GetCapture(copy, 5));
+				targetInspirationRiseTime = atof(ms.GetCapture(copy, 6));
+				currentVentilatorMode = pressureControl;
+				
+				inspirationPhaseDuration = (int) (60000 / targetRR / (1.0 + targetIERatio)); 
+				expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration; //remainder of each Breath Cycle
+				outputMessage(PCSettings);
+				break;
 
-    previousFlowReadMillis = currentMCUReadMillis;
-  
-  stringFromSlaveMCU = "";
-  stringFromSlaveMCUComplete = false;
+			case VCSettings:
+				//5;messageId;targetPEEP;targetVt;targetRR;targetIERatio;targetInspPausePerc //current VC settings, sent once every X (default 10) seconds, and immediately after a settings change
+				match_result = ms.Match("(.*);(.*);(.*);(.*);(.*);(.*);(.*)");
+				targetPEEP = atof(ms.GetCapture(copy, 2));
+				targetVt = atof(ms.GetCapture(copy, 3));
+				targetRR = (int) ms.GetCapture(copy, 4);
+				targetIERatio = atof(ms.GetCapture(copy, 5));
+				targetInspPausePerc = atof(ms.GetCapture(copy, 6));
+				currentVentilatorMode = volumeControl;
+				
+				inspirationPhaseDuration = (int) (60000 / targetRR / (1.0 + targetIERatio));
+				inspirationHoldPhaseDuration = inspirationPhaseDuration * (1/targetInspPausePerc);
+				inspirationPhaseMinusHoldDuration = inspirationPhaseDuration - inspirationHoldPhaseDuration;
+				expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration; //remainder of each Breath Cycle
+				outputMessage(VCSettings);
+				break;
+
+			case alarmThresholds:
+			    //6;messageId;lowerInspirationVolumeThreshold;upperInspirationVolumeThreshold;lowerInspirationPressureThreshold;upperInspirationPressureThreshold //current alarm settings, sent once every X (default 10) seconds, and immediately after a alarm threshold settings change
+				match_result = ms.Match("(.*);(.*);(.*);(.*);(.*);(.*)");
+				lowerInspirationVolumeThreshold = atof(ms.GetCapture(copy, 2));
+				upperInspirationVolumeThreshold = atof(ms.GetCapture(copy, 3));
+				lowerInspirationPressureThreshold = (int) ms.GetCapture(copy, 4);
+				upperInspirationPressureThreshold = atof(ms.GetCapture(copy, 5));
+			
+				outputMessage(alarmThresholds);
+				break;
+
+		}
+					
+}
+stringFromUILayer = "";
+stringFromUILayerComplete = false;
 }
 
-void serialEvent()
-{
-  while (Serial.available())
-  {
 
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    // add it to the inputString:
-    stringFromEPICs += inChar;
-    // if the incoming character is a newline, set a flag
-    // so other function spaces can do something about it:
-    if (inChar == '\n')
-    {
-      stringFromEPICsComplete = true;
-    }
-  }
-}
- 
-void serialEvent1()
-{
-  while (Serial1.available())
-  {
 
-    // get the new byte:
-    char inChar = (char)Serial1.read();
-    // add it to the inputString:
-    stringFromSlaveMCU += inChar;
-    // if the incoming character is a newline, set a flag
-    // so other function spaces can do something about it:
-    if (inChar == '\n')
-    {
-      stringFromSlaveMCUComplete = true;
-    }
-  }
-}
+		void serialEvent()
+		{
+			while (Serial.available())
+			{
+
+	 			// get the new byte:
+				char inChar = (char)Serial.read();
+	 			// add it to the inputString:
+				stringFromUILayer += inChar;
+				 // if the incoming character is a newline, set a flag
+				 // so other function spaces can do something about it:
+				if (inChar == '\n')
+				{
+					stringFromUILayerComplete = true;
+				}
+			}
+		}
+
+		void serialEvent1()
+		{
+			while (Serial1.available())
+			{
+
+	 			// get the new byte:
+				char inChar = (char)Serial1.read();
+	 			// add it to the inputString:
+				stringFromSlaveMCU += inChar;
+	 			// if the incoming character is a newline, set a flag
+	 			// so other function spaces can do something about it:
+				if (inChar == '\n')
+				{
+					stringFromSlaveMCUComplete = true;
+				}
+			}
+		}
