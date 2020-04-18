@@ -706,6 +706,32 @@ border-color: rgb(3, 43, 91);</string>
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
+  <widget class="QLabel" name="alarmMessage">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>0</y>
+     <width>401</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(252, 0, 44);
+color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
   <zorder>line_8</zorder>
   <zorder>line_7</zorder>
   <zorder>verticalLayoutWidget_3</zorder>
@@ -722,6 +748,7 @@ border-color: rgb(3, 43, 91);</string>
   <zorder>tabBtnVC</zorder>
   <zorder>tabBtnPC</zorder>
   <zorder>tabBtnPS</zorder>
+  <zorder>alarmMessage</zorder>
  </widget>
  <resources/>
  <connections/>
