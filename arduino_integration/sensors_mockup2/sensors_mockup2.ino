@@ -98,16 +98,15 @@ void writeSerial(){
   combined_flow=inspiratory_flow-expiratory_flow;
   reserved1 = 0.00;
   int n =random(1,5);
-  if(n == 1){
-    Serial.print(1);
-    Serial.print(";");
-    Serial.print(icycle);
-    Serial.print(";");
-    Serial.print(inspiratory_pressure);
-    Serial.print(";");
-    Serial.print(inspiratory_flow);
-    Serial.print(";");
-    Serial.println(tidal_volume);}
+  Serial.print(1);
+  Serial.print(";");
+  Serial.print(icycle);
+  Serial.print(";");
+  Serial.print(inspiratory_pressure);
+  Serial.print(";");
+  Serial.print(inspiratory_flow);
+  Serial.print(";");
+  Serial.println(tidal_volume);
   if(n == 2){
     Serial.print(2);
     Serial.print(";");
@@ -138,12 +137,20 @@ void writeSerial(){
     Serial.print(inspiratory_flow);
     Serial.print(";");
     Serial.println(tidal_volume);}
+  n =random(1,10);
   if(n == 4){
     Serial.print(99);
     Serial.print(";");
     Serial.print(icycle);
     Serial.print(";");
     Serial.println("THIS IS A DEBUG MESSAGE");}
+  n =random(1,200);
+  if(n == 4){
+    Serial.print(7);
+    Serial.print(";");
+    Serial.print(icycle);
+    Serial.print(";");
+    Serial.println("Vt ALARM: Vt TOO HIGH");}
   
   previousSerialWriteMillis=currentMillis;
   }
