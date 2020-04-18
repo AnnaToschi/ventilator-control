@@ -104,7 +104,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Tinsp</string>
+       <string>I:E Ratio</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -131,7 +131,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setTinspvar_setting">
+     <widget class="QLabel" name="setIERatiovar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -289,7 +289,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QScrollBar" name="setTinspScrollBar">
+  <widget class="QScrollBar" name="setIERatioScrollBar">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -372,7 +372,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Tplateau</string>
+       <string>Insp Rise Time</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -399,7 +399,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setTplateauvar_setting">
+     <widget class="QLabel" name="setInspRiseTimevar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -419,7 +419,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QScrollBar" name="setTplateauScrollBar">
+  <widget class="QScrollBar" name="setInspRiseTimeScrollBar">
    <property name="geometry">
     <rect>
      <x>330</x>

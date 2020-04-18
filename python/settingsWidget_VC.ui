@@ -88,12 +88,12 @@
      <x>40</x>
      <y>270</y>
      <width>201</width>
-     <height>121</height>
+     <height>91</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
-     <widget class="QLabel" name="Tinsp_label_set">
+     <widget class="QLabel" name="IRRatio_label_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -104,7 +104,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Tinsp</string>
+       <string>I:E Ratio</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -112,7 +112,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setTinsp_units">
+     <widget class="QLabel" name="setIERatio_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -123,26 +123,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>(sec)</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="setTinspvar_setting">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>XXXXXX</string>
+       <string>(-)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -289,7 +270,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QScrollBar" name="setTinspScrollBar">
+  <widget class="QScrollBar" name="setIERatioScrollBar">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -372,7 +353,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Tplateau</string>
+       <string>% Insp Plateau</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -391,7 +372,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>(sec)</string>
+       <string>(%)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -430,6 +411,56 @@
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="setIERatiovar_setting">
+   <property name="geometry">
+    <rect>
+     <x>135</x>
+     <y>367</y>
+     <width>81</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(3, 43, 91);</string>
+   </property>
+   <property name="text">
+    <string>XXXXXX</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sensorFiO2var_2">
+   <property name="geometry">
+    <rect>
+     <x>98</x>
+     <y>367</y>
+     <width>35</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(3, 43, 91);</string>
+   </property>
+   <property name="text">
+    <string>1:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
    </property>
   </widget>
  </widget>

@@ -13,6 +13,10 @@ VT_MIN = 100
 VT_MAX = 1300
 PIP_MIN = 5
 PIP_MAX = 120
+INSPRISETIME_MAX = 20 #percentage
+INSPRISETIME_MIN = 0 #percentage
+IERATIO_MIN = 1
+IERATIO_MAX = 3
 TINSP_MIN = 0.1
 TINSP_MAX = 20
 RR_MIN = 1
@@ -58,7 +62,13 @@ X_AXIS_LENGTH = 200;
 
 class serialReceiver(QtCore.QThread):
   
-    newSample = QtCore.pyqtSignal(int,float, float, float, float)
+    newSensorSample = QtCore.pyqtSignal(float, float, float)
+    afterInspSample = QtCore.pyqtSignal(float, float, float, float, float, float)
+    afterExpSample = QtCore.pyqtSignal(float, float, float, float, float)
+    PCSettingsSample = QtCore.pyqtSignal(float, float, float, float, float)
+    VCSettingsSample = QtCore.pyqtSignal(float, float, float, float, float)
+    alarmSettingsSample = QtCore.pyqtSignal(float, float, float, float)
+    debugMsgSample = QtCore.pyqtSignal(str)
 
     def __init__(self, serialEnabled, loopRun):
         QtCore.QThread.__init__(self)
@@ -79,18 +89,70 @@ class serialReceiver(QtCore.QThread):
     def run(self):
         while self.loopRun:
             data = self.ser.readline()
-            data = str(data).split('\'')[1].split('\\')[0].split(';')
             try:
-                self.mId = int(data[0])
-                self.fio2 = float(data[1])
-                self.pressure = float(data[2])
-                self.flow = float(data[3])
-                self.vt = float(data[4])
-                self.newSample.emit(self.mId, self.fio2, self.pressure, self.flow, self.vt)
+                dataList = str(data).split('\'')[1].split('\\')[0].split(';')
+                msgType = int(dataList[0])
+                dataList = dataList[1:]
+                if(msgType == 1):
+                    self.mId = int(dataList[0])
+                    self.pressure_now = float(dataList[2])
+                    self.flow_now = float(dataList[3])
+                    self.vt_now = float(dataList[4])
+                    self.newSensorSample.emit(self.pressure_now, \
+                        self.flow_now, self.vt_now)
+                elif(msgType == 2):
+                    self.mId = int(dataList[0])
+                    self.measuredInspirationRiseTimeInSecs = float(dataList[1])
+                    self.measuredPIP = float(dataList[2])
+                    self.measuredInspirationVolume = float(dataList[3])
+                    self.measuredPIF = float(dataList[4])
+                    self.measuredFiO2 = float(dataList[5])
+                    self.measuredRR = float(dataList[6])
+                    self.afterInspSample.emit(self.measuredInspirationRiseTimeInSecs, \
+                        self.measuredPIP, self.measuredInspirationVolume, self.measuredPIF, \
+                        self.measuredFiO2, self.measuredRR)
+                elif(msgType == 3):
+                    self.mId = int(dataList[0])
+                    self.measuredPEEP = float(dataList[1])
+                    self.measuredExpirationVolume = float(dataList[2])
+                    self.measuredPEF = float(dataList[3])
+                    self.measuredFiO2 = float(dataList[4])
+                    self.measuredRR = float(dataList[5])
+                    self.afterExpSample.emit(self.measuredPEEP, \
+                        self.measuredExpirationVolume, self.measuredPEF, self.measuredFiO2, self.measuredRR)
+                elif(msgType == 4):
+                    self.mId = int(dataList[0])
+                    self.targetPEEP = float(dataList[1])
+                    self.targetPIP = float(dataList[2])
+                    self.targetRR = float(dataList[3])
+                    self.targetIERatio = float(dataList[4])
+                    self.targetInspirationRiseTime = float(dataList[5])
+                    self.PCSettingsSample.emit(self.targetPEEP, self.targetPIP, \
+                        self.targetRR, self.targetIERatio, self.targetInspirationRiseTime)
+                elif(msgType == 5):
+                    self.mId = int(dataList[0])
+                    self.targetPEEP = float(dataList[1])
+                    self.targetVt = float(dataList[2])
+                    self.targetRR = float(dataList[3])
+                    self.targetIERatio = float(dataList[4])
+                    self.targetInspPause = float(dataList[5])
+                    self.VCSettingsSample.emit(self.targetPEEP, self.targetVt, \
+                        self.targetRR, self.targetIERatio, self.targetInspPause)
+                elif(msgType == 6):
+                    self.mId = int(dataList[0])
+                    self.lowerInspirationVolumeThreshold = float(dataList[1])
+                    self.upperInspirationVolumeThreshold = float(dataList[2])
+                    self.lowerInspirationPressureThreshold = float(dataList[3])
+                    self.upperInspirationPressureThreshold = float(dataList[4])
+                    self.alarmSettingsSample.emit(self.lowerInspirationVolumeThreshold, \
+                        self.upperInspirationVolumeThreshold, self.lowerInspirationPressureThreshold,\
+                        self.upperInspirationPressureThreshold)
+                elif(msgType == 99):
+                    self.debugMsgSample.emit(str(data[1]))
             except:
                 print('error in received data: {}'.format(data))
             
-    def setRead(self):
+    def startRead(self):
         self.loopRun = 1
 
     def stopRead(self):
@@ -100,33 +162,66 @@ class serialReceiver(QtCore.QThread):
         print('writing to serial' + str(type) + ";" + str(message) + "\n")
         self.ser.write(str.encode(str(type) + ";" + str(message) + "\n"))
 
+    def sendPCSettings(self,mID,targetPEEP,targetPIP,targetRR,targetIERatio,targetInspirationRiseTime):
+        message = str(mID) + ';' + str(targetPEEP) + ';' + str(targetPIP) + ';' + str(targetRR) + ';' + \
+        str(targetIERatio) + ';' + str(targetInspirationRiseTime) + '\n'
+        print('writing to serial: ' + message)
+        self.ser.write(str.encode(message))
+
+    def sendVCSettings(self,mID,targetPEEP,targetVt,targetRR,targetIERatio,targetInspPause):
+        message = str(mID) + ';' + str(targetPEEP) + ';' + str(targetPIP) + ';' + str(targetRR) + ';' + \
+        str(targetIERatio) + ';' + str(targetInspPause) + '\n'
+        print('writing to serial: ' + message)
+        self.ser.write(str.encode(message))
+
+    def sendAlarmSettings(self,mID,lowerInspirationVolumeThreshold,upperInspirationVolumeThreshold,\
+                            lowerInspirationPressureThreshold,upperInspirationPressureThreshold):
+        message = str(mID) + ';' + str(lowerInspirationVolumeThreshold) + ';' + str(upperInspirationVolumeThreshold) + ';' + \
+        str(lowerInspirationPressureThreshold) + ';' + str(upperInspirationPressureThreshold) + '\n'
+        print('writing to serial: ' + message)
+        self.ser.write(str.encode(message))
+
 
 class VentilatorWindow(QDialog):
     def __init__(self):
         super(VentilatorWindow, self).__init__()
         uic.loadUi("dashboard_ventilator.ui", self)
 
-
         self.initializaValuesFromArduino()
-        self.start_timer()
 
         self.PlotsWidget = PlotsWidget(parent=self)
         self.SettingsWidget_VC = SettingsWidget_VC(parent=self)
         self.SettingsWidget_PC = SettingsWidget_PC(parent=self)
         self.SettingsWidget_PS = SettingsWidget_PS(parent=self)
         self.AlarmsWidget = AlarmsWidget(parent=self)
-        self.stacked_area.addWidget(self.PlotsWidget)
+        
         self.SettingsWidget_VC.readInitialSetValues()
-        self.stacked_area.addWidget(self.SettingsWidget_VC)
-        self.stacked_area.addWidget(self.SettingsWidget_PC)
-        self.stacked_area.addWidget(self.SettingsWidget_PS)
-        self.stacked_area.addWidget(self.AlarmsWidget)
-        self.stacked_area.setCurrentWidget(self.PlotsWidget)
+
+        self.main_stacked_area.addWidget(self.PlotsWidget)
+        self.main_stacked_area.addWidget(self.SettingsWidget_VC)
+        self.main_stacked_area.addWidget(self.SettingsWidget_PC)
+        self.main_stacked_area.addWidget(self.SettingsWidget_PS)
+        self.main_stacked_area.addWidget(self.AlarmsWidget)
+        self.main_stacked_area.setCurrentWidget(self.PlotsWidget)
+
+
+        self.BottomAreaVC = BottomAreaVC(parent=self)
+        self.BottomAreaPC = BottomAreaPC(parent=self)
+        self.BottomAreaPS = BottomAreaPS(parent=self)
+
+        self.bottom_stacked_area.addWidget(self.BottomAreaVC)
+        self.bottom_stacked_area.addWidget(self.BottomAreaPC)
+        self.bottom_stacked_area.addWidget(self.BottomAreaPS)
+        self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
+
+        self.start_timer()
+
+
 
         self.setButton.clicked.connect(self.toggleStackedArea)
 
         self.alarmsButton.clicked.connect(self.toggleStackedArea)
-        self.stackedArea_flag = 0
+        self.main_stackedArea_flag = 0
         self.chooseOPMODEbutton.addItem("Volume Control")
         self.chooseOPMODEbutton.addItem("Pressure Control")
         self.chooseOPMODEbutton.addItem("Pressure Support")
@@ -151,15 +246,19 @@ class VentilatorWindow(QDialog):
 
     def start_serial(self):
         serial = serialReceiver(self.serialEnabled, True)
-        serial.newSample.connect(self.updateSideBarValues)
-        serial.newSample.connect(self.PlotsWidget.updateGraphs)
+        serial.afterInspSample.connect(self.updateSideBarValues)
+        serial.afterExpSample.connect(self.updateSideBarValues)
+        serial.VCSettingsSample.connect(self.updateVCSetValues)
+        serial.PCSettingsSample.connect(self.updatePCSetValues)
+        # serial.alarmSettingsSample.connect(self.UpdateAlarms.updateSetValues)
+        serial.newSensorSample.connect(self.PlotsWidget.updateGraphs)
         self.thread = serial
         serial.start()
 
     def start_timer(self):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(50)
-        self.timer.timeout.connect(self.updateBottomBarValues)
+        self.timer.timeout.connect(self.BottomAreaVC.updateBottomBarValues)
         self.timer.start()
 
     def check_alarms(self):
@@ -169,14 +268,20 @@ class VentilatorWindow(QDialog):
     def changeOPMODE(self, i):
         if i==0:
             self.currentModeLabel.setText('Volume Control')
+            self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
+            self.BottomAreaVC.updateBottomBarValues()
             self.currentMode = 0
             #caput('Raspi:central:OPMODE',2)
         elif i==1:
             self.currentModeLabel.setText('Pressure Control')
+            self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPC)
+            self.BottomAreaPC.updateBottomBarValues()
             self.currentMode = 1
             #caput('Raspi:central:OPMODE',3)
         elif i==2:
             self.currentModeLabel.setText('Pressure Support')
+            self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPS)
+            self.BottomAreaPS.updateBottomBarValues()
             self.currentMode = 2
             #caput('Raspi:central:OPMODE',4)
 
@@ -187,90 +292,169 @@ class VentilatorWindow(QDialog):
     def toggleStackedArea(self):
         sending_button = self.sender()
         if sending_button.objectName() == 'alarmsButton':
-            self.stacked_area.setCurrentWidget(self.AlarmsWidget)
-        elif self.stackedArea_flag == 1: #I am in the settings view and want to change to show plots
-            self.stacked_area.setCurrentWidget(self.PlotsWidget)
+            self.main_stacked_area.setCurrentWidget(self.AlarmsWidget)
+        elif self.main_stackedArea_flag == 1: #I am in the settings view and want to change to show plots
+            self.main_stacked_area.setCurrentWidget(self.PlotsWidget)
             self.PlotsWidget.initializeGraphs()
-            self.updateBottomBarValues()
-            self.thread.newSample.connect(self.PlotsWidget.updateGraphs)
+            self.thread.newSensorSample.connect(self.PlotsWidget.updateGraphs)
             try:
                 self.timer.timeout.disconnect(self.SettingsWidget_VC.updateSetValues)
             except:
-                print('nothing to disconnect')
+                print('nothing to disconnect VC')
             try:
                 self.timer.timeout.disconnect(self.SettingsWidget_PC.updateSetValues)
             except:
-                print('nothing to disconnect')
-            self.stackedArea_flag = 0
+                print('nothing to disconnect PC')
+            self.main_stackedArea_flag = 0
             if self.chooseOPMODEbutton.currentText()=='Volume Control':
                 self.SettingsWidget_VC.commitValueChanges()
+                self.BottomAreaVC.updateBottomBarValues()
             elif self.chooseOPMODEbutton.currentText()=='Pressure Control':
                 self.SettingsWidget_PC.commitValueChanges()
+                self.BottomAreaPC.updateBottomBarValues()
+            elif self.chooseOPMODEbutton.currentText()=='Pressure Support':
+                self.SettingsWidget_PS.commitValueChanges()
+                self.BottomAreaPS.updateBottomBarValues()
+            
             self.setButton.setStyleSheet("color: rgb(3, 43, 91);")
             self.setButton.setText('Set\nValues')
-        elif self.stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Volume Control': #I am in the plots view and want to change to show VC settings
+        elif self.main_stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Volume Control': #I am in the plots view and want to change to show VC settings
             self.timer.timeout.connect(self.SettingsWidget_VC.updateSetValues)
             try:
-                self.thread.newSample.disconnect(self.PlotsWidget.updateGraphs)
+                self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
                 print('nothing to disconnect')
-            self.stacked_area.setCurrentWidget(self.SettingsWidget_VC)
-            self.stackedArea_flag = 1
+            self.main_stacked_area.setCurrentWidget(self.SettingsWidget_VC)
+            self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
-        elif self.stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Control':
+        elif self.main_stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Control':
             print('Pressure Control')
             self.timer.timeout.connect(self.SettingsWidget_PC.updateSetValues)
             try:
-                self.thread.newSample.disconnect(self.PlotsWidget.updateGraphs)
+                self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
                 print('nothing to disconnect')
-            self.stacked_area.setCurrentWidget(self.SettingsWidget_PC)
-            self.stackedArea_flag = 1
+            self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PC)
+            self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
-        elif self.stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Support':
+        elif self.main_stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Support':
             print('Pressure Support')
             try:
-                self.thread.newSample.disconnect(self.PlotsWidget.updateGraphs)
+                self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
                 print('nothing to disconnect')
-            self.stacked_area.setCurrentWidget(self.SettingsWidget_PS)
-            self.stackedArea_flag = 1
+            self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PS)
+            self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
 
-    def updateSideBarValues(self, mId, fio2, pressure, flow, vt):
-        self.sensorFio2 = fio2
-        self.sensorPressure = pressure
-        self.sensorFlow = flow
-        self.sensorVt = vt
-        self.sensorVtvar.setText("{:.1f}".format(self.sensorVt))
-        self.sensorFiO2var.setText("{:.1f}".format(self.sensorFio2))
-        self.sensorPIPvar.setText("{:.1f}".format(self.sensorPressure))
-        self.sensorPEEPvar.setText("{:.1f}".format(self.sensorFlow))
+    def updateSideBarValues(self, *argv):
+        if(len(argv) == 6):
+            self.sensorInspRiseTime = argv[0]
+            self.sensorPIP = argv[1]
+            self.sensorVtinsp_max = argv[2]
+            self.sensorPIF = argv[3]
+            self.sensorFio2 = argv[4]
+            self.sensorRR = argv[5]
+            self.sensorRiseTimevar.setText("{:.1f}".format(self.sensorInspRiseTime))
+            self.sensorVtInspvar.setText("{:.1f}".format(self.sensorVtinsp_max))
+            self.sensorFiO2var.setText("{:.1f}".format(self.sensorFio2))
+            self.sensorPIPvar.setText("{:.1f}".format(self.sensorPIP))
+            self.sensorPIFvar.setText("{:.1f}".format(self.sensorPIF))
+            self.sensorRRvar.setText("{:.1f}".format(self.sensorRR))
+        elif(len(argv) == 5):
+            self.sensorPEEP = argv[0]
+            self.sensorVtexp_max = argv[1]
+            self.sensorPEF = argv[2]
+            self.sensorFiO2 = argv[3]
+            self.sensorRR = argv[4]
+            self.sensorVtExpvar.setText("{:.1f}".format(self.sensorVtexp_max))
+            self.sensorFiO2var.setText("{:.1f}".format(self.sensorFiO2))
+            self.sensorPEFvar.setText("{:.1f}".format(self.sensorPEF))
+            self.sensorPEEPvar.setText("{:.1f}".format(self.sensorPEEP))
+            self.sensorRRvar.setText("{:.1f}".format(self.sensorRR))
+
+    def updatePCSetValues(self, setPEEP, setPIP, setRR, setIERatio, setInspirationRiseTime):
+        self.setPEEP = setPEEP
+        self.setPIP = setPIP
+        self.setRR = setRR
+        self.setIERatio = setIERatio
+        self.setInspirationRiseTime = setInspirationRiseTime
+
+    def updateVCSetValues(self, setPEEP, setVt, setRR, setIERatio, setInspPause):
+        self.setPEEP = setPEEP
+        self.setVt = setVt
+        self.setRR = setRR
+        self.setIERatio = setIERatio
+        self.setInspirationRiseTime = setInspPause
+
 
     def initializaValuesFromArduino(self):
-        self.valueTinsp = 1.3
-        self.valueTplateau = 0.0
-        self.valueRR = 10
-        self.valueVt = 400
-        self.valuePEEP = 5
-        self.valuePIP = 30
+        self.setTinsp = 1.3
+        self.setInspRiseTime = 10 #in percentage
+        self.setIERatio = 2
+        self.setPIP = 60
+        self.valuePIF = 20
+        self.valuePEF = 20
+        self.setTplateau = 0.0
+        self.setRR = 10
+        self.setVt = 400
+        self.setPEEP = 5
         self.vExp = 0
         self.vInsp = 0
         
-
-    def updateBottomBarValues(self):
-        self.setVtvar_btm.setText("{:.0f}".format(self.valueVt))
-        self.setRRvar_btm.setText("{:.0f}".format(self.valueRR))
-        self.setTinspvar_btm.setText("{:.1f}".format(self.valueTinsp))
-        self.setPEEPvar_btm.setText("{:.0f}".format(self.valuePEEP))
-
-        self.check_alarms()
-
     def keyPressEvent(self, event):
         # Did the user press the Escape key?
         if event.key() == QtCore.Qt.Key_Escape: 
           self.app_after_exit = 0
           self.close()
+
+
+class BottomAreaVC(QWidget):
+    def __init__(self, parent=None):
+        super(BottomAreaVC, self).__init__(parent)
+        uic.loadUi("bottomDisplay_VC.ui", self)
+
+        self.VentilatorMain = self.parent()
+
+
+    def updateBottomBarValues(self):
+        self.setVtvar_btm.setText("{:.0f}".format(self.VentilatorMain.setVt))
+        self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
+        self.setTinspvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTinsp))
+        self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
+
+        #self.check_alarms()
+
+class BottomAreaPC(QWidget):
+    def __init__(self, parent=None):
+        super(BottomAreaPC, self).__init__(parent)
+        uic.loadUi("bottomDisplay_PC.ui", self)
+
+        self.VentilatorMain = self.parent()
+
+
+    def updateBottomBarValues(self):
+        self.setPIPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPIP))
+        self.setInspRiseTimevar_btm.setText("{:.0f}".format(self.VentilatorMain.setInspRiseTime))
+        self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
+        self.setIERatiovar_btm.setText("{:.1f}".format(self.VentilatorMain.setIERatio))
+        self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
+
+class BottomAreaPS(QWidget):
+    def __init__(self, parent=None):
+        super(BottomAreaPS, self).__init__(parent)
+        uic.loadUi("bottomDisplay_PS.ui", self)
+
+        self.VentilatorMain = self.parent()
+
+
+    def updateBottomBarValues(self):
+        self.setVtvar_btm.setText("{:.0f}".format(self.VentilatorMain.setVt))
+        self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
+        self.setTinspvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTinsp))
+        self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
+
+
 
 class SettingsWidget_VC(QWidget):
     def __init__(self, parent=None):
@@ -278,26 +462,26 @@ class SettingsWidget_VC(QWidget):
         uic.loadUi("settingsWidget_VC.ui", self)
 
         self.scrollbarSettings = SCROLLBAR_SETTINGS
+        self.VentilatorMain = self.parent()
 
-        self.setTinspScrollBar.setStyleSheet(self.scrollbarSettings)
+        self.setIERatioScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setTplateauScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setRRScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setPEEPScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setVtScrollBar.setStyleSheet(self.scrollbarSettings)
         
-        self.setTinspScrollBar.setPageStep(1)
+        self.setIERatioScrollBar.setPageStep(1)
         self.setTplateauScrollBar.setPageStep(1)
-        self.setTinspScrollBar.setSingleStep(1)
         self.setRRScrollBar.setPageStep(1)
         self.setPEEPScrollBar.setPageStep(1)
         self.setVtScrollBar.setPageStep(5)
 
-        self.setTinspScrollBar.setMaximum(TINSP_MAX*10)
+        self.setIERatioScrollBar.setMaximum(IERATIO_MAX*10)
         self.setRRScrollBar.setMaximum(RR_MAX*10)
         self.setPEEPScrollBar.setMaximum(PEEP_MAX)
         self.setVtScrollBar.setMaximum(VT_MAX)
-        self.setTplateauScrollBar.setMaximum(TPLATEAU_MAX*10)
-        self.setTinspScrollBar.setMinimum(TINSP_MIN*10)
+        self.setIERatioScrollBar.setMaximum(TPLATEAU_MAX*10)
+        self.setIERatioScrollBar.setMinimum(IERATIO_MIN*10)
         self.setTplateauScrollBar.setMinimum(TPLATEAU_MIN*10)
         self.setRRScrollBar.setMinimum(RR_MIN*10)
         self.setPEEPScrollBar.setMinimum(PEEP_MIN)
@@ -309,116 +493,123 @@ class SettingsWidget_VC(QWidget):
     def readInitialSetValues(self):
         # TODO: read initial values a file
 
-        self.valueTinsp_tmp = self.parent().valueTinsp
-        self.valueTplateau_tmp = self.parent().valueTplateau
-        self.valueRR_tmp = self.parent().valueRR
-        self.valueVt_tmp = self.parent().valueVt
-        self.valuePEEP_tmp = self.parent().valuePEEP
+        self.setIERatio_tmp = self.VentilatorMain.setIERatio
+        self.setTplateau_tmp = self.VentilatorMain.setTplateau
+        self.setRR_tmp = self.VentilatorMain.setRR
+        self.setVt_tmp = self.VentilatorMain.setVt
+        self.setPEEP_tmp = self.VentilatorMain.setPEEP
 
-        self.setTinspScrollBar.setValue(self.valueTinsp_tmp * 10)
-        self.setTplateauScrollBar.setValue(self.valueTplateau_tmp * 10)
-        self.setRRScrollBar.setValue(self.valueRR_tmp*10)
-        self.setPEEPScrollBar.setValue(self.valuePEEP_tmp)
-        self.setVtScrollBar.setValue(self.valueVt_tmp)
+        self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
+        self.setTplateauScrollBar.setValue(self.setTplateau_tmp * 10)
+        self.setRRScrollBar.setValue(self.setRR_tmp*10)
+        self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
+        self.setVtScrollBar.setValue(self.setVt_tmp)
 
     def updateSetValues(self): 
 
-        self.valueTinsp_tmp = (self.setTinspScrollBar.value() / 10)
-        self.valueTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
-        self.valueRR_tmp = (self.setRRScrollBar.value() / 10)
-        self.valuePEEP_tmp = self.setPEEPScrollBar.value()
-        self.valueVt_tmp = self.setVtScrollBar.value()
+        self.setIERatio_tmp = (self.setIERatioScrollBar.value() / 10)
+        self.setTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
+        self.setRR_tmp = (self.setRRScrollBar.value() / 10)
+        self.setPEEP_tmp = self.setPEEPScrollBar.value()
+        self.setVt_tmp = self.setVtScrollBar.value()
 
-        self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp_tmp))
-        self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau_tmp))
-        self.setRRvar_setting.setText("{:.1f}".format(self.valueRR_tmp))
-        self.setVtvar_setting.setText("{:.0f}".format(self.valueVt_tmp))
-        self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP_tmp))
+        self.setIERatiovar_setting.setText("{:.1f}".format(self.setIERatio_tmp))
+        self.setTplateauvar_setting.setText("{:.1f}".format(self.setTplateau_tmp))
+        self.setRRvar_setting.setText("{:.1f}".format(self.setRR_tmp))
+        self.setVtvar_setting.setText("{:.0f}".format(self.setVt_tmp))
+        self.setPEEPvar_setting.setText("{:.0f}".format(self.setPEEP_tmp))
 
 
     def commitValueChanges(self):
         print('Commiting values')
-        self.valueTinsp_tmp = (self.setTinspScrollBar.value() / 10)
-        self.valueTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
-        self.valueRR_tmp = (self.setRRScrollBar.value() / 10)
+        self.setIERatio_tmp = (self.setIERatioScrollBar.value() / 10)
+        self.setTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
+        self.setRR_tmp = (self.setRRScrollBar.value() / 10)
         
-        if((self.valueTinsp_tmp+self.valueTplateau_tmp)>(60/self.valueRR_tmp - 0.3)):
-            self.parent().parent().msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
-            self.parent().parent().msg.setIcon(QMessageBox.Warning)
-            self.parent().parent().msg.exec_()
+        # if((self.setTinsp_tmp+self.setTplateau_tmp)>(60/self.setRR_tmp - 0.3)):
+
+            # oldIERatio = self.VentilatorMain.setIERatio
+            # oldTplateau = self.VentilatorMain.setTplateau
+            # oldPEEP = self.VentilatorMain.setPEEP
+            # oldVt = self.VentilatorMain.setVt
+            # oldRR = self.VentilatorMain.setRR
+
+            # self.VentilatorMain.msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
+            # self.VentilatorMain.msg.setIcon(QMessageBox.Warning)
+            # self.VentilatorMain.msg.exec_()
 
 
-            self.setTinspScrollBar.setValue(self.valueTinsp * 10)
-            self.setTplateauScrollBar.setValue(self.valueTplateau * 10)
-            self.setRRScrollBar.setValue(self.valueRR*10)
-            self.setPEEPScrollBar.setValue(self.valuePEEP)
-            self.setVtScrollBar.setValue(self.valueVt)
+            # self.setIERatio_tmp.setValue(oldIERatio * 10)
+            # self.setTplateauScrollBar.setValue(oldTplateau * 10)
+            # self.setRRScrollBar.setValue(oldRR*10)
+            # self.setPEEPScrollBar.setValue(oldPEEP)
+            # self.setVtScrollBar.setValue(oldVt)
 
-            self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
-            self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau))
-            self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
-            self.setVtvar_setting.setText("{:.0f}".format(self.valueVt))
-            self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP))
+            # self.setIERatiovar_setting.setText("{:.1f}".format(oldIERatio))
+            # self.setTplateauvar_setting.setText("{:.1f}".format(oldTplateau))
+            # self.setRRvar_setting.setText("{:.1f}".format(oldRR))
+            # self.setVtvar_setting.setText("{:.0f}".format(oldVt))
+            # self.setPEEPvar_setting.setText("{:.0f}".format(oldPEEP))
 
-        else:
+        # else:
 
-            self.valueTinsp = self.valueTinsp_tmp
-            self.valueTplateau = self.valueTplateau_tmp
-            self.valueRR = self.valueRR_tmp
-            self.valueVt = self.valueVt_tmp
-            self.valuePEEP = self.valuePEEP_tmp
+        self.setIERatio = self.setIERatio_tmp
+        self.setTplateau = self.setTplateau_tmp
+        self.setRR = self.setRR_tmp
+        self.setVt = self.setVt_tmp
+        self.setPEEP = self.setPEEP_tmp
 
-            self.parent().parent().valueTinsp =self.valueTinsp 
-            self.parent().parent().valueTplateau = self.valueTplateau 
-            self.parent().parent().valueRR = self.valueRR
-            self.parent().parent().valueVt = self.valueVt 
-            self.parent().parent().valuePEEP = self.valuePEEP
+        self.VentilatorMain.setIERatio =self.setIERatio 
+        self.VentilatorMain.setTplateau = self.setTplateau 
+        self.VentilatorMain.setRR = self.setRR
+        self.VentilatorMain.setVt = self.setVt 
+        self.VentilatorMain.setPEEP = self.setPEEP
 
-            self.valueTinsp_tmp = self.parent().parent().valueTinsp
-            self.valueTplateau_tmp = self.parent().parent().valueTplateau
-            self.valueRR_tmp = self.parent().parent().valueRR
-            self.valueVt_tmp = self.parent().parent().valueVt
-            self.valuePEEP_tmp = self.parent().parent().valuePEEP
+        self.setIERatio_tmp = self.VentilatorMain.setIERatio
+        self.setTplateau_tmp = self.VentilatorMain.setTplateau
+        self.setRR_tmp = self.VentilatorMain.setRR
+        self.setVt_tmp = self.VentilatorMain.setVt
+        self.setPEEP_tmp = self.VentilatorMain.setPEEP
 
-            self.setTinspScrollBar.setValue(self.valueTinsp_tmp * 10)
-            self.setTplateauScrollBar.setValue(self.valueTplateau_tmp * 10)
-            self.setRRScrollBar.setValue(self.valueRR_tmp*10)
-            self.setPEEPScrollBar.setValue(self.valuePEEP_tmp)
-            self.setVtScrollBar.setValue(self.valueVt_tmp)
+        self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
+        self.setTplateauScrollBar.setValue(self.setTplateau_tmp * 10)
+        self.setRRScrollBar.setValue(self.setRR_tmp*10)
+        self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
+        self.setVtScrollBar.setValue(self.setVt_tmp)
 
-            self.parent().parent().updateBottomBarValues()
 
 class SettingsWidget_PC(QWidget):
     def __init__(self, parent=None):
         super(SettingsWidget_PC, self).__init__(parent)
         uic.loadUi("settingsWidget_PC.ui", self)
 
+        self.VentilatorMain = self.parent()
 
         self.scrollbarSettings = SCROLLBAR_SETTINGS
 
-        self.setTinspScrollBar.setStyleSheet(self.scrollbarSettings)
-        self.setTplateauScrollBar.setStyleSheet(self.scrollbarSettings)
+        self.setIERatioScrollBar.setStyleSheet(self.scrollbarSettings)
+        self.setInspRiseTimeScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setRRScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setPEEPScrollBar.setStyleSheet(self.scrollbarSettings)
         self.setPIPScrollBar.setStyleSheet(self.scrollbarSettings)
         
-        self.setTinspScrollBar.setPageStep(1)
-        self.setTplateauScrollBar.setPageStep(1)
-        self.setTinspScrollBar.setSingleStep(1)
+        self.setIERatioScrollBar.setPageStep(1)
+        self.setInspRiseTimeScrollBar.setPageStep(1)
         self.setRRScrollBar.setPageStep(1)
         self.setPEEPScrollBar.setPageStep(1)
         self.setPIPScrollBar.setPageStep(5)
 
-        self.setTinspScrollBar.setMaximum(TINSP_MAX*10)
+        self.setIERatioScrollBar.setMaximum(IERATIO_MAX*10)
         self.setRRScrollBar.setMaximum(RR_MAX*10)
         self.setPEEPScrollBar.setMaximum(PEEP_MAX)
-        self.setPIPScrollBar.setMaximum(VT_MAX)
-        self.setTplateauScrollBar.setMaximum(TPLATEAU_MAX*10)
-        self.setTinspScrollBar.setMinimum(TINSP_MIN*10)
-        self.setTplateauScrollBar.setMinimum(TPLATEAU_MIN*10)
+        self.setInspRiseTimeScrollBar.setMaximum(INSPRISETIME_MAX)
+        self.setPIPScrollBar.setMaximum(PIP_MAX)
+
+        self.setIERatioScrollBar.setMinimum(IERATIO_MIN*10)
         self.setRRScrollBar.setMinimum(RR_MIN*10)
         self.setPEEPScrollBar.setMinimum(PEEP_MIN)
-        self.setPIPScrollBar.setMinimum(VT_MIN)
+        self.setPIPScrollBar.setMinimum(PIP_MIN)
+        self.setInspRiseTimeScrollBar.setMinimum(INSPRISETIME_MIN)
 
         self.readInitialSetValues()
         self.updateSetValues()
@@ -426,88 +617,69 @@ class SettingsWidget_PC(QWidget):
     def readInitialSetValues(self):
         # TODO: read initial values a file
 
-        self.valueTinsp_tmp = self.parent().valueTinsp
-        self.valueTplateau_tmp = self.parent().valueTplateau
-        self.valueRR_tmp = self.parent().valueRR
-        self.valuePIP_tmp = self.parent().valuePIP
-        self.valuePEEP_tmp = self.parent().valuePEEP
+        self.setIERatio_tmp = self.VentilatorMain.setIERatio
+        self.setInspRiseTime_tmp = self.VentilatorMain.setInspRiseTime
+        print('insp rise time aa {}'.format(self.setInspRiseTime_tmp))
+        self.setRR_tmp = self.VentilatorMain.setRR
+        self.setPIP_tmp = self.VentilatorMain.setPIP
+        self.setPEEP_tmp = self.VentilatorMain.setPEEP
 
-        self.setTinspScrollBar.setValue(self.valueTinsp_tmp * 10)
-        self.setTplateauScrollBar.setValue(self.valueTplateau_tmp * 10)
-        self.setRRScrollBar.setValue(self.valueRR_tmp*10)
-        self.setPEEPScrollBar.setValue(self.valuePEEP_tmp)
-        self.setPIPScrollBar.setValue(self.valuePIP_tmp)
+        self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
+        self.setInspRiseTimeScrollBar.setValue(10)
+        print('insp rise time bb {}'.format(self.setInspRiseTime_tmp))
+        print('insp rise time cc {}'.format(self.setInspRiseTimeScrollBar.value()))
+
+        self.setRRScrollBar.setValue(self.setRR_tmp*10)
+        self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
+        self.setPIPScrollBar.setValue(self.setPIP_tmp)
 
     def updateSetValues(self): 
 
-        self.valueTinsp_tmp = (self.setTinspScrollBar.value() / 10)
-        self.valueTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
-        self.valueRR_tmp = (self.setRRScrollBar.value() / 10)
-        self.valuePEEP_tmp = self.setPEEPScrollBar.value()
-        self.valuePIP_tmp = self.setPIPScrollBar.value()
+        self.setIERatio_tmp = (self.setIERatioScrollBar.value() / 10)
+        self.setInspRiseTime_tmp = (self.setInspRiseTimeScrollBar.value())
+        self.setRR_tmp = (self.setRRScrollBar.value() / 10)
+        self.setPEEP_tmp = self.setPEEPScrollBar.value()
+        self.setPIP_tmp = self.setPIPScrollBar.value()
 
-        self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp_tmp))
-        self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau_tmp))
-        self.setRRvar_setting.setText("{:.1f}".format(self.valueRR_tmp))
-        self.setPIPvar_setting.setText("{:.0f}".format(self.valuePIP_tmp))
-        self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP_tmp))
+        self.setIERatiovar_setting.setText("{:.1f}".format(self.setIERatio_tmp))
+        self.setInspRiseTimevar_setting.setText("{:.1f}".format(self.setInspRiseTime_tmp))
+        self.setRRvar_setting.setText("{:.1f}".format(self.setRR_tmp))
+        self.setPIPvar_setting.setText("{:.0f}".format(self.setPIP_tmp))
+        self.setPEEPvar_setting.setText("{:.0f}".format(self.setPEEP_tmp))
 
 
     def commitValueChanges(self):
         print('Commiting values PC')
-        self.valueTinsp_tmp = (self.setTinspScrollBar.value() / 10)
-        self.valueTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
-        self.valueRR_tmp = (self.setRRScrollBar.value() / 10)
-        
-        if((self.valueTinsp_tmp+self.valueTplateau_tmp)>(60/self.valueRR_tmp - 0.3)):
-            self.parent().parent().msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
-            self.parent().parent().msg.setIcon(QMessageBox.Warning)
-            self.parent().parent().msg.exec_()
+        self.setIERatio_tmp = (self.setIERatioScrollBar.value() / 10)
+        self.setInspRiseTime_tmp = (self.setInspRiseTimeScrollBar.value())
+        self.setRR_tmp = (self.setRRScrollBar.value() / 10)
 
+        print('settings...')
 
-            self.setTinspScrollBar.setValue(self.valueTinsp * 10)
-            self.setTplateauScrollBar.setValue(self.valueTplateau * 10)
-            self.setRRScrollBar.setValue(self.valueRR*10)
-            self.setPEEPScrollBar.setValue(self.valuePEEP)
-            self.setPIPScrollBar.setValue(self.valuePIP)
+        self.setIERatio = self.setIERatio_tmp
+        self.setInspRiseTime = self.setInspRiseTime_tmp
+        self.setRR = self.setRR_tmp
+        self.setPIP = self.setPIP_tmp
+        self.setPEEP = self.setPEEP_tmp
 
-            self.setTinspvar_setting.setText("{:.1f}".format(self.valueTinsp))
-            self.setTplateauvar_setting.setText("{:.1f}".format(self.valueTplateau))
-            self.setRRvar_setting.setText("{:.1f}".format(self.valueRR))
-            self.setPIPvar_setting.setText("{:.0f}".format(self.valuePIP))
-            self.setPEEPvar_setting.setText("{:.0f}".format(self.valuePEEP))
+        self.VentilatorMain.setIERatio =self.setIERatio 
+        self.VentilatorMain.setInspRiseTime = self.setInspRiseTime 
+        self.VentilatorMain.setRR = self.setRR
+        self.VentilatorMain.setPIP = self.setPIP 
+        self.VentilatorMain.setPEEP = self.setPEEP
 
-        else:
+        self.setIERatio_tmp = self.VentilatorMain.setIERatio
+        self.setInspRiseTime_tmp = self.VentilatorMain.setInspRiseTime
+        self.setRR_tmp = self.VentilatorMain.setRR
+        self.setPIP_tmp = self.VentilatorMain.setPIP
+        self.setPEEP_tmp = self.VentilatorMain.setPEEP
 
-            print('settings...')
+        self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
+        self.setInspRiseTimeScrollBar.setValue(self.setInspRiseTime_tmp)
+        self.setRRScrollBar.setValue(self.setRR_tmp*10)
+        self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
+        self.setPIPScrollBar.setValue(self.setPIP_tmp)
 
-            self.valueTinsp = self.valueTinsp_tmp
-            self.valueTplateau = self.valueTplateau_tmp
-            self.valueRR = self.valueRR_tmp
-            self.valuePIP = self.valuePIP_tmp
-            self.valuePEEP = self.valuePEEP_tmp
-
-            print(self.valueTinsp_tmp)
-
-            self.parent().parent().valueTinsp =self.valueTinsp 
-            self.parent().parent().valueTplateau = self.valueTplateau 
-            self.parent().parent().valueRR = self.valueRR
-            self.parent().parent().valuePIP = self.valuePIP 
-            self.parent().parent().valuePEEP = self.valuePEEP
-
-            self.valueTinsp_tmp = self.parent().parent().valueTinsp
-            self.valueTplateau_tmp = self.parent().parent().valueTplateau
-            self.valueRR_tmp = self.parent().parent().valueRR
-            self.valuePIP_tmp = self.parent().parent().valuePIP
-            self.valuePEEP_tmp = self.parent().parent().valuePEEP
-
-            self.setTinspScrollBar.setValue(self.valueTinsp_tmp * 10)
-            self.setTplateauScrollBar.setValue(self.valueTplateau_tmp * 10)
-            self.setRRScrollBar.setValue(self.valueRR_tmp*10)
-            self.setPEEPScrollBar.setValue(self.valuePEEP_tmp)
-            self.setPIPScrollBar.setValue(self.valuePIP_tmp)
-
-            self.parent().parent().updateBottomBarValues()
 
 
 class SettingsWidget_PS(QWidget):
@@ -549,14 +721,13 @@ class AlarmsWidget(QWidget):
         # self.minAlarmVt.setText("{:.0f}".format(caget('Raspi:central:Set-Vt.LOW')))
         # self.maxAlarmPIP.setText("{:.0f}".format(caget('Raspi:central:Set-Ppeak.HIGH')))
         # self.minAlarmPIP.setText("{:.0f}".format(caget('Raspi:central:Set-Ppeak.LOW')))
-        
-
-
 
 class PlotsWidget(QWidget):
     def __init__(self, parent=None):
         super(PlotsWidget, self).__init__(parent)
         uic.loadUi("plotsWidget.ui", self)
+
+        self.VentilatorMain = self.parent()
 
         self.manualVentButton.pressed.connect(self.manualVentilationPressed)
         self.manualVentButton.released.connect(self.manualVentilationReleased)
@@ -574,21 +745,18 @@ class PlotsWidget(QWidget):
         self.basePlotVol = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor) 
         self.basePlotPres = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor)
 
-        #self.graphFlow = pg.PlotWidget()
         self.flowData = pg.PlotCurveItem()
         self.pfillX = pg.FillBetweenItem(self.flowData, self.basePlotFlow, brush = self.plotcolor)
         self.graphFlow.addItem(self.flowData)
         self.graphFlow.addItem(self.basePlotFlow)
         self.graphFlow.addItem(self.pfillX)
 
-        #self.graphVolume = pg.PlotWidget()
         self.volumeData = pg.PlotCurveItem()
         self.pfillY = pg.FillBetweenItem(self.volumeData, self.basePlotVol, brush = self.plotcolor)
         self.graphVolume.addItem(self.volumeData)
         self.graphVolume.addItem(self.basePlotVol)
         self.graphVolume.addItem(self.pfillY)
         
-        #self.graphPressure = pg.PlotWidget()
         self.pressureData = pg.PlotCurveItem()
         self.pfillZ = pg.FillBetweenItem(self.pressureData, self.basePlotPres, brush = self.plotcolor)
         self.graphPressure.addItem(self.pressureData)
@@ -628,36 +796,36 @@ class PlotsWidget(QWidget):
         self.initializeGraphs()
 
     def manualVentilationPressed(self):
-        self.lastVexp = self.parent().parent().vExp
-        self.lastVinsp = self.parent().parent().vInsp
-        self.lastMode = self.parent().parent().currentMode
+        self.lastVexp = self.VentilatorMain.vExp
+        self.lastVinsp = self.VentilatorMain.vInsp
+        self.lastMode = self.VentilatorMain.currentMode
         self.currentMode = 2 #manual
         self.setVinsp = 30
         self.setVexp = 0
-        self.parent().parent().thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
+        self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
         print('Setting Valve Insp at 30')
 
     def manualVentilationReleased(self):
-        self.parent().parent().vExp = self.lastVexp
-        self.parent().parent().vInsp = self.lastVinsp
-        self.parent().parent().currentMode = self.lastMode
-        self.parent().parent().thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
+        self.VentilatorMain.vExp = self.lastVexp
+        self.VentilatorMain.vInsp = self.lastVinsp
+        self.VentilatorMain.currentMode = self.lastMode
+        self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
         print('restarting all')
 
     def manualPausePressed(self):
-        self.lastVexp = self.parent().parent().vExp
-        self.lastVinsp = self.parent().parent().vInsp
-        self.lastMode = self.parent().parent().currentMode
+        self.lastVexp = self.VentilatorMain.vExp
+        self.lastVinsp = self.VentilatorMain.vInsp
+        self.lastMode = self.VentilatorMain.currentMode
         self.currentMode = 2 #manual
         self.setVinsp = 0
         self.setVexp = 0
-        self.parent().parent().thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
+        self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
         print('Setting Valve Insp at 0')
     def manualPauseReleased(self):
-        self.parent().parent().vExp = self.lastVexp
-        self.parent().parent().vInsp = self.lastVinsp
-        self.parent().parent().currentMode = self.lastMode
-        self.parent().parent().thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
+        self.VentilatorMain.vExp = self.lastVexp
+        self.VentilatorMain.vInsp = self.lastVinsp
+        self.VentilatorMain.currentMode = self.lastMode
+        self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
         print('restarting all')
 
     def initializeGraphs(self):
@@ -667,7 +835,7 @@ class PlotsWidget(QWidget):
         self.counterPlots = 0
 
 
-    def updateGraphs(self, mId, fio2, pressure, flow, vt):
+    def updateGraphs(self, pressure, flow, vt):
 
         self.channelFlow[self.counterPlots] = flow
         self.channelVolume[self.counterPlots] = vt
