@@ -123,7 +123,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>(sec)</string>
+       <string>(-)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -261,7 +261,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>(mL)</string>
+       <string>(cmH2O)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

@@ -156,7 +156,8 @@ class serialReceiver(QtCore.QThread):
                         self.upperInspirationVolumeThreshold, self.lowerInspirationPressureThreshold,\
                         self.upperInspirationPressureThreshold)
                 elif(msgType == 99):
-                    self.debugMsgSample.emit(str(data[1]))
+                    # self.debugMsgSample.emit(str(dataList[2]))
+                    print('GOT A DEBUG MESSAGE: {}'.format(dataList[1]))
             except:
                 print('error in received data: {}'.format(data))
             
@@ -193,7 +194,7 @@ class serialReceiver(QtCore.QThread):
 class VentilatorWindow(QDialog):
     def __init__(self):
         super(VentilatorWindow, self).__init__()
-        uic.loadUi("dashboard_ventilator.ui", self)
+        uic.loadUi("dashboard_ventilator_v2.ui", self)
 
         self.initializaValuesFromArduino()
 
@@ -227,28 +228,36 @@ class VentilatorWindow(QDialog):
 
 
         self.setButton.clicked.connect(self.toggleStackedArea)
-
         self.alarmsButton.clicked.connect(self.toggleStackedArea)
+
+
         self.main_stackedArea_flag = 0
-        self.chooseOPMODEbutton.addItem("Volume Control")
-        self.chooseOPMODEbutton.addItem("Pressure Control")
-        self.chooseOPMODEbutton.addItem("Pressure Support")
-        self.chooseOPMODEbutton.currentIndexChanged.connect(self.changeOPMODE)
+        # self.chooseOPMODEbutton.addItem("Volume Control")
+        # self.chooseOPMODEbutton.addItem("Pressure Control")
+        # self.chooseOPMODEbutton.addItem("Pressure Support")
+        self.tabBtnVC.clicked.connect(lambda:self.changeOPMODE(self.tabBtnVC.text()))
+        self.tabBtnVC.setCheckable(True)
+        self.tabBtnVC.toggle()
+        self.tabBtnPC.clicked.connect(lambda:self.changeOPMODE(self.tabBtnPC.text()))
+        self.tabBtnPC.setCheckable(True)
+        self.tabBtnPS.clicked.connect(lambda:self.changeOPMODE(self.tabBtnPS.text()))
+        self.tabBtnPS.setCheckable(True)
+        # self.chooseOPMODEbutton.currentIndexChanged.connect(self.changeOPMODE)
 
         self.serialEnabled = True
         self.start_serial()
 
         self.currentMode = 0#caget('Raspi:central:OPMODE')
 
-        if self.currentMode == 0:
-            self.currentModeLabel.setText('Volume Control')
-            self.BottomAreaVC.updateBottomBarValues()
-        elif self.currentMode == 1:
-            self.currentModeLabel.setText('Pressure Control')
-        elif self.currentMode == 2: 
-            self.currentModeLabel.setText('Pressure Support')
-        else:   
-            self.currentModeLabel.setText('No mode Selected')
+        # if self.currentMode == 0:
+        #     self.currentModeLabel.setText('Volume Control')
+        #     self.BottomAreaVC.updateBottomBarValues()
+        # elif self.currentMode == 1:
+        #     self.currentModeLabel.setText('Pressure Control')
+        # elif self.currentMode == 2: 
+        #     self.currentModeLabel.setText('Pressure Support')
+        # else:   
+        #     self.currentModeLabel.setText('No mode Selected')
 
         self.msg = QMessageBox()
         self.setWindowTitle("Ventilator")
@@ -273,21 +282,43 @@ class VentilatorWindow(QDialog):
         pass
         #if self.sensorMVvar > caget('Raspi:central:Minute-Volume')
 
-    def changeOPMODE(self, i):
-        if i==0:
-            self.currentModeLabel.setText('Volume Control')
+    def changeOPMODE(self, btnText):
+        print('CHANGE MODE {}'.format(btnText))
+        if btnText=="Volume Control":
+            print('VC mode clicked\n\n\n')
+            self.tabBtnVC.setChecked(True)
+            # self.tabBtnVC.setStyleSheet("background-color: #0000bd; color: #000000")            
+            self.tabBtnPC.setChecked(False)
+            # self.tabBtnPC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
+            self.tabBtnPS.setChecked(False)
+            # self.tabBtnPS.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
+            # self.currentModeLabel.setText('Volume Control')
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
             self.BottomAreaVC.updateBottomBarValues()
             self.currentMode = 0
             #caput('Raspi:central:OPMODE',2)
-        elif i==1:
-            self.currentModeLabel.setText('Pressure Control')
+        elif btnText=="Pressure Control":
+            print('PC mode clicked\n\n\n')
+            self.tabBtnVC.setChecked(False)
+            # self.tabBtnVC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
+            self.tabBtnPC.setChecked(True)
+            # self.tabBtnPC.setStyleSheet("background-color: #0000bd; color: #000000")  
+            self.tabBtnPS.setChecked(False)
+            # self.tabBtnPS.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
+            # self.currentModeLabel.setText('Pressure Control')
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPC)
             self.BottomAreaPC.updateBottomBarValues()
             self.currentMode = 1
             #caput('Raspi:central:OPMODE',3)
-        elif i==2:
-            self.currentModeLabel.setText('Pressure Support')
+        elif btnText=="Pressure Support":
+            print('PS mode clicked\n\n\n')
+            self.tabBtnVC.setChecked(False)
+            # self.tabBtnVC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
+            self.tabBtnPC.setChecked(False)
+            # self.tabBtnPC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
+            self.tabBtnPS.setChecked(True)
+            # self.tabBtnPS.setStyleSheet("background-color: #0000bd; color: #000000")  
+            # self.currentModeLabel.setText('Pressure Support')
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPS)
             self.BottomAreaPS.updateBottomBarValues()
             self.currentMode = 2
@@ -299,9 +330,13 @@ class VentilatorWindow(QDialog):
 
     def toggleStackedArea(self):
         sending_button = self.sender()
+
+        print('toggling area - {}\n\n\n\n'.format(self.currentMode))
+
         if sending_button.objectName() == 'alarmsButton':
             self.main_stacked_area.setCurrentWidget(self.AlarmsWidget)
         elif self.main_stackedArea_flag == 1: #I am in the settings view and want to change to show plots
+            print('Changing to plots')
             self.main_stacked_area.setCurrentWidget(self.PlotsWidget)
             self.PlotsWidget.initializeGraphs()
             self.thread.newSensorSample.connect(self.PlotsWidget.updateGraphs)
@@ -314,19 +349,19 @@ class VentilatorWindow(QDialog):
             except:
                 print('nothing to disconnect PC')
             self.main_stackedArea_flag = 0
-            if self.chooseOPMODEbutton.currentText()=='Volume Control':
+            if self.currentMode ==0:
                 self.SettingsWidget_VC.commitValueChanges()
                 self.BottomAreaVC.updateBottomBarValues()
-            elif self.chooseOPMODEbutton.currentText()=='Pressure Control':
+            elif self.currentMode ==1:
                 self.SettingsWidget_PC.commitValueChanges()
                 self.BottomAreaPC.updateBottomBarValues()
-            elif self.chooseOPMODEbutton.currentText()=='Pressure Support':
+            elif self.currentMode ==2:
                 self.SettingsWidget_PS.commitValueChanges()
                 self.BottomAreaPS.updateBottomBarValues()
             
             self.setButton.setStyleSheet("color: rgb(3, 43, 91);")
             self.setButton.setText('Set\nValues')
-        elif self.main_stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Volume Control': #I am in the plots view and want to change to show VC settings
+        elif self.main_stackedArea_flag == 0 and self.currentMode==0: #I am in the plots view and want to change to show VC settings
             self.timer.timeout.connect(self.SettingsWidget_VC.updateSetValues)
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
@@ -335,7 +370,7 @@ class VentilatorWindow(QDialog):
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_VC)
             self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
-        elif self.main_stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Control':
+        elif self.main_stackedArea_flag == 0 and self.currentMode==1:
             print('Pressure Control')
             self.timer.timeout.connect(self.SettingsWidget_PC.updateSetValues)
             try:
@@ -345,7 +380,7 @@ class VentilatorWindow(QDialog):
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PC)
             self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
-        elif self.main_stackedArea_flag == 0 and self.chooseOPMODEbutton.currentText()=='Pressure Support':
+        elif self.main_stackedArea_flag == 0 and self.currentMode==2:
             print('Pressure Support')
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
