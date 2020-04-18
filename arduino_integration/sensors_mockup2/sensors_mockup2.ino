@@ -97,8 +97,18 @@ void writeSerial(){
   tidal_volume=random(0,140000)/100.0;
   combined_flow=inspiratory_flow-expiratory_flow;
   reserved1 = 0.00;
-  int n =random(1,3);
+  int n =random(1,4);
   if(n == 1){
+    Serial.print(1);
+    Serial.print(";");
+    Serial.print(icycle);
+    Serial.print(";");
+    Serial.print(inspiratory_pressure);
+    Serial.print(";");
+    Serial.print(inspiratory_flow);
+    Serial.print(";");
+    Serial.println(tidal_volume);}
+  if(n == 2){
     Serial.print(2);
     Serial.print(";");
     Serial.print(icycle);
@@ -114,7 +124,7 @@ void writeSerial(){
     Serial.print(inspiratory_flow);
     Serial.print(";");
     Serial.println(tidal_volume);}
-  if(n == 2){
+  if(n == 3){
     Serial.print(3);
     Serial.print(";");
     Serial.print(icycle);
@@ -135,7 +145,6 @@ void writeSerial(){
 
 void interpretSerialCommand(){
   if (stringComplete){
-    Serial.print("SERIAL ECHO: ");
     Serial.println(inputString);
     for (int i = 0; i < inputString.length(); i++) {
       if (inputString.substring(i, i+1) == ";") {
