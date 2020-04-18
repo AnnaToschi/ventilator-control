@@ -94,13 +94,16 @@ class serialReceiver(QtCore.QThread):
                 msgType = int(dataList[0])
                 dataList = dataList[1:]
                 if(msgType == 1):
+                    print('Received Plot Data Sample')
+                    print('Plot: {}'.format(dataList))
                     self.mId = int(dataList[0])
-                    self.pressure_now = float(dataList[2])
-                    self.flow_now = float(dataList[3])
-                    self.vt_now = float(dataList[4])
+                    self.pressure_now = float(dataList[1])
+                    self.flow_now = float(dataList[2])
+                    self.vt_now = float(dataList[3])
                     self.newSensorSample.emit(self.pressure_now, \
                         self.flow_now, self.vt_now)
                 elif(msgType == 2):
+                    print('Received INSP Data Sample')
                     self.mId = int(dataList[0])
                     self.measuredInspirationRiseTimeInSecs = float(dataList[1])
                     self.measuredPIP = float(dataList[2])
@@ -112,6 +115,7 @@ class serialReceiver(QtCore.QThread):
                         self.measuredPIP, self.measuredInspirationVolume, self.measuredPIF, \
                         self.measuredFiO2, self.measuredRR)
                 elif(msgType == 3):
+                    print('Received EXP Data Sample')
                     self.mId = int(dataList[0])
                     self.measuredPEEP = float(dataList[1])
                     self.measuredExpirationVolume = float(dataList[2])
@@ -121,6 +125,8 @@ class serialReceiver(QtCore.QThread):
                     self.afterExpSample.emit(self.measuredPEEP, \
                         self.measuredExpirationVolume, self.measuredPEF, self.measuredFiO2, self.measuredRR)
                 elif(msgType == 4):
+                    print('Received PC Settings')
+                    print('PC: {}'.format(dataList))
                     self.mId = int(dataList[0])
                     self.targetPEEP = float(dataList[1])
                     self.targetPIP = float(dataList[2])
@@ -130,6 +136,8 @@ class serialReceiver(QtCore.QThread):
                     self.PCSettingsSample.emit(self.targetPEEP, self.targetPIP, \
                         self.targetRR, self.targetIERatio, self.targetInspirationRiseTime)
                 elif(msgType == 5):
+                    print('Received VC Settings')
+                    print('VC: {}'.format(dataList))
                     self.mId = int(dataList[0])
                     self.targetPEEP = float(dataList[1])
                     self.targetVt = float(dataList[2])
@@ -163,20 +171,20 @@ class serialReceiver(QtCore.QThread):
         self.ser.write(str.encode(str(type) + ";" + str(message) + "\n"))
 
     def sendPCSettings(self,mID,targetPEEP,targetPIP,targetRR,targetIERatio,targetInspirationRiseTime):
-        message = str(mID) + ';' + str(targetPEEP) + ';' + str(targetPIP) + ';' + str(targetRR) + ';' + \
+        message = '4;' + str(mID) + ';' + str(targetPEEP) + ';' + str(targetPIP) + ';' + str(targetRR) + ';' + \
         str(targetIERatio) + ';' + str(targetInspirationRiseTime) + '\n'
         print('writing to serial: ' + message)
         self.ser.write(str.encode(message))
 
     def sendVCSettings(self,mID,targetPEEP,targetVt,targetRR,targetIERatio,targetInspPause):
-        message = str(mID) + ';' + str(targetPEEP) + ';' + str(targetPIP) + ';' + str(targetRR) + ';' + \
+        message = '5;' + str(mID) + ';' + str(targetPEEP) + ';' + str(targetVt) + ';' + str(targetRR) + ';' + \
         str(targetIERatio) + ';' + str(targetInspPause) + '\n'
         print('writing to serial: ' + message)
         self.ser.write(str.encode(message))
 
     def sendAlarmSettings(self,mID,lowerInspirationVolumeThreshold,upperInspirationVolumeThreshold,\
                             lowerInspirationPressureThreshold,upperInspirationPressureThreshold):
-        message = str(mID) + ';' + str(lowerInspirationVolumeThreshold) + ';' + str(upperInspirationVolumeThreshold) + ';' + \
+        message = '6;' + str(mID) + ';' + str(lowerInspirationVolumeThreshold) + ';' + str(upperInspirationVolumeThreshold) + ';' + \
         str(lowerInspirationPressureThreshold) + ';' + str(upperInspirationPressureThreshold) + '\n'
         print('writing to serial: ' + message)
         self.ser.write(str.encode(message))
@@ -234,6 +242,7 @@ class VentilatorWindow(QDialog):
 
         if self.currentMode == 0:
             self.currentModeLabel.setText('Volume Control')
+            self.BottomAreaVC.updateBottomBarValues()
         elif self.currentMode == 1:
             self.currentModeLabel.setText('Pressure Control')
         elif self.currentMode == 2: 
@@ -258,7 +267,6 @@ class VentilatorWindow(QDialog):
     def start_timer(self):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(50)
-        self.timer.timeout.connect(self.BottomAreaVC.updateBottomBarValues)
         self.timer.start()
 
     def check_alarms(self):
@@ -374,18 +382,22 @@ class VentilatorWindow(QDialog):
             self.sensorRRvar.setText("{:.1f}".format(self.sensorRR))
 
     def updatePCSetValues(self, setPEEP, setPIP, setRR, setIERatio, setInspirationRiseTime):
+        print('PC set from stream')
         self.setPEEP = setPEEP
         self.setPIP = setPIP
         self.setRR = setRR
         self.setIERatio = setIERatio
         self.setInspirationRiseTime = setInspirationRiseTime
+        self.BottomAreaPC.updateBottomBarValues()
 
     def updateVCSetValues(self, setPEEP, setVt, setRR, setIERatio, setInspPause):
+        print('VC set from stream')
         self.setPEEP = setPEEP
         self.setVt = setVt
         self.setRR = setRR
         self.setIERatio = setIERatio
-        self.setInspirationRiseTime = setInspPause
+        self.setTplateau = setInspPause
+        self.BottomAreaVC.updateBottomBarValues()
 
 
     def initializaValuesFromArduino(self):
@@ -418,9 +430,12 @@ class BottomAreaVC(QWidget):
 
 
     def updateBottomBarValues(self):
+
+        print('Updating VC Bottom')
         self.setVtvar_btm.setText("{:.0f}".format(self.VentilatorMain.setVt))
         self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
-        self.setTinspvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTinsp))
+        self.setTplateauvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTplateau))
+        self.setIERatiovar_btm.setText("{:.1f}".format(self.VentilatorMain.setIERatio))
         self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
 
         #self.check_alarms()
@@ -434,6 +449,7 @@ class BottomAreaPC(QWidget):
 
 
     def updateBottomBarValues(self):
+        print('Updating PC Bottom')
         self.setPIPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPIP))
         self.setInspRiseTimevar_btm.setText("{:.0f}".format(self.VentilatorMain.setInspRiseTime))
         self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
@@ -487,6 +503,8 @@ class SettingsWidget_VC(QWidget):
         self.setPEEPScrollBar.setMinimum(PEEP_MIN)
         self.setVtScrollBar.setMinimum(VT_MIN)
 
+        self.mID = 0
+
         self.readInitialSetValues()
         self.updateSetValues()
 
@@ -521,61 +539,17 @@ class SettingsWidget_VC(QWidget):
 
 
     def commitValueChanges(self):
-        print('Commiting values')
-        self.setIERatio_tmp = (self.setIERatioScrollBar.value() / 10)
-        self.setTplateau_tmp = (self.setTplateauScrollBar.value() / 10)
-        self.setRR_tmp = (self.setRRScrollBar.value() / 10)
-        
-        # if((self.setTinsp_tmp+self.setTplateau_tmp)>(60/self.setRR_tmp - 0.3)):
+        print('Commiting values VC')
+        self.setIERatio = (self.setIERatioScrollBar.value() / 10)
+        self.setTplateau = (self.setTplateauScrollBar.value() / 10)
+        self.setRR = (self.setRRScrollBar.value() / 10)
+        self.setVt = (self.setVtScrollBar.value())
+        self.setPEEP = (self.setPEEPScrollBar.value())
 
-            # oldIERatio = self.VentilatorMain.setIERatio
-            # oldTplateau = self.VentilatorMain.setTplateau
-            # oldPEEP = self.VentilatorMain.setPEEP
-            # oldVt = self.VentilatorMain.setVt
-            # oldRR = self.VentilatorMain.setRR
+        self.mID += 1 
 
-            # self.VentilatorMain.msg.setText('Values of RR and Tinsp do not match. RR was corrected to maximum value allowed.')
-            # self.VentilatorMain.msg.setIcon(QMessageBox.Warning)
-            # self.VentilatorMain.msg.exec_()
-
-
-            # self.setIERatio_tmp.setValue(oldIERatio * 10)
-            # self.setTplateauScrollBar.setValue(oldTplateau * 10)
-            # self.setRRScrollBar.setValue(oldRR*10)
-            # self.setPEEPScrollBar.setValue(oldPEEP)
-            # self.setVtScrollBar.setValue(oldVt)
-
-            # self.setIERatiovar_setting.setText("{:.1f}".format(oldIERatio))
-            # self.setTplateauvar_setting.setText("{:.1f}".format(oldTplateau))
-            # self.setRRvar_setting.setText("{:.1f}".format(oldRR))
-            # self.setVtvar_setting.setText("{:.0f}".format(oldVt))
-            # self.setPEEPvar_setting.setText("{:.0f}".format(oldPEEP))
-
-        # else:
-
-        self.setIERatio = self.setIERatio_tmp
-        self.setTplateau = self.setTplateau_tmp
-        self.setRR = self.setRR_tmp
-        self.setVt = self.setVt_tmp
-        self.setPEEP = self.setPEEP_tmp
-
-        self.VentilatorMain.setIERatio =self.setIERatio 
-        self.VentilatorMain.setTplateau = self.setTplateau 
-        self.VentilatorMain.setRR = self.setRR
-        self.VentilatorMain.setVt = self.setVt 
-        self.VentilatorMain.setPEEP = self.setPEEP
-
-        self.setIERatio_tmp = self.VentilatorMain.setIERatio
-        self.setTplateau_tmp = self.VentilatorMain.setTplateau
-        self.setRR_tmp = self.VentilatorMain.setRR
-        self.setVt_tmp = self.VentilatorMain.setVt
-        self.setPEEP_tmp = self.VentilatorMain.setPEEP
-
-        self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
-        self.setTplateauScrollBar.setValue(self.setTplateau_tmp * 10)
-        self.setRRScrollBar.setValue(self.setRR_tmp*10)
-        self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
-        self.setVtScrollBar.setValue(self.setVt_tmp)
+        self.VentilatorMain.thread.sendVCSettings(self.mID, self.setPEEP, self.setVt,\
+                                                self.setRR, self.setIERatio, self.setTplateau)
 
 
 class SettingsWidget_PC(QWidget):
@@ -610,6 +584,8 @@ class SettingsWidget_PC(QWidget):
         self.setPEEPScrollBar.setMinimum(PEEP_MIN)
         self.setPIPScrollBar.setMinimum(PIP_MIN)
         self.setInspRiseTimeScrollBar.setMinimum(INSPRISETIME_MIN)
+
+        self.mID = 0
 
         self.readInitialSetValues()
         self.updateSetValues()
@@ -650,36 +626,16 @@ class SettingsWidget_PC(QWidget):
 
     def commitValueChanges(self):
         print('Commiting values PC')
-        self.setIERatio_tmp = (self.setIERatioScrollBar.value() / 10)
-        self.setInspRiseTime_tmp = (self.setInspRiseTimeScrollBar.value())
-        self.setRR_tmp = (self.setRRScrollBar.value() / 10)
+        self.setIERatio = (self.setIERatioScrollBar.value() / 10)
+        self.setInspRiseTime = (self.setInspRiseTimeScrollBar.value() / 10)
+        self.setRR = (self.setRRScrollBar.value() / 10)
+        self.setPIP = (self.setPIPScrollBar.value())
+        self.setPEEP = (self.setPEEPScrollBar.value())
 
-        print('settings...')
+        self.mID += 1 
 
-        self.setIERatio = self.setIERatio_tmp
-        self.setInspRiseTime = self.setInspRiseTime_tmp
-        self.setRR = self.setRR_tmp
-        self.setPIP = self.setPIP_tmp
-        self.setPEEP = self.setPEEP_tmp
-
-        self.VentilatorMain.setIERatio =self.setIERatio 
-        self.VentilatorMain.setInspRiseTime = self.setInspRiseTime 
-        self.VentilatorMain.setRR = self.setRR
-        self.VentilatorMain.setPIP = self.setPIP 
-        self.VentilatorMain.setPEEP = self.setPEEP
-
-        self.setIERatio_tmp = self.VentilatorMain.setIERatio
-        self.setInspRiseTime_tmp = self.VentilatorMain.setInspRiseTime
-        self.setRR_tmp = self.VentilatorMain.setRR
-        self.setPIP_tmp = self.VentilatorMain.setPIP
-        self.setPEEP_tmp = self.VentilatorMain.setPEEP
-
-        self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
-        self.setInspRiseTimeScrollBar.setValue(self.setInspRiseTime_tmp)
-        self.setRRScrollBar.setValue(self.setRR_tmp*10)
-        self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
-        self.setPIPScrollBar.setValue(self.setPIP_tmp)
-
+        self.VentilatorMain.thread.sendPCSettings(self.mID, self.setPEEP, self.setPIP,\
+                                                self.setRR, self.setIERatio, self.setInspRiseTime)
 
 
 class SettingsWidget_PS(QWidget):
