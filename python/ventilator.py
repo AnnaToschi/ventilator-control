@@ -1,13 +1,16 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QTextEdit, QDialog, QWidget, QMessageBox
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
+from PyQt5.QtMultimedia import QSound 
 import pyqtgraph as pg
 import sys
 #from epics import caget, caput
 import numpy as np
-from qrangesliderhorizontal import QRangeSliderHorizontal
-
+# from qrangesliderhorizontal import QRangeSliderHorizontal
+import logging
 import serial
 import sys
+
+logging.basicConfig(level = logging.WARNING)
 
 VT_MIN = 100
 VT_MAX = 1300
@@ -25,6 +28,7 @@ TPLATEAU_MIN = 0
 TPLATEAU_MAX=10
 PEEP_MIN = 0
 PEEP_MAX = 50
+ALARM_DURATION = 2000
 
 SCROLLBAR_SETTINGS = """
                 QScrollArea {
@@ -59,6 +63,11 @@ SCROLLBAR_SETTINGS = """
 
 X_AXIS_LENGTH = 200;
 
+class AlarmSoundClass:
+    def __init__(self):
+        self.SoundObject = QSound("alarm.wav")
+        self.SoundObject.play("alarm.wav")
+
 
 class serialReceiver(QtCore.QThread):
   
@@ -68,6 +77,7 @@ class serialReceiver(QtCore.QThread):
     PCSettingsSample = QtCore.pyqtSignal(float, float, float, float, float)
     VCSettingsSample = QtCore.pyqtSignal(float, float, float, float, float)
     alarmSettingsSample = QtCore.pyqtSignal(float, float, float, float)
+    soundAlarm = QtCore.pyqtSignal(str)
     debugMsgSample = QtCore.pyqtSignal(str)
 
     def __init__(self, serialEnabled, loopRun):
@@ -82,7 +92,7 @@ class serialReceiver(QtCore.QThread):
         try:
             self.ser.port = str(sys.argv[1])
         except:
-            print('ERROR, NO PORT SELECTED, going to default port')
+            logging.info('ERROR, NO PORT SELECTED, going to default port')
             self.ser.port = '/dev/cu.usbmodem14201'
         self.ser.open()
 
@@ -94,8 +104,8 @@ class serialReceiver(QtCore.QThread):
                 msgType = int(dataList[0])
                 dataList = dataList[1:]
                 if(msgType == 1):
-                    print('Received Plot Data Sample')
-                    print('Plot: {}'.format(dataList))
+                    logging.info('Received Plot Data Sample')
+                    logging.info('Plot: {}'.format(dataList))
                     self.mId = int(dataList[0])
                     self.pressure_now = float(dataList[1])
                     self.flow_now = float(dataList[2])
@@ -103,7 +113,7 @@ class serialReceiver(QtCore.QThread):
                     self.newSensorSample.emit(self.pressure_now, \
                         self.flow_now, self.vt_now)
                 elif(msgType == 2):
-                    print('Received INSP Data Sample')
+                    logging.info('Received INSP Data Sample')
                     self.mId = int(dataList[0])
                     self.measuredInspirationRiseTimeInSecs = float(dataList[1])
                     self.measuredPIP = float(dataList[2])
@@ -115,7 +125,7 @@ class serialReceiver(QtCore.QThread):
                         self.measuredPIP, self.measuredInspirationVolume, self.measuredPIF, \
                         self.measuredFiO2, self.measuredRR)
                 elif(msgType == 3):
-                    print('Received EXP Data Sample')
+                    logging.info('Received EXP Data Sample')
                     self.mId = int(dataList[0])
                     self.measuredPEEP = float(dataList[1])
                     self.measuredExpirationVolume = float(dataList[2])
@@ -125,8 +135,8 @@ class serialReceiver(QtCore.QThread):
                     self.afterExpSample.emit(self.measuredPEEP, \
                         self.measuredExpirationVolume, self.measuredPEF, self.measuredFiO2, self.measuredRR)
                 elif(msgType == 4):
-                    print('Received PC Settings')
-                    print('PC: {}'.format(dataList))
+                    logging.info('Received PC Settings')
+                    logging.info('PC: {}'.format(dataList))
                     self.mId = int(dataList[0])
                     self.targetPEEP = float(dataList[1])
                     self.targetPIP = float(dataList[2])
@@ -136,8 +146,8 @@ class serialReceiver(QtCore.QThread):
                     self.PCSettingsSample.emit(self.targetPEEP, self.targetPIP, \
                         self.targetRR, self.targetIERatio, self.targetInspirationRiseTime)
                 elif(msgType == 5):
-                    print('Received VC Settings')
-                    print('VC: {}'.format(dataList))
+                    logging.info('Received VC Settings')
+                    logging.info('VC: {}'.format(dataList))
                     self.mId = int(dataList[0])
                     self.targetPEEP = float(dataList[1])
                     self.targetVt = float(dataList[2])
@@ -155,11 +165,15 @@ class serialReceiver(QtCore.QThread):
                     self.alarmSettingsSample.emit(self.lowerInspirationVolumeThreshold, \
                         self.upperInspirationVolumeThreshold, self.lowerInspirationPressureThreshold,\
                         self.upperInspirationPressureThreshold)
+                elif(msgType == 7):
+                    self.mId = int(dataList[0])
+                    self.messageToDisplay = str(dataList[1])
+                    self.soundAlarm.emit(self.messageToDisplay)
                 elif(msgType == 99):
                     # self.debugMsgSample.emit(str(dataList[2]))
-                    print('GOT A DEBUG MESSAGE: {}'.format(dataList[1]))
+                    logging.debug('GOT A DEBUG MESSAGE: {}'.format(dataList[1]))
             except:
-                print('error in received data: {}'.format(data))
+                logging.info('error in received data: {}'.format(data))
             
     def startRead(self):
         self.loopRun = 1
@@ -168,26 +182,26 @@ class serialReceiver(QtCore.QThread):
         self.loopRun = 0
 
     def setWrite(self,type,message):
-        print('writing to serial' + str(type) + ";" + str(message) + "\n")
+        logging.warning('writing to serial' + str(type) + ";" + str(message) + "\n")
         self.ser.write(str.encode(str(type) + ";" + str(message) + "\n"))
 
     def sendPCSettings(self,mID,targetPEEP,targetPIP,targetRR,targetIERatio,targetInspirationRiseTime):
         message = '4;' + str(mID) + ';' + str(targetPEEP) + ';' + str(targetPIP) + ';' + str(targetRR) + ';' + \
         str(targetIERatio) + ';' + str(targetInspirationRiseTime) + '\n'
-        print('writing to serial: ' + message)
+        logging.warning('writing to serial: {}'.format(message))
         self.ser.write(str.encode(message))
 
     def sendVCSettings(self,mID,targetPEEP,targetVt,targetRR,targetIERatio,targetInspPause):
         message = '5;' + str(mID) + ';' + str(targetPEEP) + ';' + str(targetVt) + ';' + str(targetRR) + ';' + \
         str(targetIERatio) + ';' + str(targetInspPause) + '\n'
-        print('writing to serial: ' + message)
+        logging.warning('writing to serial: {}'.format(message))
         self.ser.write(str.encode(message))
 
     def sendAlarmSettings(self,mID,lowerInspirationVolumeThreshold,upperInspirationVolumeThreshold,\
                             lowerInspirationPressureThreshold,upperInspirationPressureThreshold):
         message = '6;' + str(mID) + ';' + str(lowerInspirationVolumeThreshold) + ';' + str(upperInspirationVolumeThreshold) + ';' + \
         str(lowerInspirationPressureThreshold) + ';' + str(upperInspirationPressureThreshold) + '\n'
-        print('writing to serial: ' + message)
+        logging.warning('writing to serial: {}'.format(message))
         self.ser.write(str.encode(message))
 
 
@@ -195,7 +209,6 @@ class VentilatorWindow(QDialog):
     def __init__(self):
         super(VentilatorWindow, self).__init__()
         uic.loadUi("dashboard_ventilator_v2.ui", self)
-
         self.initializaValuesFromArduino()
 
         self.PlotsWidget = PlotsWidget(parent=self)
@@ -223,18 +236,17 @@ class VentilatorWindow(QDialog):
         self.bottom_stacked_area.addWidget(self.BottomAreaPS)
         self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
 
+        self.alarmMessage.setVisible(False)
+
         self.start_timer()
-
-
+        self.alarmTimer = QtCore.QTimer()
 
         self.setButton.clicked.connect(self.toggleStackedArea)
         self.alarmsButton.clicked.connect(self.toggleStackedArea)
+        self.alarmMode = 0 #signals if we are in the alarm menu
 
 
         self.main_stackedArea_flag = 0
-        # self.chooseOPMODEbutton.addItem("Volume Control")
-        # self.chooseOPMODEbutton.addItem("Pressure Control")
-        # self.chooseOPMODEbutton.addItem("Pressure Support")
         self.tabBtnVC.clicked.connect(lambda:self.changeOPMODE(self.tabBtnVC.text()))
         self.tabBtnVC.setCheckable(True)
         self.tabBtnVC.toggle()
@@ -242,33 +254,23 @@ class VentilatorWindow(QDialog):
         self.tabBtnPC.setCheckable(True)
         self.tabBtnPS.clicked.connect(lambda:self.changeOPMODE(self.tabBtnPS.text()))
         self.tabBtnPS.setCheckable(True)
-        # self.chooseOPMODEbutton.currentIndexChanged.connect(self.changeOPMODE)
 
         self.serialEnabled = True
         self.start_serial()
 
-        self.currentMode = 0#caget('Raspi:central:OPMODE')
-
-        # if self.currentMode == 0:
-        #     self.currentModeLabel.setText('Volume Control')
-        #     self.BottomAreaVC.updateBottomBarValues()
-        # elif self.currentMode == 1:
-        #     self.currentModeLabel.setText('Pressure Control')
-        # elif self.currentMode == 2: 
-        #     self.currentModeLabel.setText('Pressure Support')
-        # else:   
-        #     self.currentModeLabel.setText('No mode Selected')
+        self.currentMode = 0
 
         self.msg = QMessageBox()
         self.setWindowTitle("Ventilator")
 
     def start_serial(self):
         serial = serialReceiver(self.serialEnabled, True)
+        serial.alarmSettingsSample.connect(self.updateAlarms)
+        serial.soundAlarm.connect(self.soundAlarm)
         serial.afterInspSample.connect(self.updateSideBarValues)
         serial.afterExpSample.connect(self.updateSideBarValues)
         serial.VCSettingsSample.connect(self.updateVCSetValues)
         serial.PCSettingsSample.connect(self.updatePCSetValues)
-        # serial.alarmSettingsSample.connect(self.UpdateAlarms.updateSetValues)
         serial.newSensorSample.connect(self.PlotsWidget.updateGraphs)
         self.thread = serial
         serial.start()
@@ -278,78 +280,77 @@ class VentilatorWindow(QDialog):
         self.timer.setInterval(50)
         self.timer.start()
 
-    def check_alarms(self):
-        pass
-        #if self.sensorMVvar > caget('Raspi:central:Minute-Volume')
-
     def changeOPMODE(self, btnText):
-        print('CHANGE MODE {}'.format(btnText))
+        logging.info('CHANGE MODE {}'.format(btnText))
         if btnText=="Volume Control":
-            print('VC mode clicked\n\n\n')
-            self.tabBtnVC.setChecked(True)
-            # self.tabBtnVC.setStyleSheet("background-color: #0000bd; color: #000000")            
+            logging.info('VC mode clicked\n\n\n')
+            self.tabBtnVC.setChecked(True)      
             self.tabBtnPC.setChecked(False)
-            # self.tabBtnPC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
             self.tabBtnPS.setChecked(False)
-            # self.tabBtnPS.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
-            # self.currentModeLabel.setText('Volume Control')
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
             self.BottomAreaVC.updateBottomBarValues()
             self.currentMode = 0
-            #caput('Raspi:central:OPMODE',2)
         elif btnText=="Pressure Control":
-            print('PC mode clicked\n\n\n')
+            logging.info('PC mode clicked\n\n\n')
             self.tabBtnVC.setChecked(False)
-            # self.tabBtnVC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
             self.tabBtnPC.setChecked(True)
-            # self.tabBtnPC.setStyleSheet("background-color: #0000bd; color: #000000")  
             self.tabBtnPS.setChecked(False)
-            # self.tabBtnPS.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
-            # self.currentModeLabel.setText('Pressure Control')
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPC)
             self.BottomAreaPC.updateBottomBarValues()
             self.currentMode = 1
-            #caput('Raspi:central:OPMODE',3)
         elif btnText=="Pressure Support":
-            print('PS mode clicked\n\n\n')
+            logging.info('PS mode clicked\n\n\n')
             self.tabBtnVC.setChecked(False)
-            # self.tabBtnVC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
             self.tabBtnPC.setChecked(False)
-            # self.tabBtnPC.setStyleSheet("background-color: rgba(0,0,0,0); color: rgb(3,43,91)")
             self.tabBtnPS.setChecked(True)
-            # self.tabBtnPS.setStyleSheet("background-color: #0000bd; color: #000000")  
-            # self.currentModeLabel.setText('Pressure Support')
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPS)
             self.BottomAreaPS.updateBottomBarValues()
             self.currentMode = 2
-            #caput('Raspi:central:OPMODE',4)
-
-    def slideroptions(self):
-        pass
-
 
     def toggleStackedArea(self):
         sending_button = self.sender()
 
-        print('toggling area - {}\n\n\n\n'.format(self.currentMode))
+        logging.info('toggling area - {}\n\n\n\n'.format(self.main_stackedArea_flag))
 
-        if sending_button.objectName() == 'alarmsButton':
+        if(sending_button.objectName() == 'alarmsButton' and self.main_stackedArea_flag==0):
             self.main_stacked_area.setCurrentWidget(self.AlarmsWidget)
+            self.timer.timeout.connect(self.AlarmsWidget.updateSetValues)
+            self.main_stackedArea_flag = 1
+            self.alarmMode = 1
+            try:
+                self.timer.timeout.disconnect(self.SettingsWidget_VC.updateSetValues)
+            except:
+                logging.info('nothing to disconnect VC')
+            try:
+                self.timer.timeout.disconnect(self.SettingsWidget_PC.updateSetValues)
+            except:
+                logging.info('nothing to disconnect PC')
+            try:
+                self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
+            except:
+                logging.info('nothing to disconnect Plots')
         elif self.main_stackedArea_flag == 1: #I am in the settings view and want to change to show plots
-            print('Changing to plots')
+            logging.info('Changing to \n\n\n\n')
             self.main_stacked_area.setCurrentWidget(self.PlotsWidget)
             self.PlotsWidget.initializeGraphs()
             self.thread.newSensorSample.connect(self.PlotsWidget.updateGraphs)
             try:
                 self.timer.timeout.disconnect(self.SettingsWidget_VC.updateSetValues)
             except:
-                print('nothing to disconnect VC')
+                logging.info('nothing to disconnect VC')
             try:
                 self.timer.timeout.disconnect(self.SettingsWidget_PC.updateSetValues)
             except:
-                print('nothing to disconnect PC')
+                logging.info('nothing to disconnect PC')
+            try:
+                self.timer.timeout.disconnect(self.AlarmsWidget.updateSetValues)
+            except:
+                logging.info('nothing to disconnect Alarms')
             self.main_stackedArea_flag = 0
-            if self.currentMode ==0:
+            if self.alarmMode:
+                self.AlarmsWidget.commitValueChanges()
+                self.alarmMode = 0
+            elif self.currentMode ==0:
                 self.SettingsWidget_VC.commitValueChanges()
                 self.BottomAreaVC.updateBottomBarValues()
             elif self.currentMode ==1:
@@ -359,6 +360,7 @@ class VentilatorWindow(QDialog):
                 self.SettingsWidget_PS.commitValueChanges()
                 self.BottomAreaPS.updateBottomBarValues()
             
+            
             self.setButton.setStyleSheet("color: rgb(3, 43, 91);")
             self.setButton.setText('Set\nValues')
         elif self.main_stackedArea_flag == 0 and self.currentMode==0: #I am in the plots view and want to change to show VC settings
@@ -366,26 +368,38 @@ class VentilatorWindow(QDialog):
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
-                print('nothing to disconnect')
+                logging.info('nothing to disconnect Plots')
+            try:
+                self.timer.timeout.disconnect(self.AlarmsWidget.updateSetValues)
+            except:
+                logging.info('nothing to disconnect Alarms')
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_VC)
             self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
         elif self.main_stackedArea_flag == 0 and self.currentMode==1:
-            print('Pressure Control')
+            logging.info('Pressure Control')
             self.timer.timeout.connect(self.SettingsWidget_PC.updateSetValues)
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
-                print('nothing to disconnect')
+                logging.info('nothing to disconnect Plots')
+            try:
+                self.timer.timeout.disconnect(self.AlarmsWidget.updateSetValues)
+            except:
+                logging.info('nothing to disconnect Alarms')
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PC)
             self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
         elif self.main_stackedArea_flag == 0 and self.currentMode==2:
-            print('Pressure Support')
+            logging.info('Pressure Support')
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
-                print('nothing to disconnect')
+                logging.info('nothing to disconnect')
+            try:
+                self.timer.timeout.disconnect(self.AlarmsWidget.updateSetValues)
+            except:
+                logging.info('nothing to disconnect Alarms')
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PS)
             self.main_stackedArea_flag = 1
             self.setButton.setStyleSheet("background-color: #00e64d;");
@@ -416,8 +430,14 @@ class VentilatorWindow(QDialog):
             self.sensorPEEPvar.setText("{:.1f}".format(self.sensorPEEP))
             self.sensorRRvar.setText("{:.1f}".format(self.sensorRR))
 
+    def updateCurrentValues(self, pressure_now, flow_now, vt_now):
+        self.vt_now = vt_now
+        self.flow_now = flow_now
+        self.pressure_now = pressure_now
+        self.PlotsWidget.updateGraphs(pressure_now, flow_now, vt_now)
+
     def updatePCSetValues(self, setPEEP, setPIP, setRR, setIERatio, setInspirationRiseTime):
-        print('PC set from stream')
+        logging.info('PC set from stream')
         self.setPEEP = setPEEP
         self.setPIP = setPIP
         self.setRR = setRR
@@ -426,7 +446,7 @@ class VentilatorWindow(QDialog):
         self.BottomAreaPC.updateBottomBarValues()
 
     def updateVCSetValues(self, setPEEP, setVt, setRR, setIERatio, setInspPause):
-        print('VC set from stream')
+        logging.info('VC set from stream')
         self.setPEEP = setPEEP
         self.setVt = setVt
         self.setRR = setRR
@@ -434,8 +454,34 @@ class VentilatorWindow(QDialog):
         self.setTplateau = setInspPause
         self.BottomAreaVC.updateBottomBarValues()
 
+    def soundAlarm(self, messageToDisplay):
+        AlarmSoundClass()
+        self.alarmMessage.setText("{}".format(messageToDisplay))
+        self.alarmMessage.setVisible(True)
+        self.alarmTimer.timeout.connect(lambda:self.alarmMessage.setVisible(False))        
+        self.alarmTimer.start(ALARM_DURATION)
+
+    def updateAlarms(self, setLowVtAlarm, setHighVtAlarm, setLowPressureAlarm, setHighPressureAlarm ):
+        self.setLowVtAlarm = setLowVtAlarm
+        self.setHighVtAlarm = setHighVtAlarm
+        self.setLowPressureAlarm = setLowPressureAlarm
+        self.setHighPressureAlarm = setHighPressureAlarm
+
+
+    def check_alarms(self):
+        if(self.vt_now > self.setHighVtAlarm):
+            logging.info('Vt higher than HIGH VT threshold')
+        elif(self.vt_now < self.setLowVtAlarm):
+            logging.info('Vt lower than LOW VT threshold')
+        elif(self.pressure_now > self.setHighPressureAlar):
+            logging.info('Pressure higher than HIGH Pressure threshold')
+        elif(self.pressure_now < self.setLowPressureAlarm):
+            logging.info('Pressure lower than LOW Pressure threshold')
 
     def initializaValuesFromArduino(self):
+        self.pressure_now = 0
+        self.vt_now = 0
+        self.flow_now = 0
         self.setTinsp = 1.3
         self.setInspRiseTime = 10 #in percentage
         self.setIERatio = 2
@@ -448,6 +494,12 @@ class VentilatorWindow(QDialog):
         self.setPEEP = 5
         self.vExp = 0
         self.vInsp = 0
+        self.setLowVtAlarm = 400
+        self.setHighVtAlarm = 1000
+        self.setLowPressureAlarm = 0
+        self.setHighPressureAlarm = 80
+        self.setLowRRAlarm = 10
+        self.setHighRRAlarm = 10
         
     def keyPressEvent(self, event):
         # Did the user press the Escape key?
@@ -466,7 +518,7 @@ class BottomAreaVC(QWidget):
 
     def updateBottomBarValues(self):
 
-        print('Updating VC Bottom')
+        logging.info('Updating VC Bottom')
         self.setVtvar_btm.setText("{:.0f}".format(self.VentilatorMain.setVt))
         self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
         self.setTplateauvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTplateau))
@@ -484,7 +536,7 @@ class BottomAreaPC(QWidget):
 
 
     def updateBottomBarValues(self):
-        print('Updating PC Bottom')
+        logging.info('Updating PC Bottom')
         self.setPIPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPIP))
         self.setInspRiseTimevar_btm.setText("{:.0f}".format(self.VentilatorMain.setInspRiseTime))
         self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
@@ -498,14 +550,11 @@ class BottomAreaPS(QWidget):
 
         self.VentilatorMain = self.parent()
 
-
     def updateBottomBarValues(self):
         self.setVtvar_btm.setText("{:.0f}".format(self.VentilatorMain.setVt))
         self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
         self.setTinspvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTinsp))
         self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
-
-
 
 class SettingsWidget_VC(QWidget):
     def __init__(self, parent=None):
@@ -574,7 +623,7 @@ class SettingsWidget_VC(QWidget):
 
 
     def commitValueChanges(self):
-        print('Commiting values VC')
+        logging.info('Commiting values VC')
         self.setIERatio = (self.setIERatioScrollBar.value() / 10)
         self.setTplateau = (self.setTplateauScrollBar.value() / 10)
         self.setRR = (self.setRRScrollBar.value() / 10)
@@ -630,15 +679,15 @@ class SettingsWidget_PC(QWidget):
 
         self.setIERatio_tmp = self.VentilatorMain.setIERatio
         self.setInspRiseTime_tmp = self.VentilatorMain.setInspRiseTime
-        print('insp rise time aa {}'.format(self.setInspRiseTime_tmp))
+        logging.info('insp rise time aa {}'.format(self.setInspRiseTime_tmp))
         self.setRR_tmp = self.VentilatorMain.setRR
         self.setPIP_tmp = self.VentilatorMain.setPIP
         self.setPEEP_tmp = self.VentilatorMain.setPEEP
 
         self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
         self.setInspRiseTimeScrollBar.setValue(10)
-        print('insp rise time bb {}'.format(self.setInspRiseTime_tmp))
-        print('insp rise time cc {}'.format(self.setInspRiseTimeScrollBar.value()))
+        logging.info('insp rise time bb {}'.format(self.setInspRiseTime_tmp))
+        logging.info('insp rise time cc {}'.format(self.setInspRiseTimeScrollBar.value()))
 
         self.setRRScrollBar.setValue(self.setRR_tmp*10)
         self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
@@ -660,7 +709,7 @@ class SettingsWidget_PC(QWidget):
 
 
     def commitValueChanges(self):
-        print('Commiting values PC')
+        logging.info('Commiting values PC')
         self.setIERatio = (self.setIERatioScrollBar.value() / 10)
         self.setInspRiseTime = (self.setInspRiseTimeScrollBar.value() / 10)
         self.setRR = (self.setRRScrollBar.value() / 10)
@@ -682,36 +731,95 @@ class SettingsWidget_PS(QWidget):
 class AlarmsWidget(QWidget):
     def __init__(self, parent=None):
         super(AlarmsWidget, self).__init__(parent)
-        uic.loadUi("alarmsWidget.ui", self)
-            
+        uic.loadUi("alarmsSettingWidget.ui", self)
 
-        # self.alarmVtMaxRange=caget('Raspi:central:Set-Vt.DRVH')
-        # self.alarmVtMinRange=caget('Raspi:central:Set-Vt.DRVL')
+        self.VentilatorMain = self.parent()
 
-        # self.alarmVtHIGH=caget('Raspi:central:Set-Vt.HIGH')
-        # self.alarmVtLOW=caget('Raspi:central:Set-Vt.LOW')
+        self.scrollbarSettings = SCROLLBAR_SETTINGS
 
-        # self.alarmPIPMaxRange=caget('Raspi:central:Set-Vt.DRVH')
-        # self.alarmPIPMinRange=caget('Raspi:central:Set-Vt.DRVL')
+        self.setHighVtScrollBar_alarm.setStyleSheet(self.scrollbarSettings)
+        self.setLowVtScrollBar_alarm.setStyleSheet(self.scrollbarSettings)
+        self.setHighPressureScrollBar_alarm.setStyleSheet(self.scrollbarSettings)
+        self.setLowPressureScrollBar_alarm.setStyleSheet(self.scrollbarSettings)
+        # self.setHighRRScrollBar_alarm.setStyleSheet(self.scrollbarSettings)
+        # self.setLowRRScrollBar_alarm.setStyleSheet(self.scrollbarSettings)
+        
+        self.setHighVtScrollBar_alarm.setPageStep(1)
+        self.setLowVtScrollBar_alarm.setPageStep(1)
+        self.setHighPressureScrollBar_alarm.setPageStep(1)
+        self.setLowPressureScrollBar_alarm.setPageStep(1)
+        # self.setHighRRScrollBar_alarm.setPageStep(5)
+        # self.setLowRRScrollBar_alarm.setPageStep(5)
 
-        # #self.setAlarmVtSlider.SetRange(self.alarmVtMinRange, self.alarmVtMaxRange)
-        # self.setAlarmVtSlider.setMin(self.alarmVtMinRange)
-        # self.setAlarmVtSlider.setMax(self.alarmVtMaxRange)
+        self.setHighVtScrollBar_alarm.setMaximum(VT_MAX)
+        self.setLowVtScrollBar_alarm.setMaximum(VT_MAX)
+        self.setHighPressureScrollBar_alarm.setMaximum(PIP_MAX)
+        self.setLowPressureScrollBar_alarm.setMaximum(PIP_MAX)
+        # self.setHighRRScrollBar_alarm.setMaximum(RR_MAX*10)
+        # self.setLowRRScrollBar_alarm.setMaximum(RR_MAX*10)
 
-        # self.setAlarmVtSlider.setStart(self.alarmVtMinRange)
-        # self.setAlarmVtSlider.setEnd(self.alarmVtMaxRange)
+        self.setHighVtScrollBar_alarm.setMinimum(VT_MIN)
+        self.setLowVtScrollBar_alarm.setMinimum(VT_MIN)
+        self.setHighPressureScrollBar_alarm.setMinimum(PIP_MIN)
+        self.setLowPressureScrollBar_alarm.setMinimum(PIP_MIN)
+        # self.setHighRRScrollBar_alarm.setMinimum(RR_MIN*10)
+        # self.setLowRRScrollBar_alarm.setMinimum(RR_MIN*10)
+        
+
+        self.mID = 0
+
+        self.readInitialSetValues()
+        self.updateSetValues()
+
+    def readInitialSetValues(self):
+        # TODO: read initial values a file
+
+        self.setHighVtAlarm_tmp = self.VentilatorMain.setHighVtAlarm
+        self.setHighPressureAlarm_tmp = self.VentilatorMain.setHighPressureAlarm
+        # self.setHighRRAlarm_tmp = self.VentilatorMain.setHighPressureAlarm
+
+        self.setLowVtAlarm_tmp = self.VentilatorMain.setLowVtAlarm
+        self.setLowPressureAlarm_tmp = self.VentilatorMain.setLowPressureAlarm
+        # self.setLowRRAlarm_tmp = self.VentilatorMain.setLowPressureAlarm
 
 
-        # # self.setAlarmPIPSlider.setMin(0)
-        # # self.setAlarmPIPSlider.setMax(99)
-        # # self.setAlarmPIPSlider.setStart(10)
-        # # self.setAlarmPIPSlider.setEnd(40)
-        # #self.setAlarmPIPSlider.SetRange(self.alarmPIPMinRange, self.alarmPIPMaxRange)
+        self.setHighVtScrollBar_alarm.setValue(self.setHighVtAlarm_tmp)
+        self.setLowVtScrollBar_alarm.setValue(self.setLowVtAlarm_tmp)
+        self.setHighPressureScrollBar_alarm.setValue(self.setHighPressureAlarm_tmp)
+        self.setLowPressureScrollBar_alarm.setValue(self.setLowPressureAlarm_tmp)
+        # self.setHighRRScrollBar_alarm.setValue(self.setHighRRAlarm_tmp * 10)
+        # self.setLowRRScrollBar_alarm.setValue(self.setLowRRAlarm_tmp * 10)
 
-        # self.maxAlarmVt.setText("{:.0f}".format(caget('Raspi:central:Set-Vt.HIGH')))
-        # self.minAlarmVt.setText("{:.0f}".format(caget('Raspi:central:Set-Vt.LOW')))
-        # self.maxAlarmPIP.setText("{:.0f}".format(caget('Raspi:central:Set-Ppeak.HIGH')))
-        # self.minAlarmPIP.setText("{:.0f}".format(caget('Raspi:central:Set-Ppeak.LOW')))
+    def updateSetValues(self): 
+
+        self.setHighVtAlarm_tmp = (self.setHighVtScrollBar_alarm.value())
+        self.setLowVtAlarm_tmp = (self.setLowVtScrollBar_alarm.value())
+        self.setHighPressureAlarm_tmp = (self.setHighPressureScrollBar_alarm.value())
+        self.setLowPressureAlarm_tmp = (self.setLowPressureScrollBar_alarm.value())
+        # self.setHighRRAlarm_tmp = (self.setHighRRScrollBar_alarm.value() / 10)
+        # self.setLowRRAlarm_tmp = (self.setLowRRScrollBar_alarm.value() / 10)
+
+        self.setHighVtvar_alarm.setText("{:.1f}".format(self.setHighVtAlarm_tmp))
+        self.setLowVtvar_alarm.setText("{:.1f}".format(self.setLowVtAlarm_tmp))
+        self.setHighPressurevar_alarm.setText("{:.1f}".format(self.setHighPressureAlarm_tmp))
+        self.setLowPressurevar_alarm.setText("{:.0f}".format(self.setLowPressureAlarm_tmp))
+        # self.setHighRRvar_alarm.setText("{:.0f}".format(self.setHighRRAlarm_tmp))
+        # self.setLowRRvar_alarm.setText("{:.0f}".format(self.setLowRRAlarm_tmp))
+
+
+    def commitValueChanges(self):
+        logging.info('Commiting values Alarms')
+        self.setHighVtAlarm = (self.setHighVtScrollBar_alarm.value())
+        self.setLowVtAlarm = (self.setLowVtScrollBar_alarm.value())
+        self.setHighPressureAlarm = (self.setHighPressureScrollBar_alarm.value())
+        self.setLowPressureAlarm = (self.setLowPressureScrollBar_alarm.value())
+        # self.setHighRRAlarm = (self.setHighRRScrollBar_alarm.value() / 10)
+        # self.setLowRRAlarm = (self.setLowRRScrollBar_alarm.value() / 10)
+
+        self.mID += 1 
+
+        self.VentilatorMain.thread.sendAlarmSettings(self.mID, self.setLowVtAlarm, self.setHighVtAlarm,\
+                                                self.setLowPressureAlarm, self.setHighPressureAlarm)
 
 class PlotsWidget(QWidget):
     def __init__(self, parent=None):
@@ -794,14 +902,14 @@ class PlotsWidget(QWidget):
         self.setVinsp = 30
         self.setVexp = 0
         self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
-        print('Setting Valve Insp at 30')
+        logging.info('Setting Valve Insp at 30')
 
     def manualVentilationReleased(self):
         self.VentilatorMain.vExp = self.lastVexp
         self.VentilatorMain.vInsp = self.lastVinsp
         self.VentilatorMain.currentMode = self.lastMode
         self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
-        print('restarting all')
+        logging.info('restarting all')
 
     def manualPausePressed(self):
         self.lastVexp = self.VentilatorMain.vExp
@@ -811,13 +919,13 @@ class PlotsWidget(QWidget):
         self.setVinsp = 0
         self.setVexp = 0
         self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
-        print('Setting Valve Insp at 0')
+        logging.info('Setting Valve Insp at 0')
     def manualPauseReleased(self):
         self.VentilatorMain.vExp = self.lastVexp
         self.VentilatorMain.vInsp = self.lastVinsp
         self.VentilatorMain.currentMode = self.lastMode
         self.VentilatorMain.thread.setWrite(self.currentMode,'0;'+str(self.setVinsp)+';1;'+str(self.setVexp))
-        print('restarting all')
+        logging.info('restarting all')
 
     def initializeGraphs(self):
         self.channelFlow = [0]*X_AXIS_LENGTH
@@ -825,12 +933,11 @@ class PlotsWidget(QWidget):
         self.channelPressure = [0]*X_AXIS_LENGTH
         self.counterPlots = 0
 
+    def updateGraphs(self, pressure_now, flow_now, vt_now):
 
-    def updateGraphs(self, pressure, flow, vt):
-
-        self.channelFlow[self.counterPlots] = flow
-        self.channelVolume[self.counterPlots] = vt
-        self.channelPressure[self.counterPlots] = pressure
+        self.channelFlow[self.counterPlots] = flow_now
+        self.channelVolume[self.counterPlots] = vt_now
+        self.channelPressure[self.counterPlots] = pressure_now
         self.counterPlots += 1
         if(self.counterPlots == X_AXIS_LENGTH):
             self.initializeGraphs()
