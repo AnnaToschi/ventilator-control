@@ -10,7 +10,7 @@ import logging
 import serial
 import sys
 
-logging.basicConfig(level = logging.WARNING)
+logging.basicConfig(level = logging.DEBUG)
 
 VT_MIN = 100
 VT_MAX = 1300
@@ -25,7 +25,7 @@ TINSP_MAX = 20
 RR_MIN = 1
 RR_MAX = 30
 TPLATEAU_MIN = 0
-TPLATEAU_MAX=10
+TPLATEAU_MAX= 50
 PEEP_MIN = 0
 PEEP_MAX = 50
 ALARM_DURATION = 2000
@@ -172,8 +172,8 @@ class serialReceiver(QtCore.QThread):
                 elif(msgType == 99):
                     # self.debugMsgSample.emit(str(dataList[2]))
                     logging.debug('GOT A DEBUG MESSAGE: {}'.format(dataList[2]))
-            except:
-                logging.info('error in received data: {}'.format(data))
+            except Exception as e:
+                logging.info('error in received data: {} --- {}'.format(data,e))
             
     def startRead(self):
         self.loopRun = 1
@@ -235,6 +235,8 @@ class VentilatorWindow(QDialog):
         self.bottom_stacked_area.addWidget(self.BottomAreaPC)
         self.bottom_stacked_area.addWidget(self.BottomAreaPS)
         self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
+
+        self.BottomAreaVC.updateBottomBarValues()
 
         self.alarmMessage.setVisible(False)
 
@@ -436,13 +438,13 @@ class VentilatorWindow(QDialog):
         self.pressure_now = pressure_now
         self.PlotsWidget.updateGraphs(pressure_now, flow_now, vt_now)
 
-    def updatePCSetValues(self, setPEEP, setPIP, setRR, setIERatio, setInspirationRiseTime):
+    def updatePCSetValues(self, setPEEP, setPIP, setRR, setIERatio, setInspRiseTime):
         logging.info('PC set from stream')
         self.setPEEP = setPEEP
         self.setPIP = setPIP
         self.setRR = setRR
         self.setIERatio = setIERatio
-        self.setInspirationRiseTime = setInspirationRiseTime
+        self.setInspRiseTime = setInspRiseTime
         self.BottomAreaPC.updateBottomBarValues()
 
     def updateVCSetValues(self, setPEEP, setVt, setRR, setIERatio, setInspPause):
@@ -685,10 +687,7 @@ class SettingsWidget_PC(QWidget):
         self.setPEEP_tmp = self.VentilatorMain.setPEEP
 
         self.setIERatioScrollBar.setValue(self.setIERatio_tmp * 10)
-        self.setInspRiseTimeScrollBar.setValue(10)
-        logging.info('insp rise time bb {}'.format(self.setInspRiseTime_tmp))
-        logging.info('insp rise time cc {}'.format(self.setInspRiseTimeScrollBar.value()))
-
+        self.setInspRiseTimeScrollBar.setValue(self.setInspRiseTime_tmp)
         self.setRRScrollBar.setValue(self.setRR_tmp*10)
         self.setPEEPScrollBar.setValue(self.setPEEP_tmp)
         self.setPIPScrollBar.setValue(self.setPIP_tmp)
@@ -711,7 +710,7 @@ class SettingsWidget_PC(QWidget):
     def commitValueChanges(self):
         logging.info('Commiting values PC')
         self.setIERatio = (self.setIERatioScrollBar.value() / 10)
-        self.setInspRiseTime = (self.setInspRiseTimeScrollBar.value() / 10)
+        self.setInspRiseTime = (self.setInspRiseTimeScrollBar.value())
         self.setRR = (self.setRRScrollBar.value() / 10)
         self.setPIP = (self.setPIPScrollBar.value())
         self.setPEEP = (self.setPEEPScrollBar.value())
