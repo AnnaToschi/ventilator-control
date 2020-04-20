@@ -290,6 +290,9 @@ class VentilatorWindow(QDialog):
             self.tabBtnPC.setChecked(False)
             self.tabBtnPS.setChecked(False)
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaVC)
+            self.SettingsWidget_VC.mID+= 1
+            self.thread.sendVCSettings(self.SettingsWidget_VC.mID, self.setPEEP, self.setVt,\
+                                                self.setRR, self.setIERatio, self.setTplateau)
             self.BottomAreaVC.updateBottomBarValues()
             self.currentMode = 0
         elif btnText=="Pressure Control":
@@ -298,6 +301,9 @@ class VentilatorWindow(QDialog):
             self.tabBtnPC.setChecked(True)
             self.tabBtnPS.setChecked(False)
             self.bottom_stacked_area.setCurrentWidget(self.BottomAreaPC)
+            self.SettingsWidget_PC.mID += 1
+            self.thread.sendPCSettings(self.SettingsWidget_PC.mID, self.setPEEP, self.setPIP,\
+                                    self.setRR, self.setIERatio, self.setInspRiseTime)
             self.BottomAreaPC.updateBottomBarValues()
             self.currentMode = 1
         elif btnText=="Pressure Support":
@@ -366,6 +372,7 @@ class VentilatorWindow(QDialog):
             self.setButton.setStyleSheet("color: rgb(3, 43, 91);")
             self.setButton.setText('Set\nValues')
         elif self.main_stackedArea_flag == 0 and self.currentMode==0: #I am in the plots view and want to change to show VC settings
+            self.SettingsWidget_VC.readInitialSetValues()
             self.timer.timeout.connect(self.SettingsWidget_VC.updateSetValues)
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
@@ -380,6 +387,7 @@ class VentilatorWindow(QDialog):
             self.setButton.setStyleSheet("background-color: #00e64d;");
         elif self.main_stackedArea_flag == 0 and self.currentMode==1:
             logging.info('Pressure Control')
+            self.SettingsWidget_PC.readInitialSetValues()
             self.timer.timeout.connect(self.SettingsWidget_PC.updateSetValues)
             try:
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
