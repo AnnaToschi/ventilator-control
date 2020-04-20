@@ -530,10 +530,11 @@ class BottomAreaVC(QWidget):
 
         logging.info('Updating VC Bottom')
         self.setVtvar_btm.setText("{:.0f}".format(self.VentilatorMain.setVt))
-        self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
+        self.setRRvar_btm.setText("{:.1f}".format(self.VentilatorMain.setRR))
         self.setTplateauvar_btm.setText("{:.1f}".format(self.VentilatorMain.setTplateau))
         self.setIERatiovar_btm.setText("{:.1f}".format(self.VentilatorMain.setIERatio))
         self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
+
 
         #self.check_alarms()
 
@@ -549,7 +550,7 @@ class BottomAreaPC(QWidget):
         logging.info('Updating PC Bottom')
         self.setPIPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPIP))
         self.setInspRiseTimevar_btm.setText("{:.0f}".format(self.VentilatorMain.setInspRiseTime))
-        self.setRRvar_btm.setText("{:.0f}".format(self.VentilatorMain.setRR))
+        self.setRRvar_btm.setText("{:.1f}".format(self.VentilatorMain.setRR))
         self.setIERatiovar_btm.setText("{:.1f}".format(self.VentilatorMain.setIERatio))
         self.setPEEPvar_btm.setText("{:.0f}".format(self.VentilatorMain.setPEEP))
 
@@ -586,16 +587,24 @@ class SettingsWidget_VC(QWidget):
         self.setPEEPScrollBar.setPageStep(1)
         self.setVtScrollBar.setPageStep(5)
 
-        self.setIERatioScrollBar.setMaximum(IERATIO_MAX*10)
-        self.setRRScrollBar.setMaximum(RR_MAX*10)
-        self.setPEEPScrollBar.setMaximum(PEEP_MAX)
-        self.setVtScrollBar.setMaximum(VT_MAX)
-        self.setIERatioScrollBar.setMaximum(TPLATEAU_MAX*10)
-        self.setIERatioScrollBar.setMinimum(IERATIO_MIN*10)
-        self.setTplateauScrollBar.setMinimum(TPLATEAU_MIN*10)
+ 
         self.setRRScrollBar.setMinimum(RR_MIN*10)
+        self.setRRScrollBar.setMaximum(RR_MAX*10)
+
         self.setPEEPScrollBar.setMinimum(PEEP_MIN)
+        self.setPEEPScrollBar.setMaximum(PEEP_MAX)
+
         self.setVtScrollBar.setMinimum(VT_MIN)
+        self.setVtScrollBar.setMaximum(VT_MAX)
+        
+        self.setIERatioScrollBar.setMinimum(IERATIO_MIN*10)
+        self.setIERatioScrollBar.setMaximum(IERATIO_MAX*10)
+        
+
+        self.setTplateauScrollBar.setMinimum(TPLATEAU_MIN*10)
+        self.setTplateauScrollBar.setMaximum(TPLATEAU_MAX*10)
+        
+        
 
         self.mID = 0
 
