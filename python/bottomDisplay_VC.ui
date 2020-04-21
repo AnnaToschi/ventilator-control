@@ -23,25 +23,50 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="3">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="1" column="0">
+     <widget class="QLabel" name="setVtvar_btm">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>22</pointsize>
+       </font>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
-     </spacer>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </item>
-    <item row="2" column="6">
+    <item row="1" column="8">
+     <widget class="QLabel" name="setPEEPvar_btm">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>22</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(3, 43, 91);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="8">
      <widget class="QLabel" name="PEEP_label_btm">
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -55,95 +80,19 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QLabel" name="setRRvar_btm">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>XXXXXX</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="setVtvar_btm">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>XXXXXX</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="6">
-     <widget class="QLabel" name="setPEEPvar_btm">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>XXXXXX</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="4">
-     <widget class="QLabel" name="Tplateau_label_btm">
+     <widget class="QLabel" name="RR_label_btm">
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;Plateau&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="Vt_label_btm">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>Vt</string>
+       <string>RR</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -163,31 +112,12 @@
       </property>
      </spacer>
     </item>
-    <item row="2" column="2">
-     <widget class="QLabel" name="RR_label_btm">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>RR</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="4">
-     <widget class="QLabel" name="setTplateauvar_btm">
+     <widget class="QLabel" name="setRRvar_btm">
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -201,8 +131,78 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="5">
+    <item row="2" column="2">
+     <widget class="QLabel" name="Tplateau_label_btm">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>22</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(3, 43, 91);</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;Plateau&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="Vt_label_btm">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>22</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(3, 43, 91);</string>
+      </property>
+      <property name="text">
+       <string>Vt</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="7">
      <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="setTplateauvar_btm">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>22</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(3, 43, 91);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <spacer name="horizontalSpacer_2">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -219,16 +219,16 @@
   <widget class="QLabel" name="IERation_label_btm">
    <property name="geometry">
     <rect>
-     <x>774</x>
+     <x>737</x>
      <y>45</y>
-     <width>104</width>
+     <width>141</width>
      <height>34</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>26</pointsize>
+     <pointsize>22</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -244,7 +244,7 @@
   <widget class="QLabel" name="sensorFiO2var_2">
    <property name="geometry">
     <rect>
-     <x>765</x>
+     <x>750</x>
      <y>5</y>
      <width>35</width>
      <height>35</height>
@@ -253,7 +253,7 @@
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>26</pointsize>
+     <pointsize>22</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -269,16 +269,16 @@
   <widget class="QLabel" name="setIERatiovar_btm">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>790</x>
      <y>5</y>
-     <width>61</width>
+     <width>71</width>
      <height>35</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>26</pointsize>
+     <pointsize>22</pointsize>
     </font>
    </property>
    <property name="styleSheet">

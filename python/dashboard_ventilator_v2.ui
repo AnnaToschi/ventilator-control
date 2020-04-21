@@ -651,7 +651,7 @@ ALARMS</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 75 20pt &quot;Arial&quot;;</string>
+    <string notr="true">font: 75 18pt &quot;Arial&quot;;</string>
    </property>
    <property name="text">
     <string>Volume Control</string>
@@ -667,7 +667,7 @@ ALARMS</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 75 20pt &quot;Arial&quot;;
+    <string notr="true">font: 75 18pt &quot;Arial&quot;;
 border-color: rgb(3, 43, 91);</string>
    </property>
    <property name="text">
@@ -684,7 +684,7 @@ border-color: rgb(3, 43, 91);</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 75 20pt &quot;Arial&quot;;</string>
+    <string notr="true">font: 75 18pt &quot;Arial&quot;;</string>
    </property>
    <property name="text">
     <string>Pressure Support</string>
