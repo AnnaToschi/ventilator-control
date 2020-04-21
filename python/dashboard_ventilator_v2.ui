@@ -452,7 +452,7 @@
        <string notr="true">color: rgb(3, 43, 91);</string>
       </property>
       <property name="text">
-       <string>Rise Time</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;Rise&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -557,7 +557,7 @@ ALARMS</string>
     <rect>
      <x>188</x>
      <y>561</y>
-     <width>61</width>
+     <width>71</width>
      <height>35</height>
     </rect>
    </property>
@@ -571,7 +571,7 @@ ALARMS</string>
     <string notr="true">color: rgb(3, 43, 91);</string>
    </property>
    <property name="text">
-    <string>XXXXXX</string>
+    <string>XXXX</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
