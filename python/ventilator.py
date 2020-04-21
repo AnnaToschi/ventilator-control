@@ -30,6 +30,8 @@ PEEP_MIN = 0
 PEEP_MAX = 50
 ALARM_DURATION = 2000
 
+THEME = 'DARK'
+
 SCROLLBAR_SETTINGS = """
                 QScrollArea {
                     border: none;
@@ -208,7 +210,10 @@ class serialReceiver(QtCore.QThread):
 class VentilatorWindow(QDialog):
     def __init__(self):
         super(VentilatorWindow, self).__init__()
-        uic.loadUi("dashboard_ventilator_v2.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("dashboard_ventilator_v2.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("dashboard_ventilator_dark.ui", self)
         self.initializaValuesFromArduino()
 
         self.PlotsWidget = PlotsWidget(parent=self)
@@ -521,8 +526,10 @@ class VentilatorWindow(QDialog):
 class BottomAreaVC(QWidget):
     def __init__(self, parent=None):
         super(BottomAreaVC, self).__init__(parent)
-        uic.loadUi("bottomDisplay_VC.ui", self)
-
+        if(THEME == 'STD'):
+            uic.loadUi("bottomDisplay_VC.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("bottomDisplay_VC_dark.ui", self)
         self.VentilatorMain = self.parent()
 
 
@@ -541,7 +548,10 @@ class BottomAreaVC(QWidget):
 class BottomAreaPC(QWidget):
     def __init__(self, parent=None):
         super(BottomAreaPC, self).__init__(parent)
-        uic.loadUi("bottomDisplay_PC.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("bottomDisplay_PC.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("bottomDisplay_PC_dark.ui", self)
 
         self.VentilatorMain = self.parent()
 
@@ -557,7 +567,10 @@ class BottomAreaPC(QWidget):
 class BottomAreaPS(QWidget):
     def __init__(self, parent=None):
         super(BottomAreaPS, self).__init__(parent)
-        uic.loadUi("bottomDisplay_PS.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("bottomDisplay_PS.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("bottomDisplay_PS_dark.ui", self)
 
         self.VentilatorMain = self.parent()
 
@@ -570,7 +583,10 @@ class BottomAreaPS(QWidget):
 class SettingsWidget_VC(QWidget):
     def __init__(self, parent=None):
         super(SettingsWidget_VC, self).__init__(parent)
-        uic.loadUi("settingsWidget_VC.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("settingsWidget_VC.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("settingsWidget_VC_dark.ui", self)
 
         self.scrollbarSettings = SCROLLBAR_SETTINGS
         self.VentilatorMain = self.parent()
@@ -658,7 +674,11 @@ class SettingsWidget_VC(QWidget):
 class SettingsWidget_PC(QWidget):
     def __init__(self, parent=None):
         super(SettingsWidget_PC, self).__init__(parent)
-        uic.loadUi("settingsWidget_PC.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("settingsWidget_PC.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("settingsWidget_PC_dark.ui", self)
+
 
         self.VentilatorMain = self.parent()
 
@@ -741,13 +761,19 @@ class SettingsWidget_PC(QWidget):
 class SettingsWidget_PS(QWidget):
     def __init__(self, parent=None):
         super(SettingsWidget_PS, self).__init__(parent)
-        uic.loadUi("settingsWidget_PS.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("settingsWidget_PS.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("settingsWidget_PS_dark.ui", self)
         
 
 class AlarmsWidget(QWidget):
     def __init__(self, parent=None):
         super(AlarmsWidget, self).__init__(parent)
-        uic.loadUi("alarmsSettingWidget.ui", self)
+        if(THEME == 'STD'):
+            uic.loadUi("alarmsSettingWidget.ui", self)
+        elif(THEME == 'DARK'):
+            uic.loadUi("alarmsSettingWidget_dark.ui", self)
 
         self.VentilatorMain = self.parent()
 
@@ -840,8 +866,10 @@ class AlarmsWidget(QWidget):
 class PlotsWidget(QWidget):
     def __init__(self, parent=None):
         super(PlotsWidget, self).__init__(parent)
-        uic.loadUi("plotsWidget.ui", self)
-
+        if(THEME=='STD'):
+            uic.loadUi("plotsWidget.ui", self)
+        elif(THEME=='DARK'):
+            uic.loadUi("plotsWidget_dark.ui", self)
         self.VentilatorMain = self.parent()
 
         self.manualVentButton.pressed.connect(self.manualVentilationPressed)
@@ -851,9 +879,15 @@ class PlotsWidget(QWidget):
 
         self.accelBufferX = (0,0)
 
-        self.BGCOLOR = QtGui.QColor(220,220,220)
-        self.FGCOLOR = QtGui.QColor(255,0,0)
-        self.plotcolor = QtGui.QColor(26, 76, 156)
+        if(THEME=='STD'):
+            self.BGCOLOR = QtGui.QColor(220,220,220)
+            self.FGCOLOR = QtGui.QColor(255,0,0)
+            self.plotcolor = QtGui.QColor(26, 76, 156)
+        elif(THEME == 'DARK'):
+            self.BGCOLOR = QtGui.QColor(255,255,255)
+            self.FGCOLOR = QtGui.QColor(255,0,0)
+            self.plotcolor = QtGui.QColor(205, 237, 24)
+            
         self.PLTWIDTH = 2
 
         self.basePlotFlow = pg.PlotCurveItem([0]*X_AXIS_LENGTH, pen = self.plotcolor)
@@ -878,13 +912,27 @@ class PlotsWidget(QWidget):
         self.graphPressure.addItem(self.basePlotPres)
         self.graphPressure.addItem(self.pfillZ)
 
-        self.graphFlow.setLabel('left', "<span style=\"color:black;font-size:16px\">Flow (L/min)</span>")
-        self.graphVolume.setLabel('left', "<span style=\"color:black;font-size:16px\">Volume (mL)</span>")
-        self.graphPressure.setLabel('left', "<span style=\"color:black;font-size:16px\">Pressure (cmH2O)</span>")
-        self.graphPressure.setLabel('bottom', "<span style=\"color:black;font-size:16px\">Time (sec)</span>")
+        if(THEME=='STD'):
+            self.graphFlow.setLabel('left', "<span style=\"color:black;font-size:16px\">Flow (L/min)</span>")
+            self.graphVolume.setLabel('left', "<span style=\"color:black;font-size:16px\">Volume (mL)</span>")
+            self.graphPressure.setLabel('left', "<span style=\"color:black;font-size:16px\">Pressure (cmH2O)</span>")
+            self.graphPressure.setLabel('bottom', "<span style=\"color:black;font-size:16px\">Time (sec)</span>")
+        elif(THEME == 'DARK'):
+            self.graphFlow.setLabel('left', "<span style=\"color:white;font-size:16px\">Flow (L/min)</span>")
+            self.graphVolume.setLabel('left', "<span style=\"color:white;font-size:16px\">Volume (mL)</span>")
+            self.graphPressure.setLabel('left', "<span style=\"color:white;font-size:16px\">Pressure (cmH2O)</span>")
+            self.graphPressure.setLabel('bottom', "<span style=\"color:white;font-size:16px\">Time (sec)</span>")
+            self.graphFlow.getAxis('bottom').setPen(pg.mkPen(color='w', width=2))
+            self.graphVolume.getAxis('bottom').setPen(pg.mkPen(color='w', width=2))
+            self.graphPressure.getAxis('bottom').setPen(pg.mkPen(color='w', width=2))
+            self.graphFlow.getAxis('left').setPen(pg.mkPen(color='w', width=2))
+            self.graphVolume.getAxis('left').setPen(pg.mkPen(color='w', width=2))
+            self.graphPressure.getAxis('left').setPen(pg.mkPen(color='w', width=2))
+
+        
         self.graphFlow.setYRange(-60, 60) 
-        self.graphVolume.setYRange(0, 160) 
-        self.graphPressure.setYRange(0, 10) 
+        self.graphVolume.setYRange(0, 1500) 
+        self.graphPressure.setYRange(0, 1000) 
         tticks = (np.array(range(0,X_AXIS_LENGTH+1,20))/20)
         ax=self.graphFlow.getAxis('bottom')    #This is the trick  
         ax.setTicks([[(v*20, '') for v in tticks ]])

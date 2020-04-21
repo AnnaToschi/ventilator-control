@@ -22,6 +22,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_10">
     <item>
      <widget class="QLabel" name="RR_label_set">
@@ -32,10 +35,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RR&lt;span style=&quot; vertical-align:sub;&quot;&gt;min&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>RR</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -51,7 +54,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>(bpm)</string>
@@ -70,7 +73,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -88,12 +91,15 @@
      <x>40</x>
      <y>270</y>
      <width>201</width>
-     <height>121</height>
+     <height>91</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
-     <widget class="QLabel" name="Tinsp_label_set">
+     <widget class="QLabel" name="IRRatio_label_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -101,10 +107,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;insp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>I:E Ratio</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -112,7 +118,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setTinsp_units">
+     <widget class="QLabel" name="setIERatio_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -120,29 +126,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>(sec)</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="setTinspvar_setting">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>26</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
-      </property>
-      <property name="text">
-       <string>XXXXXX</string>
+       <string>(-)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -160,6 +147,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_9">
     <item>
      <widget class="QLabel" name="PEEP_label_set">
@@ -170,7 +160,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>PEEP</string>
@@ -189,7 +179,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>(cmH2O)</string>
@@ -208,7 +198,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -229,9 +219,12 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_7">
     <item>
-     <widget class="QLabel" name="PIP_label_set">
+     <widget class="QLabel" name="Vt_label_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -239,10 +232,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>PIP</string>
+       <string>Vt</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -250,7 +243,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setPIP_units">
+     <widget class="QLabel" name="setVt_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -258,10 +251,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>(cmH2O)</string>
+       <string>(mL)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -269,7 +262,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setPIPvar_setting">
+     <widget class="QLabel" name="setVtvar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -277,7 +270,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -289,7 +282,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QScrollBar" name="setTinspScrollBar">
+  <widget class="QScrollBar" name="setIERatioScrollBar">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -297,6 +290,9 @@
      <width>199</width>
      <height>15</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
    </property>
    <property name="maximum">
     <number>10</number>
@@ -320,11 +316,14 @@
      <height>15</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QScrollBar" name="setPIPScrollBar">
+  <widget class="QScrollBar" name="setVtScrollBar">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -332,6 +331,9 @@
      <width>199</width>
      <height>15</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -346,6 +348,9 @@
      <height>15</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -359,9 +364,12 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_11">
     <item>
-     <widget class="QLabel" name="Ptriggerlabel_set">
+     <widget class="QLabel" name="Tplateau_label_set">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -369,10 +377,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;trigger&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>% Insp Plateau</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -380,7 +388,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setPtrigger_units">
+     <widget class="QLabel" name="setTplateau_units">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -388,10 +396,10 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
-       <string>(cmH2O)</string>
+       <string>(%)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -399,7 +407,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="setPtriggervar_setting">
+     <widget class="QLabel" name="setTplateauvar_setting">
       <property name="font">
        <font>
         <family>Arial</family>
@@ -407,7 +415,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255,255,255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -419,7 +427,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QScrollBar" name="setPtriggerScrollBar">
+  <widget class="QScrollBar" name="setTplateauScrollBar">
    <property name="geometry">
     <rect>
      <x>330</x>
@@ -428,8 +436,61 @@
      <height>15</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="setIERatiovar_setting">
+   <property name="geometry">
+    <rect>
+     <x>135</x>
+     <y>367</y>
+     <width>81</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>XXXXXX</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sensorFiO2var_2">
+   <property name="geometry">
+    <rect>
+     <x>98</x>
+     <y>367</y>
+     <width>35</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>1:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
    </property>
   </widget>
  </widget>

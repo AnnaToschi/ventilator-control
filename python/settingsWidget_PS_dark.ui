@@ -22,6 +22,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_10">
     <item>
      <widget class="QLabel" name="RR_label_set">
@@ -32,7 +35,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RR&lt;span style=&quot; vertical-align:sub;&quot;&gt;min&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -51,7 +54,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>(bpm)</string>
@@ -70,7 +73,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -91,6 +94,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
      <widget class="QLabel" name="Tinsp_label_set">
@@ -101,7 +107,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;insp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -120,7 +126,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>(sec)</string>
@@ -139,7 +145,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -160,6 +166,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_9">
     <item>
      <widget class="QLabel" name="PEEP_label_set">
@@ -170,7 +179,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>PEEP</string>
@@ -189,7 +198,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>(cmH2O)</string>
@@ -208,7 +217,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -229,6 +238,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_7">
     <item>
      <widget class="QLabel" name="PIP_label_set">
@@ -239,7 +251,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>PIP</string>
@@ -258,7 +270,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>(cmH2O)</string>
@@ -277,7 +289,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -297,6 +309,9 @@
      <width>199</width>
      <height>15</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
    </property>
    <property name="maximum">
     <number>10</number>
@@ -320,6 +335,9 @@
      <height>15</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -332,6 +350,9 @@
      <width>199</width>
      <height>15</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -346,6 +367,9 @@
      <height>15</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -359,6 +383,9 @@
      <height>121</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_11">
     <item>
      <widget class="QLabel" name="Ptriggerlabel_set">
@@ -369,7 +396,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;trigger&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -388,7 +415,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>(cmH2O)</string>
@@ -407,7 +434,7 @@
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(3, 43, 91);</string>
+       <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
        <string>XXXXXX</string>
@@ -427,6 +454,9 @@
      <width>199</width>
      <height>15</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>

@@ -28,7 +28,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -66,7 +66,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -97,7 +97,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -135,7 +135,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -166,7 +166,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -204,7 +204,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -283,7 +283,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">
@@ -321,7 +321,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>26</pointsize>
+        <pointsize>22</pointsize>
        </font>
       </property>
       <property name="styleSheet">

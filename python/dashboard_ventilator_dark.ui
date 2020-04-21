@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1280</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(51,62,86);</string>
+  </property>
+  <widget class="Line" name="line_7">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>597</y>
+     <width>921</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>69</y>
+     <width>139</width>
+     <height>447</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QLabel" name="vtExplabel">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>Vt Exp</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorVtExpvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_5">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="RR_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>RR</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorRRvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_10">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="PEF_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>PEF</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorPEFvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_6">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="PEEP_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>PEEP</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorPEEPvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_9">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="FiO2_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>FiO2</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorFiO2var">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>70</y>
+     <width>141</width>
+     <height>451</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="vtInsplabel">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>Vt Insp</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorVtInspvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_2">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="MV_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>MV</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorMVvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_12">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="PIF_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>PIF</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorPIFvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_1">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="PIP_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>PIP</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorPIPvar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_3">
+      <property name="styleSheet">
+       <string>color: rgb(255,255,255);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="InspRiseTime_label">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;Rise&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sensorRiseTimevar">
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255,255,255);</string>
+      </property>
+      <property name="text">
+       <string>XXXXXX</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>56</y>
+     <width>20</width>
+     <height>531</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="setButton">
+   <property name="geometry">
+    <rect>
+     <x>1018</x>
+     <y>620</y>
+     <width>81</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>SET
+Values</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="alarmsButton">
+   <property name="geometry">
+    <rect>
+     <x>1130</x>
+     <y>620</y>
+     <width>71</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>SET
+ALARMS</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sensorFiO2var_2">
+   <property name="geometry">
+    <rect>
+     <x>153</x>
+     <y>560</y>
+     <width>35</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>1:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sensorIERatiovar">
+   <property name="geometry">
+    <rect>
+     <x>188</x>
+     <y>561</y>
+     <width>71</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>XXXX</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QStackedWidget" name="main_stacked_area">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>44</y>
+     <width>810</width>
+     <height>550</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <widget class="QWidget" name="verticalStackedWidget_4Page1_2">
+    <layout class="QVBoxLayout" name="verticalLayout_8"/>
+   </widget>
+  </widget>
+  <widget class="QStackedWidget" name="bottom_stacked_area">
+   <property name="geometry">
+    <rect>
+     <x>49</x>
+     <y>607</y>
+     <width>910</width>
+     <height>90</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <widget class="QWidget" name="verticalStackedWidget_4Page1_5">
+    <layout class="QVBoxLayout" name="verticalLayout_11"/>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="IERatio_label">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>530</y>
+     <width>139</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>I:E</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="Line" name="line_11">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>530</y>
+     <width>139</width>
+     <height>3</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string>color: rgb(255,255,255);</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="tabBtnVC">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>201</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>Volume Control</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="tabBtnPC">
+   <property name="geometry">
+    <rect>
+     <x>202</x>
+     <y>0</y>
+     <width>201</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>Pressure Control</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="tabBtnPS">
+   <property name="geometry">
+    <rect>
+     <x>404</x>
+     <y>0</y>
+     <width>201</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="text">
+    <string>Pressure Support</string>
+   </property>
+  </widget>
+  <widget class="Line" name="line_8">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>33</y>
+     <width>1241</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255,255,255);</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="alarmMessage">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>0</y>
+     <width>401</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>26</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(252, 0, 44);
+color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <zorder>line_8</zorder>
+  <zorder>line_7</zorder>
+  <zorder>verticalLayoutWidget_3</zorder>
+  <zorder>verticalLayoutWidget</zorder>
+  <zorder>line</zorder>
+  <zorder>setButton</zorder>
+  <zorder>alarmsButton</zorder>
+  <zorder>sensorFiO2var_2</zorder>
+  <zorder>sensorIERatiovar</zorder>
+  <zorder>main_stacked_area</zorder>
+  <zorder>bottom_stacked_area</zorder>
+  <zorder>IERatio_label</zorder>
+  <zorder>line_11</zorder>
+  <zorder>tabBtnVC</zorder>
+  <zorder>tabBtnPC</zorder>
+  <zorder>tabBtnPS</zorder>
+  <zorder>alarmMessage</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
