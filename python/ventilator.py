@@ -173,7 +173,7 @@ class serialReceiver(QtCore.QThread):
                     self.soundAlarm.emit(self.messageToDisplay)
                 elif(msgType == 99):
                     # self.debugMsgSample.emit(str(dataList[2]))
-                    logging.debug('GOT A DEBUG MESSAGE: {}'.format(dataList[2]))
+                    logging.debug('GOT A DEBUG MESSAGE: {}'.format(dataList[1]))
             except Exception as e:
                 logging.info('error in received data: {} --- {}'.format(data,e))
             
