@@ -11,6 +11,7 @@ import serial
 import sys
 
 logging.basicConfig(level = logging.DEBUG)
+logging.basicConfig(format="%(asctime)-15s - %(levelname)s - %(threadName)s - %(module)s/%(funcName)s - %(message)s")
 
 VT_MIN = 100
 VT_MAX = 1300
@@ -95,7 +96,7 @@ class serialReceiver(QtCore.QThread):
             self.ser.port = str(sys.argv[1])
         except:
             logging.info('ERROR, NO PORT SELECTED, going to default port')
-            self.ser.port = '/dev/cu.usbmodem14201'
+            self.ser.port = '/dev/ttyACM0'
         self.ser.open()
 
     def run(self):
