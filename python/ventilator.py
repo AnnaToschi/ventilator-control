@@ -324,7 +324,6 @@ class VentilatorWindow(QDialog):
         sending_button = self.sender()
 
         logging.info('toggling area - {}\n\n\n\n'.format(self.main_stackedArea_flag))
-
         if(sending_button.objectName() == 'alarmsButton' and self.main_stackedArea_flag==0):
             self.main_stacked_area.setCurrentWidget(self.AlarmsWidget)
             self.timer.timeout.connect(self.AlarmsWidget.updateSetValues)
@@ -342,6 +341,7 @@ class VentilatorWindow(QDialog):
                 self.thread.newSensorSample.disconnect(self.PlotsWidget.updateGraphs)
             except:
                 logging.info('nothing to disconnect Plots')
+            self.alarmsButton.setStyleSheet("background-color: #00e64d;color: rgb(3, 43, 91);");
         elif self.main_stackedArea_flag == 1: #I am in the settings view and want to change to show plots
             logging.info('Changing to \n\n\n\n')
             self.main_stacked_area.setCurrentWidget(self.PlotsWidget)
@@ -372,10 +372,9 @@ class VentilatorWindow(QDialog):
             elif self.currentMode ==2:
                 self.SettingsWidget_PS.commitValueChanges()
                 self.BottomAreaPS.updateBottomBarValues()
-            
-            
-            self.setButton.setStyleSheet("color: rgb(3, 43, 91);")
-            self.setButton.setText('Set\nValues')
+            print('HERE\n\n\n\n')
+            self.setButton.setStyleSheet("color: rgb(255,255,255);")
+            self.alarmsButton.setStyleSheet("color: rgb(255,255,255);");
         elif self.main_stackedArea_flag == 0 and self.currentMode==0: #I am in the plots view and want to change to show VC settings
             self.SettingsWidget_VC.readInitialSetValues()
             self.timer.timeout.connect(self.SettingsWidget_VC.updateSetValues)
@@ -389,7 +388,8 @@ class VentilatorWindow(QDialog):
                 logging.info('nothing to disconnect Alarms')
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_VC)
             self.main_stackedArea_flag = 1
-            self.setButton.setStyleSheet("background-color: #00e64d;");
+            print('HERE222\n\n\n\n')
+            self.setButton.setStyleSheet("background-color: #00e64d;color: rgb(3, 43, 91);");
         elif self.main_stackedArea_flag == 0 and self.currentMode==1:
             logging.info('Pressure Control')
             self.SettingsWidget_PC.readInitialSetValues()
@@ -404,7 +404,7 @@ class VentilatorWindow(QDialog):
                 logging.info('nothing to disconnect Alarms')
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PC)
             self.main_stackedArea_flag = 1
-            self.setButton.setStyleSheet("background-color: #00e64d;");
+            self.setButton.setStyleSheet("background-color: #00e64d;color: rgb(3, 43, 91);");
         elif self.main_stackedArea_flag == 0 and self.currentMode==2:
             logging.info('Pressure Support')
             try:
@@ -417,7 +417,7 @@ class VentilatorWindow(QDialog):
                 logging.info('nothing to disconnect Alarms')
             self.main_stacked_area.setCurrentWidget(self.SettingsWidget_PS)
             self.main_stackedArea_flag = 1
-            self.setButton.setStyleSheet("background-color: #00e64d;");
+            self.setButton.setStyleSheet("background-color: #00e64d;color: rgb(3, 43, 91);");
 
     def updateSideBarValues(self, *argv):
         if(len(argv) == 6):
@@ -472,6 +472,8 @@ class VentilatorWindow(QDialog):
     def soundAlarm(self, messageToDisplay):
         AlarmSoundClass()
         self.alarmMessage.setText("{}".format(messageToDisplay))
+        fnt = QtGui.QFont("Arial", 18, QtGui.QFont.Bold) 
+        self.alarmMessage.setFont(fnt)
         self.alarmMessage.setVisible(True)
         self.alarmTimer.timeout.connect(lambda:self.alarmMessage.setVisible(False))        
         self.alarmTimer.start(ALARM_DURATION)
@@ -1012,6 +1014,7 @@ class PlotsWidget(QWidget):
 
 def main():
   app = QApplication(sys.argv)
+  app.setStyle('Fusion')
   win = VentilatorWindow()
   win.show()
   sys.exit(app.exec_())
