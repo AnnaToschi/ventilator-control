@@ -10,8 +10,8 @@ import logging
 import serial
 import sys
 
-logging.basicConfig(level = logging.DEBUG)
-logging.basicConfig(format="%(asctime)-15s - %(levelname)s - %(threadName)s - %(module)s/%(funcName)s - %(message)s")
+logging.basicConfig(level = logging.DEBUG, format="%(asctime)-15s - %(levelname)s - %(threadName)s - %(module)s/%(funcName)s - %(message)s")
+
 
 VT_MIN = 100
 VT_MAX = 1300
