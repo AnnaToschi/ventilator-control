@@ -1,7 +1,7 @@
 #include <Adafruit_MCP4725.h> // https://github.com/adafruit/Adafruit_MCP4725 Adafruit MCP4725 12-bit DAC Driver Library
 #include <PID_v1.h>			  // https://github.com/br3ttb/Arduino-PID-Library/ Arduino PID Library v1.2.1 by Brett Beauregard
 //#include <avr/wdt.h>			 // AVR Watchdog Timer
-
+#include <EEPROM.h>
 //Pressure Sensor includes
 #include <Adafruit_BMP3XX.h>
 #include <Regexp.h>
@@ -75,7 +75,7 @@ const int debugMessage = 99;
 const int pressureControl = 0;
 const int volumeControl = 1;
 
-int currentVentilatorMode = volumeControl;
+int currentVentilatorMode = pressureControl;
 
 const String messageSeparator = ";";
 
@@ -137,13 +137,14 @@ unsigned long previousO2ReadMillis = 0;
 unsigned long previousImmediateSensorOutputMillis = 0;
 unsigned long previousControlCycleMillis = 0;
 unsigned long inspirationPhaseStartMillis = 0;
+unsigned long previousSettingsUpdateMillis = 0;
 
 unsigned long inspirationHoldPhaseStartMillis = 0;
 unsigned long expirationPhaseStartMillis = 0;
 float measuredInspirationRiseTimeInSecs = 0.0;
 
 const int O2Offset = 28;
-const float pressureOffsetMultiplier = 1;
+const float pressureOffsetMultiplier = 0.85;
 float pressureOffset = 0.0;
 const float flowOffsetMultiplier = 1.0;
 
@@ -153,6 +154,7 @@ const int flowUpdateInterval = 50;
 const int volumeUpdateInterval = 50;
 const int pressureUpdateInterval = 10;
 const int controlCycleInterval = 10;
+const int settingsUpdateInterval = 3000;
 
 float measuredRR = 0.0;
 float measuredPIP = 0.0;
@@ -169,6 +171,7 @@ float lowerInspirationPressureThreshold = 3.0;
 float upperInspirationPressureThreshold = 80.0;
 
 bool PIPReached = false;
+bool PEEPReached = false;
 bool targetVtReached = false;
 bool isInspirationStart=true;
 MatchState ms;
@@ -176,8 +179,8 @@ MatchState ms;
 //float tidalVolume = 0.00;
 
 bool pressureCalibrationDone = false;
+int eeBaseAddress= 0;
 
-char copy[200];
 
 //Specify the links and initial tuning parameters for the pressure PID
 PID pressurePID( &pressure,  &pidControlledInspiratoryAperture, &targetInspPressure, consKp, consKi, consKd, DIRECT);
@@ -221,6 +224,7 @@ void setup()
 	{
 	 O2readings[thisReading] = 0; // reset O2readings array
 	}
+	readSettingsFromEEPROM();
 }
 
 void loop()
@@ -247,6 +251,7 @@ void loop()
   	volumeControlCycle();
   	break;
   }
+  settingsSync();
   
   outputMessage(sensorReadings);
 }
@@ -355,6 +360,17 @@ void getPressure(){
 	}
 }
 
+void settingsSync(){
+	if (currentMillis - previousSettingsUpdateMillis >= settingsUpdateInterval)
+	{
+		outputMessage(VCSettings);
+		outputMessage(PCSettings);
+		outputMessage(alarmThresholds);
+		previousSettingsUpdateMillis = currentMillis;
+	}
+
+
+}
 void getO2perc()
 {
 	if (currentMillis - previousO2ReadMillis >= O2UpdateInterval)
@@ -392,6 +408,118 @@ void iterateMessageId(){
 		message_id++;
 	}
 }
+
+
+void writeSettingsToEEPROM(){
+	debugString = "Saving settings in MCUs EEPROM";
+
+	outputMessage(debugMessage);
+	int eeAddress = eeBaseAddress;
+	EEPROM.put(eeAddress, targetPEEP);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, targetPIP);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, targetRR);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, targetIERatio);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, targetInspirationRiseTime);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, targetVt);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, targetInspPausePerc);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, lowerInspirationVolumeThreshold);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, upperInspirationVolumeThreshold);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, lowerInspirationPressureThreshold);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, upperInspirationPressureThreshold);
+	eeAddress += sizeof(float);
+	EEPROM.put(eeAddress, currentVentilatorMode);
+}
+
+
+void readSettingsFromEEPROM(){
+	debugString = "Reading saved settings from MCUs EEPROM and sending to UI Layer";
+
+	outputMessage(debugMessage);
+	int eeAddress = eeBaseAddress;
+	EEPROM.get(eeAddress, targetPEEP);
+	if (isnan(targetPEEP)){
+		targetPEEP=5.0;
+	}
+	eeAddress += sizeof(float);
+
+	EEPROM.get(eeAddress, targetPIP);
+	if (isnan(targetPIP)){
+		targetPIP=50.0;
+	}
+	eeAddress += sizeof(float);
+
+	EEPROM.get(eeAddress, targetRR);
+	if (isnan(targetRR)||targetRR<0){
+		targetRR=10.0;
+	}
+	eeAddress += sizeof(float);
+
+	EEPROM.get(eeAddress, targetIERatio);
+	if (isnan(targetIERatio)){
+		targetIERatio=2.0;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, targetInspirationRiseTime);
+	if (isnan(targetInspirationRiseTime)){
+		targetInspirationRiseTime=0.8;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, targetVt);
+	if (isnan(targetVt)){
+		targetVt=0.8;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, targetInspPausePerc);
+	if (isnan(targetInspPausePerc)){
+		targetInspPausePerc=30.0;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, lowerInspirationVolumeThreshold);
+	if (isnan(lowerInspirationVolumeThreshold)){
+		lowerInspirationVolumeThreshold=50.0;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, upperInspirationVolumeThreshold);
+	if (isnan(upperInspirationVolumeThreshold)){
+		upperInspirationVolumeThreshold=1500.0;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, lowerInspirationPressureThreshold);
+	if (isnan(lowerInspirationPressureThreshold)){
+		lowerInspirationPressureThreshold=10.0;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, upperInspirationPressureThreshold);
+	if (isnan(upperInspirationPressureThreshold)){
+		upperInspirationPressureThreshold=70.0;
+	}
+	eeAddress += sizeof(float);
+	EEPROM.get(eeAddress, currentVentilatorMode);
+	if (currentVentilatorMode!=pressureControl || currentVentilatorMode!=volumeControl){
+		currentVentilatorMode=pressureControl;
+	}
+	inspirationPhaseDuration = (int) (60000 / targetRR / (1.0 + targetIERatio)); 
+	expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration;
+	inspirationHoldPhaseDuration = inspirationPhaseDuration * (targetInspPausePerc/100.0);
+	inspirationPhaseMinusHoldDuration = inspirationPhaseDuration - inspirationHoldPhaseDuration;
+	expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration;
+
+	outputMessage(VCSettings);
+	outputMessage(PCSettings);
+	outputMessage(alarmThresholds);
+}
+
+
 
 void outputMessage(int messageType){
 
@@ -546,17 +674,25 @@ void outputMessage(int messageType){
 
 
 				if (isInspirationStart) {
-					handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-						pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
-						inspirationPhaseStartMillis=currentMillis;
-						isInspirationStart=false;
-						debugString = "Inspiration Cycle start, inspiration Valve is Open";
+					int targetAperture=INSPIRATION_APERTURE_TARGET *0.5;
+					pidControlledInspiratoryAperture = (double) targetAperture;
+					
+					handleInspiratoryValveAperture(targetAperture);
+
+					inspirationPhaseStartMillis=currentMillis;
+					isInspirationStart=false;
+					debugString = "Inspiration Cycle start, inspiration Valve is Open";
 					outputMessage(debugMessage);
-					}
-					else{
+				}
+				else{
 					debugString = "Inspiration Valve is Open";
 					outputMessage(debugMessage);
-					if (measuredPIP >= (targetPIP-(targetPIP*0.25))){
+					if (PIPReached && pressure < (targetPIP *0.95)) {
+						targetAperture = targetAperture + (targetAperture*0.1);
+						handleInspiratoryValveAperture(targetAperture);
+						
+					}
+					if ((pressure >= (targetPIP*0.8))&& !PIPReached){
 						if(!PIPReached){
 							measuredInspirationRiseTimeInSecs = (millis() - inspirationPhaseStartMillis) / 1000.0;
 							PIPReached=true;
@@ -569,8 +705,19 @@ void outputMessage(int messageType){
 
 
 						outputMessage(debugMessage);
-						handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+						targetAperture = targetAperture - (targetAperture*0.2);
+						handleInspiratoryValveAperture(targetAperture);
+						
 					}
+					
+					if (PIPReached && pressure > (targetPIP *1.1)) {
+						handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+						targetAperture = targetAperture - (targetAperture*0.1);
+						handleInspiratoryValveAperture(targetAperture);
+					}
+
+					
+
 
 					if (tidalVolume > tidalVolumeUpperLimit){ // Volume Upper Threshold reached?
 
@@ -606,18 +753,21 @@ void outputMessage(int messageType){
 				 	// if none of the exit conditions apply, lets continue applying pressure PID
 
 					double pressureGap = abs(targetPIP-pressure); //distance away from setpoint
-					if (pressureGap < 10.0)
+					/*if (pressureGap < 10.0)
 						{  //we're close to setpoint, use conservative tuning parameters
 					pressurePID.SetTunings(consKp, consKi, consKd);
-				}
-					else   //we're far from setpoint, use aggressive tuning parameters
-					{
-						pressurePID.SetTunings(aggKp, aggKi, aggKd);
 					}
+					else   //we're far from setpoint, use aggressive tuning parameters
+					{*/
 
-					pressurePID.Compute();
+					pressurePID.SetTunings(aggKp, aggKi, aggKd);
+					//}
 
-					//handleInspiratoryValveAperture((int) pidControlledInspiratoryAperture);
+					/*pressurePID.Compute();
+					if (PIPReached){
+						handleInspiratoryValveAperture((int) pidControlledInspiratoryAperture);
+					}*/
+					
          //handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
 				}
 
@@ -643,84 +793,92 @@ void outputMessage(int messageType){
 				 debugString += " , measuredExpirationVolume = ";
 				 debugString += measuredExpirationVolume;
 				 outputMessage(debugMessage);
+				 if (PEEPReached && pressure < targetPEEP){
+				 	handleInspiratoryValveAperture(MAX_TARGET_APERTURE);
+				 }
+				 
+				 if (PEEPReached && pressure >= (targetPEEP - 1.0)){
+				 	handleInspiratoryValveAperture(MIN_TARGET_APERTURE);
+				 }
 
 				 if (pressureAverage < targetPEEP){
 				 	debugString = "PEEP Reached: ";
 				 	debugString += pressureAverage;
 				 	outputMessage(debugMessage);
+				 	PEEPReached=true;
 
 				 	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-						//handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-						//cyclePhase = inspiration;
-						//tidalVolume=0.0;
-						//inspirationPhaseStartMillis=currentMillis;
+							//handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+							//cyclePhase = inspiration;
+							//tidalVolume=0.0;
+							//inspirationPhaseStartMillis=currentMillis;
 				 }
-				  if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
-				  	debugString = "Expiration phase duration reached";
-				  	outputMessage(debugMessage);
-				  	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
-				  	handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-				  	pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
-				  	cyclePhase = inspiration;
-				  	measuredRR= 60000 / (millis() - inspirationPhaseStartMillis);
-				  	outputMessage(expiratorySummary);
-				  	tidalVolume=0.0;
+					  if (currentMillis - expirationPhaseStartMillis > expirationPhaseDuration){ // Expiration Time Upper Limit reached?
+					  	debugString = "Expiration phase duration reached";
+					  	outputMessage(debugMessage);
+					  	handleExpiratoryValveAperture(MIN_TARGET_APERTURE);
+					  	handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+					  	pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
+					  	cyclePhase = inspiration;
+					  	measuredRR= 60000 / (millis() - inspirationPhaseStartMillis);
+					  	outputMessage(expiratorySummary);
+					  	tidalVolume=0.0;
 
-				  	measuredPIP=0.0;
+					  	measuredPIP=0.0;
+					  	PEEPReached=false;
+					  	measuredInspirationVolume=0.0;
+					  	measuredExpirationVolume=0.0;
+					  	measuredPIF=0.0;
+					  	measuredPEF=0.0;
+					  	measuredInspirationRiseTimeInSecs=0;
+					  	measuredPEEP=999.0; //insanely high value
+					  	PIPReached=false;
 
-				  	measuredInspirationVolume=0.0;
-				  	measuredExpirationVolume=0.0;
-				  	measuredPIF=0.0;
-				  	measuredPEF=0.0;
-				  	measuredInspirationRiseTimeInSecs=0;
-				  	measuredPEEP=999.0; //insanely high value
-				  	PIPReached=false;
-
-				  	inspirationPhaseStartMillis=currentMillis;
-				  }
-				  break;
+					  	inspirationPhaseStartMillis=currentMillis;
+					  }
+					  break;
+					}
+					previousControlCycleMillis = currentMillis;
 				}
-				previousControlCycleMillis = currentMillis;
+
 			}
 
-		}
 
 
-
-		void volumeControlCycle(){
-			if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
-				switch (cyclePhase) {
-					case inspiration:
-					debugString = "Volume Contol - Inspiration Phase, pressure = ";
-					debugString += pressure;
-					debugString += " , flow = ";
-					debugString += flow;
-					debugString += " , measuredInspirationVolume = ";
-					debugString += measuredInspirationVolume;
-					debugString += " , pidControlledInspiratoryAperture = ";
-					debugString += pidControlledInspiratoryAperture;
-					outputMessage(debugMessage);
-
-
-					if (isInspirationStart) {
-					handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
-						pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
-						inspirationPhaseStartMillis=currentMillis;
-						isInspirationStart=false;
-						debugString = "Inspiration Cycle start, inspiration Valve is Open";
-					outputMessage(debugMessage);
-					}
-					else{
+			void volumeControlCycle(){
+				if (currentMillis - previousControlCycleMillis >= controlCycleInterval) {
+					switch (cyclePhase) {
+						case inspiration:
+						debugString = "Volume Contol - Inspiration Phase, pressure = ";
+						debugString += pressure;
+						debugString += " , flow = ";
+						debugString += flow;
+						debugString += " , measuredInspirationVolume = ";
+						debugString += measuredInspirationVolume;
+						debugString += " , pidControlledInspiratoryAperture = ";
+						debugString += pidControlledInspiratoryAperture;
+						outputMessage(debugMessage);
 
 
-						if (measuredInspirationVolume >=targetVt && !targetVtReached){
-
-							debugString = "Reached targetVt, switching to inspiration hold phase ";
-	
+						if (isInspirationStart) {
+							handleInspiratoryValveAperture(INSPIRATION_APERTURE_TARGET);
+							pidControlledInspiratoryAperture = (double) INSPIRATION_APERTURE_TARGET;
+							inspirationPhaseStartMillis=currentMillis;
+							isInspirationStart=false;
+							debugString = "Inspiration Cycle start, inspiration Valve is Open";
 							outputMessage(debugMessage);
+						}
+						else{
 
-							measuredInspirationRiseTimeInSecs = (millis() - inspirationPhaseStartMillis) / 1000.0;
-							targetVtReached=true;
+
+							if (measuredInspirationVolume >=targetVt && !targetVtReached){
+
+								debugString = "Reached targetVt, switching to inspiration hold phase ";
+
+								outputMessage(debugMessage);
+
+								measuredInspirationRiseTimeInSecs = (millis() - inspirationPhaseStartMillis) / 1000.0;
+								targetVtReached=true;
 
 							handleInspiratoryValveAperture(MIN_TARGET_APERTURE); // close inspiration valve
 							cyclePhase = inspirationHold; // switch to expiration
@@ -773,7 +931,7 @@ void outputMessage(int messageType){
 
 					break;
 
-				case inspirationHold: 
+					case inspirationHold: 
 
 					if (measuredInspirationVolume < lowerInspirationVolumeThreshold){
 						debugString = "Inspiration Volume lower than threshold";
@@ -886,102 +1044,159 @@ void outputMessage(int messageType){
 			{
 				if (stringFromUILayerComplete)
 				{
-					stringFromUILayer.toCharArray(copy,200);
-					ms.Target(copy);
+          //Serial.println(stringFromUILayer);
+					char copy[50];
+					
 					debugString = "MCU received the following message from Rpi: ";
 					debugString += stringFromUILayer;
 					outputMessage(debugMessage);
-					char match_result = ms.Match("(.*);.*");
-					int intendedMessageType=(int)  ms.GetCapture(copy, 0);
-					debugString = "intendedMessageType: ";
-					debugString += intendedMessageType;
-					outputMessage(debugMessage);
+					stringFromUILayer.toCharArray(copy, 50);
+					char *tok = strtok(copy, ";");
+					int i = 1;
+
+					int intendedMessageType = atoi(tok);
+					//debugString = "intendedMessageType: ";
+					//debugString += intendedMessageType;
+					//outputMessage(debugMessage);
 					switch (intendedMessageType){
 						case PCSettings:
+//DEBUG:root:error in received data: b'99;token=4\r\n'
+//DEBUG:root:error in received data: b'99;token=1\r\n'
+//DEBUG:root:error in received data: b'99;token=5\r\n'
+//DEBUG:root:error in received data: b'99;token=113\r\n'
+//DEBUG:root:error in received data: b'99;token=10.0\r\n'
+//DEBUG:root:error in received data: b'99;token=2.0\r\n'
+//DEBUG:root:error in received data: b'99;token=1.0\r\n'
 
 				//4;messageId;targetPEEP;targetPIP;targetRR;targetIERatio;targetInspirationRiseTime //current PC settings, sent once every X (default 10) seconds, and immediately after a settings change
-						match_result = ms.Match("(.*);(.*);(.*);(.*);(.*);(.*);(.*)");
-						targetPEEP = atof(ms.GetCapture(copy, 2));
-						targetPIP = atof(ms.GetCapture(copy, 3));
-						targetRR = (int) ms.GetCapture(copy, 4);
-						targetIERatio = atof(ms.GetCapture(copy, 5));
-						targetInspirationRiseTime = atof(ms.GetCapture(copy, 6));
+						while (tok) {
+							tok = strtok(NULL, ";");
+							
+							if(i == 2){
+								targetPEEP=atof(tok);
+							}
+							else if(i==3){
+								targetPIP=atof(tok);
+							}
+							else if(i==4){
+								targetRR=atof(tok);
+							}
+							else if(i==5){
+								targetIERatio=atof(tok);
+							}
+							else if(i==6){
+								targetInspirationRiseTime=atof(tok);
+							}
+							i++;
+					    	// Note: NULL, not IncomingString
+						}
 						currentVentilatorMode = pressureControl;
-
+						targetInspPressure= (double)targetPIP;
 						inspirationPhaseDuration = (int) (60000 / targetRR / (1.0 + targetIERatio)); 
-				expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration; //remainder of each Breath Cycle
-				outputMessage(PCSettings);
-				break;
+						expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration; //remainder of each Breath Cycle
+						writeSettingsToEEPROM();
+						outputMessage(PCSettings);
+						break;
 
-				case VCSettings:
+						case VCSettings:
 				//5;messageId;targetPEEP;targetVt;targetRR;targetIERatio;targetInspPausePerc //current VC settings, sent once every X (default 10) seconds, and immediately after a settings change
-				match_result = ms.Match("(.*);(.*);(.*);(.*);(.*);(.*);(.*)");
-				targetPEEP = atof(ms.GetCapture(copy, 2));
-				targetVt = atof(ms.GetCapture(copy, 3));
-				targetRR = (int) ms.GetCapture(copy, 4);
-				targetIERatio = atof(ms.GetCapture(copy, 5));
-				targetInspPausePerc = atof(ms.GetCapture(copy, 6));
-				currentVentilatorMode = volumeControl;
-				
-				inspirationPhaseDuration = (int) (60000 / targetRR / (1.0 + targetIERatio));
-				inspirationHoldPhaseDuration = inspirationPhaseDuration * (1/targetInspPausePerc);
-				inspirationPhaseMinusHoldDuration = inspirationPhaseDuration - inspirationHoldPhaseDuration;
-				expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration; //remainder of each Breath Cycle
-				outputMessage(VCSettings);
-				break;
+						while (tok) {
+							tok = strtok(NULL, ";");
+							
+							if(i == 2){
+								targetPEEP=atof(tok);
+							}
+							else if(i==3){
+								targetVt=atof(tok);
+							}
+							else if(i==4){
+								targetRR=atof(tok);
+							}
+							else if(i==5){
+								targetIERatio=atof(tok);
+							}
+							else if(i==6){
+								targetInspPausePerc=atof(tok);
+							}
+							i++;
+					    	// Note: NULL, not IncomingString
+						}
+						currentVentilatorMode = volumeControl;
 
-				case alarmThresholds:
+						inspirationPhaseDuration = (int) (60000 / targetRR / (1.0 + targetIERatio));
+						inspirationHoldPhaseDuration = inspirationPhaseDuration * (targetInspPausePerc/100.0);
+						inspirationPhaseMinusHoldDuration = inspirationPhaseDuration - inspirationHoldPhaseDuration;
+						expirationPhaseDuration = (60000 / targetRR) - inspirationPhaseDuration;
+						writeSettingsToEEPROM();
+						outputMessage(VCSettings);
+						break;
+
+						case alarmThresholds:
 			    //6;messageId;lowerInspirationVolumeThreshold;upperInspirationVolumeThreshold;lowerInspirationPressureThreshold;upperInspirationPressureThreshold //current alarm settings, sent once every X (default 10) seconds, and immediately after a alarm threshold settings change
-				match_result = ms.Match("(.*);(.*);(.*);(.*);(.*);(.*)");
-				lowerInspirationVolumeThreshold = atof(ms.GetCapture(copy, 2));
-				upperInspirationVolumeThreshold = atof(ms.GetCapture(copy, 3));
-				lowerInspirationPressureThreshold = (int) ms.GetCapture(copy, 4);
-				upperInspirationPressureThreshold = atof(ms.GetCapture(copy, 5));
+						while (tok) {
+							tok = strtok(NULL, ";");
+							
+							if(i == 2){
+								lowerInspirationVolumeThreshold=atof(tok);
+							}
+							else if(i==3){
+								upperInspirationVolumeThreshold=atof(tok);
+							}
+							else if(i==4){
+								lowerInspirationPressureThreshold=atof(tok);
+							}
+							else if(i==5){
+								upperInspirationPressureThreshold=atof(tok);
+							}
+							i++;
+					    	// Note: NULL, not IncomingString
+						}
+						writeSettingsToEEPROM();
+						outputMessage(alarmThresholds);
+						break;
 
-				outputMessage(alarmThresholds);
-				break;
+					}
 
+				}
+				stringFromUILayer = "";
+				stringFromUILayerComplete = false;
 			}
 
-		}
-		stringFromUILayer = "";
-		stringFromUILayerComplete = false;
-	}
 
 
-
-	void serialEvent()
-	{
-		while (Serial.available())
-		{
+			void serialEvent()
+			{
+				while (Serial.available())
+				{
 
 	 			// get the new byte:
-			char inChar = (char)Serial.read();
+					char inChar = (char)Serial.read();
 	 			// add it to the inputString:
-			stringFromUILayer += inChar;
+					if (inChar == '\n')
+					{
+						stringFromUILayerComplete = true;
+					}else{
+						stringFromUILayer += inChar;
+					}
 				 // if the incoming character is a newline, set a flag
 				 // so other function spaces can do something about it:
-			if (inChar == '\n')
-			{
-				stringFromUILayerComplete = true;
+				}
 			}
-		}
-	}
 
-	void serialEvent1()
-	{
-		while (Serial1.available())
-		{
+			void serialEvent1()
+			{
+				while (Serial1.available())
+				{
 
 	 			// get the new byte:
-			char inChar = (char)Serial1.read();
+					char inChar = (char)Serial1.read();
 	 			// add it to the inputString:
-			stringFromSlaveMCU += inChar;
+					stringFromSlaveMCU += inChar;
 	 			// if the incoming character is a newline, set a flag
 	 			// so other function spaces can do something about it:
-			if (inChar == '\n')
-			{
-				stringFromSlaveMCUComplete = true;
+					if (inChar == '\n')
+					{
+						stringFromSlaveMCUComplete = true;
+					}
+				}
 			}
-		}
-	}
