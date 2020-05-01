@@ -1,0 +1,15 @@
+1;messageId;immediatePressure;immediateFlow;immediateTidalVolume //sensor readings, sent once every 50ms
+
+2;messageId;measuredInspirationRiseTimeInSecs;measuredPIP;measuredInspirationVolume;measuredPIF;O2% //inspiratory summary, sent at the end of the inspiratory phase
+
+3;messageId;measuredPEEP;measuredExpirationVolume;measuredPEF;O2% //expiratory summary, sent at the end of the expiratory phase
+
+4;messageId;targetPEEP;targetPIP;targetRR;targetIERatio;targetInspirationRiseTime //current PC settings, sent once every X (default 10) seconds, and immediately after a settings change
+
+5;messageId;targetPEEP;targetVt;targetRR;targetI/ERatio;targetInspPausePerc //current VC settings, sent once every X (default 10) seconds, and immediately after a settings change
+
+6;messageId;lowerInspirationVolumeThreshold;upperInspirationVolumeThreshold;lowerInspirationPressureThreshold;upperInspirationPressureThreshold //current alarm settings, sent once every X (default 10) seconds, and immediately after a alarm threshold settings change
+
+7;messageId;alarmString //alarm message
+
+99;messageId;debugString //to be used for debug purposes only, either displayed in the python console or some text box in the QT dashboard
